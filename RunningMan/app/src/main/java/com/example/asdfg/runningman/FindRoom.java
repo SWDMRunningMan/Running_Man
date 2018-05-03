@@ -24,7 +24,7 @@ public class FindRoom extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 str = edit.getText().toString();
-                if (/*str조건검증*/) {
+                if (true/*str==서버의 방 아이디*/) {
                 }else{
                     startActivity(intent);
                     finish();

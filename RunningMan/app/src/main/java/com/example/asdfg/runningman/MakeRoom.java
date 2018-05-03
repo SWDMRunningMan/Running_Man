@@ -23,6 +23,7 @@ public class MakeRoom extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 str = edit.getText().toString();
+                //방아이디 생성
                 if (str.length()>5/*str조건검증*/) {
 
                 }else{
