@@ -3,18 +3,83 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:background="#ffffff44"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+        android:id="@+id/roomName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Enter room name"
+        android:background="#ffffffff"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_margin="5dp"
+            android:id="@+id/searchRoomName"
+            android:layout_weight="5"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:id="@+id/searchBtn"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:gravity="right"
+            android:layout_margin="5dp"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Room List"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textStyle="bold"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_weight="10"
+        android:background="#ffffffff">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/roomList"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                />
+        </ScrollView>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center">
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btn1"
+        android:id="@+id/roomMakeBtn"
         android:text="방만들기"
-        />
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_margin="5dp" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btn2"
-        android:text="방찾기"
-        />
+        android:id="@+id/roomEnterBtn"
+        android:text="방 접속하기"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_margin="5dp"/>
+</LinearLayout>
+
+
 
 </LinearLayout>
