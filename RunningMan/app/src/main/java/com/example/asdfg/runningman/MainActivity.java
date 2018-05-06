@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView = findViewById(R.id.roomList);
-        // roomList= 방 리스트 어디서 갖고오지?
+        // roomList= 방 리스트 어디서 갖고오지? xml에 있는 방 list 보여주는거 자바에서 해야할듯?
         // textView.setText(roomList);
 
         editText = findViewById(R.id.searchRoomName);
@@ -39,12 +39,14 @@ public class MainActivity extends AppCompatActivity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {       // 방찾기
-               // roomList안에 roomName 검색
+               // roomList안에 roomName 검색색
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() {      // 방만들기
             @Override
             public void onClick(View v) {
+                intent1 = new Intent(getApplicationContext(),MakeRoom.class);
+                intent1.putExtra("userName",userName);
                 startActivity(intent1);
                 finish();
             }
