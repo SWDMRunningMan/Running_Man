@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
                 intent1 = new Intent(getApplicationContext(),MakeRoom.class);
                 intent1.putExtra("userName",userName);
                 startActivity(intent1);
-                finish();
             }
         });
         btn3.setOnClickListener(new View.OnClickListener(){      // 방 접속하기
