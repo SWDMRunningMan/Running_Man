@@ -19,72 +19,76 @@
         android:layout_height="2dp"
         android:layout_width="match_parent"
         android:background="#ffffffff" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="5">
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"
+        android:layout_height="wrap_content"
         android:stretchColumns="1">
         <TableRow>
             <TextView
-                android:layout_weight="3"
                 android:text="Room Name "
-                android:layout_margin="10dp"
                 android:textStyle="bold"
                 android:textSize="15dp"
+                android:padding="10dp"
                />
             <EditText
                 android:id="@+id/roomNameText"
                 android:hint="Enter room name"
                 android:textStyle="bold"
                 android:textSize="15dp"
-                android:layout_margin="10dp"
+                android:padding="10dp"
                 />
         </TableRow>
 
         <TableRow>
             <TextView
                 android:text="Seeker Numbers "
-                android:layout_margin="10dp"
                 android:textStyle="bold"
                 android:textSize="15dp"
+                android:padding="10dp"
                 />
             <EditText
                 android:id="@+id/seekerNum"
                 android:hint="Enter number of seekers"
                 android:textStyle="bold"
                 android:textSize="15dp"
-                android:layout_margin="10dp"    />
+                android:padding="10dp"/>
         </TableRow>
 
         <TableRow>
             <TextView
                 android:text="Time Limit "
-                android:layout_margin="10dp"
                 android:textStyle="bold"
                 android:textSize="15dp"
+                android:padding="10dp"
                 />
             <EditText
                 android:id="@+id/timeLimit"
                 android:hint="Enter Time Limit"
                 android:textStyle="bold"
                 android:textSize="15dp"
-                android:layout_margin="10dp"    />
+                android:padding="10dp"/>
         </TableRow>
 
         <TableRow>
             <TextView
                 android:text="Chance Numbers: "
-                android:layout_margin="10dp"
                 android:textStyle="bold"
-                android:textSize="15dp"/>
+                android:textSize="15dp"
+                android:padding="10dp"
+                />
             <EditText
                 android:id="@+id/chanceNum"
                 android:hint="Enter number of chances"
                 android:textStyle="bold"
                 android:textSize="15dp"
-                android:layout_margin="10dp"    />
+                android:padding="10dp"/>
         </TableRow>
     </TableLayout>
+    </ScrollView>
     <View
         android:layout_height="2dp"
         android:layout_width="match_parent"
@@ -93,7 +97,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:gravity="center"
+    android:gravity="top|center"
     android:layout_weight="1">
     <Button
         android:layout_width="wrap_content"
@@ -112,7 +116,7 @@
         android:textStyle="bold"
         android:textSize="18dp"
         android:layout_margin="5dp"
-    android:id="@+id/Cancel"/>
+    android:id="@+id/cancel"/>
 </LinearLayout>
 
 </LinearLayout>
