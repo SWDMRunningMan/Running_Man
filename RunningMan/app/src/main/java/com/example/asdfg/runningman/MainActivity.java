@@ -1,4 +1,4 @@
-package com.example.yea2.runningman;
+package com.example.asdfg.runningman;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.asdfg.runningman.R;
 
 public class MainActivity extends AppCompatActivity {
     Button btn1,btn2,btn3;
@@ -19,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.roomList);
+       // textView = findViewById(R.id.roomList);
         // roomList= 방 리스트 어디서 갖고오지? xml에 있는 방 list 보여주는거 자바에서 해야할듯?
         // textView.setText(roomList);
 
