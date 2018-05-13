@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff44"
+    android:background="#44345678"
     android:orientation="vertical">
 
     <LinearLayout
@@ -15,10 +15,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Enter room name"
+            android:gravity="center"
+            android:layout_margin="5dp"
         android:background="#ffffffff"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:layout_margin="5dp"
+        android:padding="10dp"
             android:id="@+id/searchRoomName"
             android:layout_weight="5"/>
 
@@ -29,7 +31,7 @@
             android:id="@+id/searchBtn"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:gravity="right"
+            android:gravity="center"
             android:layout_margin="5dp"
             android:textAllCaps="false"/>
     </LinearLayout>
@@ -46,13 +48,50 @@
         android:layout_margin="15dp"
         android:layout_weight="10"
         android:background="#ffffffff">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/roomList"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                />
+           <TableLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:stretchColumns="1"
+               android:background="#ff000000"
+               android:padding="2dp">
+               <TableRow
+                   android:background="#ffffffff">
+                   <TextView
+                       android:layout_height="30dp"
+                       android:text="방 번호"
+                       android:layout_margin="1dp"
+                       android:gravity="center"/>
+                   <TextView android:text="방 제목"
+                       android:layout_height="30dp"
+                       android:layout_margin="1dp"
+                       android:gravity="center"/>
+                   <TextView android:text="방 인원수"
+                       android:layout_height="30dp"
+                       android:layout_margin="1dp"
+                       android:gravity="center"/>
+               </TableRow>
+               <View
+                   android:background="#ff000000"
+                   android:layout_width="match_parent"
+                   android:layout_height="1dp"
+                   />
+               <TableRow
+                   android:background="#ffffffff">
+                   <TextView
+                       android:text="1"
+                       android:layout_margin="1dp"
+                       android:layout_height="30dp"
+                       android:gravity="center"/>
+                   <TextView android:text="런닝맨"
+                       android:layout_margin="1dp"
+                       android:layout_height="30dp"
+                       android:gravity="center"/>
+                   <TextView android:text="5/8"
+                       android:layout_height="30dp"
+                       android:layout_margin="1dp"
+                       android:gravity="center"/>
+               </TableRow>
+           </TableLayout>
         </ScrollView>
 
     <LinearLayout
