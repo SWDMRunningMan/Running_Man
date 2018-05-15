@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 public class Login extends AppCompatActivity {
 EditText loginID;
-Button enterBtn;
+Button enterBtn,exitBtn;
 Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +18,7 @@ Intent intent;
 
         loginID=findViewById(R.id.loginID);
         enterBtn=findViewById(R.id.enterBtn);
+        exitBtn=findViewById(R.id.exitBtn);
 
         enterBtn.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
@@ -26,6 +27,11 @@ Intent intent;
                 intent = new Intent(getApplicationContext(),MainActivity.class);
                 intent.putExtra("loginID",name);
                 startActivity(intent);
+                finish();
+            }
+        });
+        exitBtn.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
                 finish();
             }
         });
