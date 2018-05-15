@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.asdfg.runningman.MakeRoom"
-    android:background="#44345678">
+    tools:context="com.example.yea2.runningman.MakeRoom"
+    android:background="#ffffff44">
 
     <TextView
         android:layout_width="match_parent"

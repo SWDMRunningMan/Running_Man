@@ -1,37 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.asdfg.runningman.Login"
+    tools:context="com.example.yea2.runningman.Login"
+    android:background="@drawable/run"
+    android:padding="10dp">
 
-
-    android:background="#aaffffff">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:src="@drawable/runningman_logo" />
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:hint="닉네임을 입력하세요"
-                android:id="@+id/loginID"
-                android:gravity="center" />
-            <Button
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="10dp"
+        android:background="#aaffffff">
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:id="@+id/text"
+            android:text="Username: "
+            android:textColor="#ff222222"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/loginID"
+            android:layout_toRightOf="@+id/text"
+            android:layout_alignBaseline="@+id/text"
+            android:textColor="#ff222222"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/enterBtn"
+            android:layout_below="@+id/text"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="16dp"
             android:text="Login"
+            android:textAllCaps="false"
+            android:textColor="#ff222222"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:id="@+id/enterBtn" />
-        </LinearLayout>
-</ScrollView>
+            android:drawableLeft="@drawable/r"
+            />
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/exitBtn"
+            android:layout_below="@+id/text"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="60dp"
+            android:layout_marginTop="16dp"
+            android:text="Exit"
+            android:textAllCaps="false"
+            android:textColor="#ff222222"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:drawableLeft="@drawable/exit" />
+
+    </RelativeLayout>
+</RelativeLayout>
