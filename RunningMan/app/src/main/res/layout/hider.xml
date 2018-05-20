@@ -1,20 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/run"
     >
     <TextView
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:id="@+id/text1"
-        android:text="Hider"
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        android:text="Seeker"
         />
-    <TextView
-        android:layout_height="wrap_content"
+    <View
         android:layout_width="match_parent"
-        android:id="@+id/text2"
-        android:text="Time : "
-        />
-</LinearLayout>
+        android:layout_height="3dp"
+        android:background="#ffffffff"
+        android:layout_below="@+id/text1"
+        android:id="@+id/linee"/>
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#66ffffff"
+        android:layout_below="@+id/linee"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/table1">
+        <TableRow>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/hider1"
+                android:layout_margin="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hider1"
+                    android:layout_gravity="center"
+                    android:textSize="30sp"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="#ffffffff"/>
+                <ImageButton
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/hider1Image"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/hider2"
+                android:layout_margin="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hider1"
+                    android:layout_gravity="center"
+                    android:textSize="30sp"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="#ffffffff"/>
+                <ImageButton
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/hider2Image"
+                    />
+            </LinearLayout>
+        </TableRow>
+        <TableRow>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/hider3"
+                android:layout_margin="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hider1"
+                    android:layout_gravity="center"
+                    android:textSize="30sp"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="#ffffffff"/>
+                <ImageButton
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/hider3Image"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/hider4"
+                android:layout_margin="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hider1"
+                    android:layout_gravity="center"
+                    android:textSize="30sp"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="#ffffffff"/>
+                <ImageButton
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/hider4Image"
+                    />
+            </LinearLayout>
+        </TableRow>
+
+    </TableLayout>
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_below="@+id/table1"
+        android:background="#ffffffff"
+        android:id="@+id/linee2"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linee2"
+        android:text="남은 시간: 5분 30초"
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>

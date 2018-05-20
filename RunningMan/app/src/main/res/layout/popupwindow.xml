@@ -4,7 +4,7 @@
     android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="com.example.yea2.runningman.MakeRoom"
+    tools:context="com.example.asdfg.runningman.MakeRoom;"
     android:background="#ffffffff">
 
     <TextView
@@ -17,33 +17,33 @@
         android:text="Make Room"
         android:id="@+id/textMake"
         android:background="@drawable/logo1"/>
-<RelativeLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textMake"
         android:layout_gravity="center_horizontal">
-       <TableLayout
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:background="#44000000"
-           android:padding="2dp"
-           android:id="@+id/table">
-           <TableRow android:background="#aaffffff">
-               <TextView android:text="Room Name: "
-                   />
-               <EditText android:hint="Enter room name"
-                   android:id="@+id/roomNameText"
-                   android:layout_span="3"/>
-       </TableRow>
-           <TableRow android:background="#aaffffff">
-               <TextView android:text="Player Number: "/>
-               <EditText android:layout_width="30dp"
-                   android:id="@+id/playerNum"/>
-               <TextView android:text=" Seeker Number: "/>
-               <EditText android:layout_width="30dp"
-                   android:id="@+id/seekerNum"/>
-           </TableRow>
-       </TableLayout>
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#44000000"
+            android:padding="2dp"
+            android:id="@+id/table">
+            <TableRow android:background="#aaffffff">
+                <TextView android:text="Room Name: "
+                    />
+                <EditText android:hint="Enter room name"
+                    android:id="@+id/roomNameText"
+                    android:layout_span="3"/>
+            </TableRow>
+            <TableRow android:background="#aaffffff">
+                <TextView android:text="Player Number: "/>
+                <EditText android:layout_width="30dp"
+                    android:id="@+id/playerNum"/>
+                <TextView android:text=" Seeker Number: "/>
+                <EditText android:layout_width="30dp"
+                    android:id="@+id/seekerNum"/>
+            </TableRow>
+        </TableLayout>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -81,11 +81,11 @@
                 <RadioGroup
                     android:orientation="horizontal"
                     android:id="@+id/chanceGroup">
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="30초"
-                    android:id="@+id/sec30"/>
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="30초"
+                        android:id="@+id/sec30"/>
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

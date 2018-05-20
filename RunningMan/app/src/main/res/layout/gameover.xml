@@ -3,18 +3,58 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/run"
     >
-    <TextView
-        android:layout_height="wrap_content"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:id="@+id/text1"
-        android:text="Game Over"
-        />
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:id="@+id/text2"
-        android:text="You walking : "
-        />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#66ffffff">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/text1"
+            android:textSize="30sp"
+            android:textStyle="italic"
+            android:gravity="center"
+            android:paddingTop="30dp"
+            android:text="Game Over"
+            />
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/text2"
+            android:textSize="30sp"
+            android:textStyle="italic"
+            android:gravity="center"
+            android:paddingTop="30dp"
+            android:text="You walked : \n 5000 feets~"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1. player2 : 6000 feets"
+            android:textSize="30sp"
+            android:textStyle="italic"
+            android:layout_gravity="center"
+            android:paddingTop="30dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2. player3 : 5000 feets"
+            android:textSize="30sp"
+            android:textStyle="italic"
+            android:layout_gravity="center"
+            android:paddingTop="30dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3. player1 : 4000 feets"
+            android:textSize="30sp"
+            android:textStyle="italic"
+            android:layout_gravity="center"
+            android:paddingTop="30dp"/>
+    </LinearLayout>
+
 </LinearLayout>
