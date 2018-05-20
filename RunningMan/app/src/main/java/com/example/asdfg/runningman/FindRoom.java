@@ -16,20 +16,20 @@ public class FindRoom extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.findroom);
+     /*   setContentView(R.layout.findroom);
         edit=findViewById(R.id.edit);
-        btn=findViewById(R.id.btn);
+       btn=findViewById(R.id.btn);
         intent=new Intent(this,Room.class);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 str = edit.getText().toString();
-                if (true/*str==서버의 방 아이디*/) {
+                if (true str==서버의 방 아이디) {
                 }else{
                     startActivity(intent);
                     finish();
                 }
             }
-        });
+        });*/
     }
 }

@@ -1,5 +1,4 @@
-package com.example.yea2.runningman;
-
+package com.example.asdfg.runningman;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
@@ -13,6 +12,7 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
     Button btn1,btn2,btn3,makeRoom,cancel;
@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       // textView = findViewById(R.id.roomList);
+        // textView = findViewById(R.id.roomList);
         // roomList= 방 리스트 어디서 갖고오지?
         // textView.setText(roomList);
 
@@ -45,13 +45,13 @@ public class MainActivity extends Activity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {       // 방찾기
-               // roomList안에 roomName 검색색
+                // roomList안에 roomName 검색색
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() {      // 방만들기
             @Override
             public void onClick(View v) {                   // 방만들기
-                View popupView = getLayoutInflater().inflate(R.layout.popupwindow,null);
+                final View popupView = getLayoutInflater().inflate(R.layout.popupwindow,null);
                 window = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
                 window.setAnimationStyle(-1);
                 window.setFocusable(true);
@@ -67,28 +67,31 @@ public class MainActivity extends Activity {
                 cancel=popupView.findViewById(R.id.cancel);
 
                 makeRoom.setOnClickListener(new View.OnClickListener(){
-                    public void onClick(View v){
-                        intent=new Intent(getApplicationContext(),Room.class);
-                        intent.putExtra("roomName",roomNameText.getText().toString());
-                        intent.putExtra("playerNum",playerNum.getText().toString());
-                        intent.putExtra("seekerNum",seekerNum.getText().toString());
-                        int timeID = time.getCheckedRadioButtonId();
-                        if(timeID == R.id.min5)
-                            intent.putExtra("time",min5.getText().toString());
-                        if(timeID==R.id.min10)
-                            intent.putExtra("time",min10.getText().toString());
-                        if(timeID==R.id.min15)
-                            intent.putExtra("time",min15.getText().toString());
-                        int chanceID = chance.getCheckedRadioButtonId();
-                        if(chanceID == R.id.sec30)
-                            intent.putExtra("chance",sec30.getText().toString());
-                        if(chanceID == R.id.sec60)
-                            intent.putExtra("chance",sec60.getText().toString());
-                        if(chanceID == R.id.sec120)
-                            intent.putExtra("chance",sec120.getText().toString());
-                        startActivity(intent);
-                        window.dismiss();
-                        finish();
+                    public void onClick(View v) {
+                        if (roomNameText.getText().toString().length() < 2)
+                            Toast.makeText(MainActivity.this, "방 제목은 2자 이상이여야합니다", Toast.LENGTH_LONG).show();
+                        else {
+                            intent1 = new Intent(getApplicationContext(), Room.class);
+                            intent1.putExtra("roomName", roomNameText.getText().toString());
+                            intent1.putExtra("playerNum", playerNum.getText().toString());
+                            intent1.putExtra("seekerNum", seekerNum.getText().toString());
+                            int timeID = time.getCheckedRadioButtonId();
+                            if (timeID == R.id.min5)
+                                intent1.putExtra("time", min5.getText().toString());
+                            if (timeID == R.id.min10)
+                                intent1.putExtra("time", min10.getText().toString());
+                            if (timeID == R.id.min15)
+                                intent1.putExtra("time", min15.getText().toString());
+                            int chanceID = chance.getCheckedRadioButtonId();
+                            if (chanceID == R.id.sec30)
+                                intent1.putExtra("chance", sec30.getText().toString());
+                            if (chanceID == R.id.sec60)
+                                intent1.putExtra("chance", sec60.getText().toString());
+                            if (chanceID == R.id.sec120)
+                                intent1.putExtra("chance", sec120.getText().toString());
+                            startActivity(intent1);
+                            window.dismiss();
+                        }
                     }
                 });
                 cancel.setOnClickListener(new View.OnClickListener(){
@@ -100,8 +103,9 @@ public class MainActivity extends Activity {
         });
         btn3.setOnClickListener(new View.OnClickListener(){      // 방 접속하기
             public void onClick(View v){                  // 방접속
+                //방제목
+                //if(인원수 꽉 차지 않았으면)
                 startActivity(intent2);
-                finish();
             }
         });
     }

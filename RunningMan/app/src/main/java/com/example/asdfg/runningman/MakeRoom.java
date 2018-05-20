@@ -1,4 +1,4 @@
-package com.example.yea2.runningman;
+package com.example.asdfg.runningman;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +33,7 @@ public class MakeRoom extends AppCompatActivity {
                 if (str.length()>5) {      // str조건검증
                     Toast.makeText(getApplicationContext(),"5자 이하의 방 제목을 입력해주세요",Toast.LENGTH_SHORT);
                 }else
-                    {
+                {
                     intent=new Intent(getApplicationContext(),Room.class);
                     intent.putExtra("roomName",roomNameText.getText().toString());
                     intent.putExtra("seekerNum",seekerNum.getText().toString());

@@ -1,4 +1,4 @@
-package com.example.yea2.runningman;
+package com.example.asdfg.runningman;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,9 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class Login extends AppCompatActivity {
-EditText loginID;
-Button enterBtn,exitBtn;
-Intent intent;
+    EditText loginID;
+    Button enterBtn,exitBtn;
+    Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
