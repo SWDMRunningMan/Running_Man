@@ -1,24 +1,27 @@
-import java.nio.channels.SocketChannel;
-import java.util.Vector;
+import java.net.Socket;
+import java.util.ArrayList;
 
 public class room {
-	private Vector<SocketChannel> user=new Vector<SocketChannel>();
-	private Vector<String> userID=new Vector<String>();
-	private Vector<Integer> feet=new Vector<Integer>();
-	private Vector<SocketChannel> seeker=new Vector<SocketChannel>();
-	private Vector<SocketChannel> hider=new Vector<SocketChannel>();
-	private SocketChannel owner;
-	private int ID;
+	private  ArrayList<String> user=new  ArrayList<String>();
+	private  ArrayList<Integer> userid=new  ArrayList<Integer>();
+	private  ArrayList<Integer> feet=new  ArrayList<Integer>();
+	private  ArrayList<Integer> seeker=new  ArrayList<Integer>();
+	private ArrayList<Integer> hider=new ArrayList<Integer>();
+	private Integer owner;
+	private String ID;
 	private int num,num_S,num_H;
 	private int time;
 	private int hint;
-	public room(int id,SocketChannel sc,String userid) {
-		user.add(sc);
-		userID.add(userid);
-		ID=id;
-		owner=sc;
+	public room(String name,int id,String rid ,int n,int s,int t,int h) {
+		user.add(name);
+		userid.add(id);
+		ID=rid;
+		owner=id;
+		time=t;
+		hint=h;
+		num_S=n;
 	}
-	public int getId() {
+	public String getRId() {
 		return ID;
 	}
 	public int getNum() {
@@ -36,26 +39,26 @@ public class room {
 	public int getHint() {
 		return hint;
 	}
-	public Vector<SocketChannel> userList() {
+	public  ArrayList<String> userList() {
 		return user;
 	}
-	public SocketChannel getOwner() {
+	public  ArrayList<Integer> userIdList() {
+		return userid;
+	}
+	public Integer getOwner() {
 		return owner;
 	}
-	public Vector<String> userIDList() {
-		return userID;
-	}
-	public Vector<Integer> feetList() {
+	public  ArrayList<Integer> feetList() {
 		return feet;
 	}
-	public Vector<SocketChannel> seekerList() {
+	public  ArrayList<Integer> seekerList() {
 		return seeker;
 	}
-	public Vector<SocketChannel> hiderList() {
+	public  ArrayList<Integer> hiderList() {
 		return hider;
 	}
-	public void setOwner(SocketChannel sc) {
-		owner=sc;
+	public void setOwner(int id) {
+		owner=id;
 	}
 	public void setNum(int n) {
 		num=n;
@@ -72,41 +75,38 @@ public class room {
 	public void setHint(int n) {
 		hint=n;
 	}
-	public void addUser(SocketChannel sc) {
-		user.add(sc);
+	public void addUser(String name) {
+		user.add(name);
 	}
-	public void addUserID(String S) {
-		userID.add(S);
+	public void addUser(int id) {
+		userid.add(id);
 	}
 	public void addFeet(int i,int f) {
 		feet.add(i, f);
 	}
-	public void addSeeker(SocketChannel sc) {
-		seeker.add(sc);
+	public void addSeeker(int id) {
+		seeker.add(id);
 	}
-	public void addHider(SocketChannel sc) {
-		hider.add(sc);
+	public void addHider(int id) {
+		hider.add(id);
 	}
-	public int findUser(SocketChannel sc) {
+	public int findUser(int id) {
 		int i=-1;
-		i=user.indexOf(sc);
+		i=user.indexOf(id);
 		return i;
 	}
-	public int findUserS(SocketChannel sc) {
+	public int findUserS(int id) {
 		int i=-1;
-		i=seeker.indexOf(sc);
+		i=seeker.indexOf(id);
 		return i;
 	}
-	public int findUserH(SocketChannel sc) {
+	public int findUserH(int id) {
 		int i=-1;
-		i=hider.indexOf(sc);
+		i=hider.indexOf(id);
 		return i;
 	}
 	public void deleteUser(int i) {
 		user.remove(i);
-	}
-	public void deleteUserID(int i) {
-		userID.remove(i);
 	}
 	public void deleteFeet(int i) {
 		feet.remove(i);
