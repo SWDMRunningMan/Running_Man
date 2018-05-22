@@ -31,16 +31,25 @@
             <TableRow android:background="#aaffffff">
                 <TextView android:text="Room Name: "
                     />
-                <EditText android:hint="Enter room name"
+                <EditText
+                    android:singleLine="true"
+                    android:lines="1"
+                    android:hint="Enter room name"
                     android:id="@+id/roomNameText"
                     android:layout_span="3"/>
             </TableRow>
             <TableRow android:background="#aaffffff">
                 <TextView android:text="Player Number: "/>
-                <EditText android:layout_width="30dp"
+                <EditText
+                    android:singleLine="true"
+                    android:lines="1"
+                    android:layout_width="30dp"
                     android:id="@+id/playerNum"/>
                 <TextView android:text=" Seeker Number: "/>
-                <EditText android:layout_width="30dp"
+                <EditText
+                    android:singleLine="true"
+                    android:lines="1"
+                    android:layout_width="30dp"
                     android:id="@+id/seekerNum"/>
             </TableRow>
         </TableLayout>

@@ -35,6 +35,8 @@
                 android:padding="10dp"
                />
             <EditText
+                android:singleLine="true"
+                android:lines="1"
                 android:id="@+id/roomNameText"
                 android:hint="Enter room name"
                 android:textStyle="bold"
@@ -51,6 +53,8 @@
                 android:padding="10dp"
                 />
             <EditText
+                android:singleLine="true"
+                android:lines="1"
                 android:id="@+id/seekerNum"
                 android:hint="Enter number of seekers"
                 android:textStyle="bold"
