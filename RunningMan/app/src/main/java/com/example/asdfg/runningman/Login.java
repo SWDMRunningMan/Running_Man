@@ -21,7 +21,7 @@ public class Login extends AppCompatActivity {
     int ID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.55.4";
+    protected static String ip = "192.9.116.245";
     int port = 7777;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

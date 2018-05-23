@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
     int ID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.55.4";
+    protected static String ip = "192.9.116.245";
     int port = 7777;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,23 @@ public class MainActivity extends Activity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {       // 방찾기
-                // roomList안에 roomName 검색색
+                 try {    // roomList안에 roomName 검색색try {
+                     if(ID==-1) {
+
+                         outstream.writeUTF("-1");
+                     }else{
+                        outstream.writeUTF("-1 "+String.valueOf(ID));
+                     }
+                    outstream.flush();
+                    ID=instream.readInt();
+                    outstream.writeUTF("1 "+ userName+ " " + String.valueOf(ID));
+                    outstream.flush();
+                    outstream.close();
+                    instream.close();
+                    sock.close();
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() {      // 방만들기
@@ -157,6 +173,26 @@ public class MainActivity extends Activity {
             public void onClick(View v){                  // 방접속
                 //방제목
                 //if(인원수 꽉 차지 않았으면)
+                try {    // roomList안에 roomName 검색색try {
+                    if(ID==-1) {
+
+                        outstream.writeUTF("-1");
+                    }else{
+                        outstream.writeUTF("-1 "+String.valueOf(ID));
+                    }
+                    outstream.flush();
+                    ID=instream.readInt();
+                    outstream.writeUTF("1 "+ userName+ " " + String.valueOf(ID));
+                    outstream.flush();
+                    outstream.close();
+                    instream.close();
+                    sock.close();
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+                intent2 = new Intent(getApplicationContext(), Room.class);
+                intent2.putExtra("userName",userName);
+                intent2.putExtra("code",ID);
                 startActivity(intent2);
             }
         });
