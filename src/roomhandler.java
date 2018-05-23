@@ -1,114 +1,136 @@
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util. ArrayList;
 
 public class roomhandler{
-	private Vector<room> Room=new Vector<room>();
-	private void createRoom(int id,SocketChannel sc,String userid) {
-		room R=new room(id,sc,userid);
+	private  ArrayList<room> Room=new  ArrayList<room>();
+	private void createRoom(int id,String name,int rid,String rname ,int n,int s,int t,int h) {
+		room R=new room(id,name,rid ,rname,n, s, t, h);
 		Room.add(R);
 	}
 	//방생성
-	private void deleteRoom(int id){
-		int I=findRoom(id);
+	private void deleteRoom(int rid){
+		int I=findRoom(rid);
 		Room.remove(I);
 	}
 	//방삭제
-	private void enterRoom(int id,SocketChannel sc,String userid) {
-		int I=findRoom(id);
+	private void enterRoom(int id,int rid) {
+		int I=findRoom(rid);
 		room R=Room.get(I);
-		R.addUser(sc);
-		R.addUserID(userid);
+		R.addUser(id);
+		R.addHider(id);
 		Room.set(I,R);
 	}
 	//유저입장
-	private void quitRoom(int id,SocketChannel sc) {
-		int I=findRoom(id);
+	private void quitRoom(int id,int rid) {
+		int I=findRoom(rid);
 		room R=Room.get(I);
-		int i=R.findUserS(sc);
+		int i=R.findUserS(id);
 		if(i!=-1)
 			R.deleteSeeker(i);
-		i=R.findUserH(sc);
+		i=R.findUserH(id);
 		if(i!=-1)
 			R.deleteHider(i);
-		i=R.findUser(sc);
+		i=R.findUser(id);
 		if(i==-1)
 			return;
 		R.deleteUser(i);
-		R.deleteUserID(i);
 		R.deleteFeet(i);
 		Room.set(I,R);
 	}
 	//유저퇴장
-	private void setRoom(int id,int num,int numS,int numH, int time,int hint) {
-		int I=findRoom(id);
-		room R=Room.get(I);
-		R.setNum(num);
-		R.setNumS(numS);
-		R.setNumH(numH);
-		R.setTime(time);
-		R.setHint(hint);
-		Room.set(I,R);
-	}
-	//방설정
-	private void broadcast(int id,ByteBuffer buffer) throws IOException {
-		buffer.flip();
-		int I=findRoom(id);
-		Iterator<SocketChannel> iter=Room.get(I).userList().iterator();
+/*
+	private void broadcast(String rid) throws IOException {
+		int I=findRoom(rid);
+		OutputStream out;
+		DataOutputStream dos;
+		Iterator<Socket> iter=Room.get(I).userList().iterator();
 		while(iter.hasNext()){
-			SocketChannel sc = (SocketChannel)iter.next();
-			if(sc != null){
-				sc.write(buffer);
-				buffer.rewind();
+			Socket socket = (Socket)iter.next();
+			out=socket.getOutputStream();
+			dos =new DataOutputStream(out);
+			if(socket != null){
+				dos.writeInt(msg);
+				System.out.println("데이터 전송");
+				dos.close();
 			}
 		}
 	}
 	//브로드케스트
-	private void sendSeeker(int id,ByteBuffer buffer) throws IOException {
-		buffer.flip();
-		int I=findRoom(id);
-		Iterator<SocketChannel> iterS=Room.get(I).seekerList().iterator();
-		while(iterS.hasNext()){
-			SocketChannel sc = (SocketChannel)iterS.next();
-			if(sc != null){
-				sc.write(buffer);
-				buffer.rewind();
+	private void sendSeeker(String rid,String msg) throws IOException {
+		int I=findRoom(rid);
+		OutputStream out;
+		DataOutputStream dos;
+		Iterator<Socket> iter=Room.get(I).seekerList().iterator();
+		while(iter.hasNext()){
+			Socket socket = (Socket)iter.next();
+			out=socket.getOutputStream();
+			dos =new DataOutputStream(out);
+			if(socket != null){
+				dos.writeUTF(msg);
+				System.out.println("데이터 전송");
+				dos.close();
 			}
 		}
 	}
-	private void sendHider(int id,ByteBuffer buffer) throws IOException {
-		buffer.flip();
-		int I=findRoom(id);
-		Iterator<SocketChannel> iterH=Room.get(I).hiderList().iterator();
-		while(iterH.hasNext()){
-			SocketChannel sc = (SocketChannel)iterH.next();
-			if(sc != null){
-				sc.write(buffer);
-				buffer.rewind();
+	private void sendSeeker(String rid,int msg) throws IOException {
+		int I=findRoom(rid);
+		OutputStream out;
+		DataOutputStream dos;
+		Iterator<Socket> iter=Room.get(I).seekerList().iterator();
+		while(iter.hasNext()){
+			Socket socket = (Socket)iter.next();
+			out=socket.getOutputStream();
+			dos =new DataOutputStream(out);
+			if(socket != null){
+				dos.writeInt(msg);
+				System.out.println("데이터 전송");
+				dos.close();
 			}
 		}
 	}
-	private int findRoom(int id) {
+	private void sendHider(String rid,String msg) throws IOException {
+		int I=findRoom(rid);
+		OutputStream out;
+		DataOutputStream dos;
+		Iterator<Socket> iter=Room.get(I).hiderList().iterator();
+		while(iter.hasNext()){
+			Socket socket = (Socket)iter.next();
+			out=socket.getOutputStream();
+			dos =new DataOutputStream(out);
+			if(socket != null){
+				dos.writeUTF(msg);
+				System.out.println("데이터 전송");
+				dos.close();
+			}
+		}
+	}
+	private void sendHider(String rid,int msg) throws IOException {
+		int I=findRoom(rid);
+		OutputStream out;
+		DataOutputStream dos;
+		Iterator<Socket> iter=Room.get(I).hiderList().iterator();
+		while(iter.hasNext()){
+			Socket socket = (Socket)iter.next();
+			out=socket.getOutputStream();
+			dos =new DataOutputStream(out);
+			if(socket != null){
+				dos.writeInt(msg);
+				System.out.println("데이터 전송");
+				dos.close();
+			}
+		}
+	}
+	*/
+	private int findRoom(int rid) {
 		int I=-1;
 		for(int i=0;i<Room.size();i++) {
-			if(Room.get(i).getId()==id) {
+			if(Room.get(i).getRId()==rid) {
 				I=i;
 				break;
-			}
-		}
-		return I;
-	}
-	private int findRoomID(SocketChannel sc) {
-		int I=-1;
-		for(int i=0;i<Room.size();i++) {
-			Vector<SocketChannel> user=Room.get(I).userList();
-			for(int j=0;j<user.size();j++) {
-				if(user.get(j)==sc) {
-					I=Room.get(j).getId();
-					break;
-				}
 			}
 		}
 		return I;
@@ -121,159 +143,143 @@ public class roomhandler{
 		}
 		i =new int[Room.size()];
 		for(int j=0;j<i.length;j++) {
-			i[j]=Room.get(j).getId();
+			i[j]=Room.get(j).getRId();
 		}
 		return i;
 	}
 	//방찾기
 	//게임진행 - 게임종료 - 결과전송
-	public boolean make(SocketChannel sc,int id,int num,int numS,int numH, int time,int hint,String userid) {
-		if(findRoom(id)==-1) {
-			createRoom(id, sc, userid);
-			setRoom(id,num,numS,numH,time,hint);
+	public boolean make(int id,String name,int rid,String rname ,int n,int s,int t,int h) {
+		if(findRoom(rid)==-1) {
+			createRoom(id,name,rid,rname ,n,s,t,h);
 			return true;
 		}
 		else
 			return false;
 	}
-	public boolean add(SocketChannel sc,int id,String userid) {
-		if(findRoom(id)==-1) {
+	public boolean add(int id,int rid) {
+		if(findRoom(rid)==-1) {
 			return false;
 		}else {
-			enterRoom(id, sc, userid);
+			enterRoom(id,rid);
 			return true;
 		}
 	}
-	public boolean remove(SocketChannel sc) {
-		int id=findRoomID(sc);
-		if(id==-1)
-			return false;
-		if(findRoom(id)==-1) {
+	public boolean remove(int id,int rid) {
+		int i=findRoom(rid);
+		if(i==-1) {
 			return false;
 		}else {
-			quitRoom(id, sc);
-			if(Room.get(findRoom(id)).userList().size()==0)
-				deleteRoom(id);
+			quitRoom(id,rid);
+			if(Room.get(i).userList().size()==0)
+				deleteRoom(rid);
 			return true;
 		}
 	}
-	public boolean gameStart(SocketChannel sc) throws IOException{
-		int id=findRoomID(sc);
-		if(id==-1)
-			return false;
-		if(findRoom(id)==-1) {
+	public boolean gameStart(int rid) throws IOException{
+		int i=findRoom(rid);
+		if(i==-1) {
 			return false;
 		}else {
-			ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
 			String msg="GS";
-			buffer.put(msg.getBytes());
-			broadcast(id, buffer);
+			//broadcast(rid, msg);
 			return true;
 		}
 	}
-	public boolean gameOver(SocketChannel sc) throws IOException{
-		int id=findRoomID(sc);
-		if(id==-1)
-			return false;
-		if(findRoom(id)==-1) {
+	public boolean gameOver(int rid) throws IOException{
+		int i=findRoom(rid);
+		if(i==-1) {
 			return false;
 		}else {
-			ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
 			String msg="GO";
-			buffer.put(msg.getBytes());
-			broadcast(id, buffer);
+			//broadcast(rid, msg);
 			return true;
 		}
 	}
-	public room inform(SocketChannel sc) {
-		int id=findRoomID(sc);
-		return Room.get(findRoom(id));
+	public room inform(int rid) {
+		int i=findRoom(rid);
+		return Room.get(i);
 	}
-	public boolean receiveHint(SocketChannel sc,ByteBuffer buffer) throws IOException {
-		int id=findRoomID(sc);
-		if(id==-1)
-			return false;
-		if(findRoom(id)==-1) {
+	public boolean receiveHint(int rid,String msg) throws IOException {
+		int i=findRoom(rid);
+		if(i==-1) {
 			return false;
 		}else {
-			sendSeeker(id, buffer);
+			//sendSeeker(rid, msg);
 			return true;
 		}
 	}
-	public boolean sendHint(SocketChannel sc) throws IOException{
-		int id=findRoomID(sc);
-		ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
-		String msg="NH";
-		buffer.put(msg.getBytes());
-		if(id==-1)
-			return false;
-		if(findRoom(id)==-1) {
+	public boolean receiveHint(int rid,int msg) throws IOException {
+		int i=findRoom(rid);
+		if(i==-1) {
 			return false;
 		}else {
-			sendHider(id, buffer);
+			//sendSeeker(rid, msg);
 			return true;
 		}
 	}
-	public boolean getFeet(SocketChannel sc,ByteBuffer buffer){
-		int id=findRoomID(sc);
-		if(id==-1)
-			return false;
-		if(findRoom(id)==-1) {
+	public boolean sendHint(int rid,String msg) throws IOException{
+		int i=findRoom(rid);
+		if(i==-1) {
 			return false;
 		}else {
-			int feet=buffer.getInt();
-			int index=Room.get(findRoom(id)).findUser(sc);
-			Room.get(findRoom(id)).addFeet(index,feet);
+			//sendHider(rid, msg);
 			return true;
 		}
 	}
-	public boolean sendFeet(SocketChannel sc) throws IOException{
-		ByteBuffer buffer;
-		int id=findRoomID(sc);
-		if(id==-1)
-			return false;
-		if(findRoom(id)==-1) {
+	public boolean sendHint(int rid,int msg) throws IOException{
+		int i=findRoom(rid);
+		if(i==-1) {
 			return false;
 		}else {
-			Vector<Integer>feet= Room.get(findRoom(id)).feetList();
-			int[] feets=new int[feet.size()];
-			for(int i=0;i<feets.length;i++) {
-				feets[i]=feet.get(i);
+			//sendHider(rid, msg);
+			return true;
+		}
+	}
+	public boolean setFeet(int rid,int sc,int feet){
+		int i=findRoom(rid);
+		if(i==-1) {
+			return false;
+		}else {
+			int index=Room.get(i).findUser(sc);
+			Room.get(i).addFeet(index,feet);
+			return true;
+		}
+	}
+	public boolean sendFeet(int rid) throws IOException{
+		int i=findRoom(rid);
+		if(i==-1) {
+			return false;
+		}else {
+			 ArrayList<Integer>feet= Room.get(i).feetList();
+			for(int j=0;j<feet.size();j++) {
+				//broadcast(rid, feet.get(j));
 			}
-			buffer = ByteBuffer.allocateDirect(Integer.SIZE*feets.length);
-			for(int i=0;i<feets.length;i++) {
-				buffer.putInt(feets[i]);
-			}
-			broadcast(id, buffer);
 			return true;
 		}
 	}
-	public boolean moveToSeeker(SocketChannel sc) {
-		int id=findRoomID(sc);
-		if(id==-1)
+	public boolean moveToSeeker(int rid,int id) {
+		int i=findRoom(rid);
+		if(i==-1) {
 			return false;
-		if(findRoom(id)==-1) {
-			return false;
-		}else if(Room.get(findRoom(id)).getNumS()!=Room.get(findRoom(id)).seekerList().size()){
-			int index=Room.get(findRoom(id)).findUserH(sc);
+		}else if(Room.get(i).getNumS()!=Room.get(i).seekerList().size()){
+			int index=Room.get(i).findUserH(id);
 			if(index!=-1)	
-				Room.get(findRoom(id)).deleteHider(index);
-			Room.get(findRoom(id)).addSeeker(sc);
+				Room.get(i).deleteHider(index);
+			Room.get(i).addSeeker(id);
 			return true;
 		}else
 			return false;
 	}
-	public boolean moveToHider(SocketChannel sc) {
-		int id=findRoomID(sc);
-		if(id==-1)
+	public boolean moveToHider(int rid,int id) {
+		int i=findRoom(rid);
+		if(i==-1) {
 			return false;
-		if(findRoom(id)==-1) {
-			return false;
-		}else if(Room.get(findRoom(id)).getNumH()!=Room.get(findRoom(id)).hiderList().size()){
-			int index=Room.get(findRoom(id)).findUserS(sc);
+		}else if(Room.get(i).getNumH()!=Room.get(i).hiderList().size()){
+			int index=Room.get(i).findUserS(id);
 			if(index!=-1)	
-				Room.get(findRoom(id)).deleteSeeker(index);
-			Room.get(findRoom(id)).addHider(sc);
+				Room.get(i).deleteSeeker(index);
+			Room.get(i).addHider(id);
 			return true;
 		}else
 			return false;
