@@ -30,7 +30,9 @@
             android:layout_alignBaseline="@+id/text"
             android:textColor="#ff222222"
             android:textSize="24sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:lines="1"/>
         <Button
             android:layout_width="100dp"
             android:layout_height="wrap_content"
@@ -44,12 +46,14 @@
             android:textColor="#ff222222"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:background="#00ffffff"
             android:drawableLeft="@drawable/r"
             />
         <Button
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:id="@+id/exitBtn"
+            android:background="#00ffffff"
             android:layout_below="@+id/text"
             android:layout_alignParentRight="true"
             android:layout_marginRight="60dp"

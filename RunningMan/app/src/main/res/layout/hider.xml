@@ -8,129 +8,161 @@
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:id="@+id/text1"
+        android:id="@+id/text11"
         android:textSize="30sp"
         android:layout_centerHorizontal="true"
-        android:text="Seeker"
+        android:text="Seeker : Yea"
         />
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:background="#ffffffff"
-        android:layout_below="@+id/text1"
-        android:id="@+id/linee"/>
+        android:layout_below="@+id/text11"
+        android:id="@+id/line1"/>
     <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/table1"
         android:background="#66ffffff"
-        android:layout_below="@+id/linee"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/table1">
+        android:layout_below="@+id/line1"
+        android:layout_centerHorizontal="true">
         <TableRow>
             <LinearLayout
+                android:id="@+id/hider11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/hider1"
-                android:layout_margin="10dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="hider1"
-                    android:layout_gravity="center"
-                    android:textSize="30sp"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    android:background="#ffffffff"/>
-                <ImageButton
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:id="@+id/hider1Image"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/hider2"
-                android:layout_margin="10dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="hider1"
-                    android:layout_gravity="center"
-                    android:textSize="30sp"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    android:background="#ffffffff"/>
-                <ImageButton
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:id="@+id/hider2Image"
-                    />
-            </LinearLayout>
-        </TableRow>
-        <TableRow>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/hider3"
-                android:layout_margin="10dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="hider1"
-                    android:layout_gravity="center"
-                    android:textSize="30sp"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    android:background="#ffffffff"/>
-                <ImageButton
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:id="@+id/hider3Image"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/hider4"
-                android:layout_margin="10dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="hider1"
-                    android:layout_gravity="center"
-                    android:textSize="30sp"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    android:background="#ffffffff"/>
-                <ImageButton
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:id="@+id/hider4Image"
-                    />
-            </LinearLayout>
-        </TableRow>
+                android:layout_margin="10dp"
+                android:orientation="vertical">
 
+                <Button
+                    android:layout_height="35dp"
+                    android:id="@+id/catch11"
+                    android:background="#00000000"
+                    android:textAllCaps="false"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="hider : Hong"
+                    android:textSize="20sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="#ffffffff" />
+
+                <ImageButton
+                    android:id="@+id/hider11Image"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/p1" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/hider22"
+                android:layout_margin="10dp">
+
+                <Button
+                    android:layout_height="35dp"
+                    android:background="#00000000"
+                    android:id="@+id/catch22"
+                    android:text="hider : Son"
+                    android:textAllCaps="false"
+                    android:textSize="20sp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="#ffffffff"/>
+                <ImageButton
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/hider22Image"
+                    android:src="@drawable/p2"
+                    android:scaleType="fitXY"
+                    />
+            </LinearLayout>
+        </TableRow>
+        <TableRow>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/hider33"
+                android:layout_margin="10dp">
+                <Button
+                    android:id="@+id/catch33"
+                    android:layout_height="35dp"
+                    android:background="#00000000"
+                    android:textAllCaps="false"
+                    android:layout_width="wrap_content"
+                    android:text="hider : Kim"
+                    android:layout_gravity="center"
+                    android:textSize="20sp"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="#ffffffff"/>
+                <ImageButton
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/hider33Image"
+                    android:src="@drawable/p3"
+                    android:scaleType="fitXY"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/hider44"
+                android:layout_margin="10dp">
+                <Button
+                    android:id="@+id/catch44"
+                    android:layout_height="35dp"
+                    android:background="#00000000"
+                    android:textAllCaps="false"
+                    android:layout_width="wrap_content"
+                    android:text="hider : Nam"
+                    android:layout_gravity="center"
+                    android:textSize="20sp"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="#ffffffff"/>
+                <ImageButton
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/hider44Image"
+                    android:src="@drawable/p4"
+                    android:scaleType="fitXY"
+                    />
+            </LinearLayout>
+        </TableRow>
     </TableLayout>
     <View
         android:layout_width="wrap_content"
         android:layout_height="3dp"
         android:layout_below="@+id/table1"
         android:background="#ffffffff"
-        android:id="@+id/linee2"/>
+        android:id="@+id/line22"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linee2"
+        android:layout_below="@+id/line22"
         android:text="남은 시간: 5분 30초"
-        android:textSize="30sp"
-        android:layout_centerHorizontal="true"/>
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/restTime"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="17초 안에 사진을 보내주세요"
+        android:visibility="gone"
+        android:textSize="20sp"
+        android:layout_below="@+id/restTime"
+        android:background="#00000000"
+        android:id="@+id/takePicture"/>
 </RelativeLayout>

@@ -28,11 +28,14 @@
                 android:textStyle="bold"
                 android:padding="10dp"
                 android:id="@+id/searchRoomName"
-                android:layout_weight="5"/>
+                android:layout_weight="5"
+                android:singleLine="true"
+                android:lines="1"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="#00ffffff"
                 android:text=" Search"
                 android:id="@+id/searchBtn"
                 android:textSize="15sp"
@@ -104,7 +107,7 @@
                         android:layout_margin="1dp"
                         android:layout_height="30dp"
                         android:gravity="center"/>
-                    <TextView android:text="5/8"
+                    <TextView android:text="4/8"
                         android:textColor="#ff000000"
                         android:textStyle="bold"
                         android:layout_height="30dp"
@@ -125,6 +128,7 @@
                 android:id="@+id/roomMakeBtn"
                 android:text="방만들기"
                 android:textSize="20dp"
+                android:background="#00ffffff"
                 android:textStyle="bold"
                 android:layout_margin="5dp" />
             <Button
@@ -133,6 +137,7 @@
                 android:id="@+id/roomEnterBtn"
                 android:text="방 접속하기"
                 android:textSize="20dp"
+                android:background="#00ffffff"
                 android:textStyle="bold"
                 android:layout_margin="5dp"/>
         </LinearLayout>

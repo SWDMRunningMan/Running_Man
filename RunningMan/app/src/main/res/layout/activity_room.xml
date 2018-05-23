@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_margin="10dp"
-        android:text="방 제목"
+        android:text="런 닝 맨"
         android:textSize="30sp"
         android:textColor="#ffffffff"
         android:textStyle="italic"
@@ -34,63 +34,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#44ffffff"
-        android:stretchColumns="*">
-        <TableRow
-            android:background="#aaffffff">
-            <TextView
-                android:padding="5dp"
-                android:gravity="center"
-                android:text="ID" />
-        </TableRow>
-        <View
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:layout_height="2dp"
-            android:background="#ffffffff"
-            android:layout_width="match_parent"
-            />
-        <TableRow
-            android:background="#aaffffff">
-            <TextView
-                android:padding="5dp"
-                android:gravity="center"
-                android:text="ID" />
-        </TableRow>
-        <View
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:layout_height="2dp"
-            android:background="#ffffffff"
-            android:layout_width="match_parent"
-            />
-        <TableRow
-            android:background="#aaffffff">
-            <TextView
-                android:padding="5dp"
-                android:gravity="center"
-                android:text="ID" />
-        </TableRow>
-        <View
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:layout_height="2dp"
-            android:background="#ffffffff"
-            android:layout_width="match_parent"
-            />
-        <TableRow
-            android:background="#aaffffff">
-            <TextView
-                android:padding="5dp"
-                android:gravity="center"
-                android:text="ID" />
-        </TableRow>
-        <View
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:layout_height="2dp"
-            android:background="#ffffffff"
-            android:layout_width="match_parent"
-            />
+        android:stretchColumns="*"
+        android:id="@+id/seekerTable">
+
     </TableLayout>
     <Button
         android:layout_marginLeft="15dp"
@@ -99,79 +45,40 @@
         android:text="Hiders"
         android:textAllCaps="false"
         android:gravity="center"
-        android:id="@+id/hidersButton"
+        android:id="@+id/hiderButton"
         android:background="#22ffffff"/>
     <TableLayout
         android:padding="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#44ffffff"
-        android:stretchColumns="*">
-        <TableRow
-            android:background="#aaffffff">
-            <TextView
-                android:padding="5dp"
-                android:gravity="center"
-                android:text="ID" />
-        </TableRow>
-        <View
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:layout_height="2dp"
-            android:background="#ffffffff"
-            android:layout_width="match_parent"
-            />
-        <TableRow
-            android:background="#aaffffff">
-            <TextView
-                android:padding="5dp"
-                android:gravity="center"
-                android:text="ID" />
-        </TableRow>
-        <View
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:layout_height="2dp"
-            android:background="#ffffffff"
-            android:layout_width="match_parent"
-            />
-        <TableRow
-            android:background="#aaffffff">
-            <TextView
-                android:padding="5dp"
-                android:gravity="center"
-                android:text="ID" />
-        </TableRow>
-        <View
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:layout_height="2dp"
-            android:background="#ffffffff"
-            android:layout_width="match_parent"
-            />
-        <TableRow
-            android:background="#aaffffff">
-            <TextView
-                android:padding="5dp"
-                android:gravity="center"
-                android:text="ID" />
-        </TableRow>
-        <View
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:layout_height="2dp"
-            android:background="#ffffffff"
-            android:layout_width="match_parent"
-            />
+        android:stretchColumns="*"
+        android:id="@+id/hiderTable">
+
     </TableLayout>
-    <Button
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="나가기"
-        android:layout_gravity="right"
-        android:layout_margin="10dp"
-        android:background="#44ffffff"
-        android:textStyle="bold"
-        android:textSize="15sp"
-        android:id="@+id/roomExit"/>
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="시작하기"
+            android:layout_toLeftOf="@+id/roomExit"
+            android:layout_margin="10dp"
+            android:background="#00ffffff"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:id="@+id/startGame"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="나가기"
+            android:layout_margin="10dp"
+            android:background="#00ffffff"
+            android:layout_alignParentRight="true"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:id="@+id/roomExit"/>
+    </RelativeLayout>
 </LinearLayout>

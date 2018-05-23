@@ -6,17 +6,26 @@
     android:orientation="vertical"
     tools:context="com.example.asdfg.runningman.MakeRoom;"
     android:background="#ffffffff">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:padding="10dp"
-        android:layout_gravity="center"
-        android:textSize="25sp"
-        android:text="Make Room"
-        android:id="@+id/textMake"
-        android:background="@drawable/logo1"/>
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textStyle="bold"
+    android:padding="10dp"
+    android:layout_gravity="center"
+    android:textSize="25sp"
+    android:text="Make Room"
+    android:id="@+id/textMake" />
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:src="@drawable/gldjdf"
+        android:scaleType="fitXY"/>
+</LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,23 +34,31 @@
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#44000000"
+            android:background="#ffffffff"
             android:padding="2dp"
             android:id="@+id/table">
             <TableRow android:background="#aaffffff">
                 <TextView android:text="Room Name: "
                     />
                 <EditText android:hint="Enter room name"
+                    android:singleLine="true"
+                    android:lines="1"
                     android:id="@+id/roomNameText"
                     android:layout_span="3"/>
             </TableRow>
             <TableRow android:background="#aaffffff">
-                <TextView android:text="Player Number: "/>
+                <TextView android:text="Player Number: "
+                    />
                 <EditText android:layout_width="30dp"
+                    android:singleLine="true"
+                    android:lines="1"
                     android:id="@+id/playerNum"/>
-                <TextView android:text=" Seeker Number: "/>
+                <TextView android:text=" Seeker Number: "
+                    />
                 <EditText android:layout_width="30dp"
-                    android:id="@+id/seekerNum"/>
+                    android:id="@+id/seekerNum"
+                    android:singleLine="true"
+                    android:lines="1"/>
             </TableRow>
         </TableLayout>
     </RelativeLayout>
@@ -52,7 +69,7 @@
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#44000000"
+            android:background="#ffffffff"
             android:padding="2dp">
             <TableRow android:background="#aaffffff">
                 <TextView android:text="Time Limit"/>
@@ -107,7 +124,7 @@
         android:orientation="horizontal"
         android:gravity="top|center"
         android:layout_weight="1"
-        android:background="#21000000">
+        android:background="#ffffffff">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -116,6 +133,7 @@
             android:textStyle="bold"
             android:textSize="18dp"
             android:layout_margin="5dp"
+            android:background="#00ffffff"
             android:drawableLeft="@drawable/r"
             android:id="@+id/makeRoom"/>
         <Button
@@ -124,6 +142,7 @@
             android:text="Cancel"
             android:drawableLeft="@drawable/exit"
             android:textAllCaps="false"
+            android:background="#00ffffff"
             android:textStyle="bold"
             android:textSize="18sp"
             android:layout_margin="5dp"
