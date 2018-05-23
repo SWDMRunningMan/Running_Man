@@ -1,30 +1,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="com.example.asdfg.runningman.MakeRoom;"
     android:background="#ffffffff">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-    <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textStyle="bold"
-    android:padding="10dp"
-    android:layout_gravity="center"
-    android:textSize="25sp"
-    android:text="Make Room"
-    android:id="@+id/textMake" />
-    <ImageView
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:src="@drawable/gldjdf"
-        android:scaleType="fitXY"/>
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:layout_gravity="center"
+            android:textSize="25sp"
+            android:text="Make Room"
+            android:id="@+id/textMake" />
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:src="@drawable/gldjdf"
+            android:scaleType="fitXY"/>
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
