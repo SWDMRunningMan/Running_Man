@@ -3,28 +3,38 @@ import java.util.ArrayList;
 
 public class room {
 	private  ArrayList<String> user=new  ArrayList<String>();
+	private  ArrayList<Socket> usersc=new  ArrayList<Socket>();
 	private  ArrayList<Integer> userid=new  ArrayList<Integer>();
 	private  ArrayList<Integer> feet=new  ArrayList<Integer>();
 	private  ArrayList<Integer> seeker=new  ArrayList<Integer>();
 	private ArrayList<Integer> hider=new ArrayList<Integer>();
-	private Integer owner;
+	private  ArrayList<Socket> seekersc=new  ArrayList<Socket>();
+	private ArrayList<Socket> hidersc=new ArrayList<Socket>();
+	private String owner;
 	private int ID;
 	private String name;
 	private int num,num_S,num_H;
 	private int time;
 	private int hint;
-	public room(int id,String Name,int rid,String rname ,int n,int s,int t,int h) {
+	public room(int id,String Name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
 		user.add(Name);
 		userid.add(id);
+		usersc.add(sc);
 		ID=rid;
 		name=rname;
-		owner=id;
+		owner=Name;
 		time=t;
 		hint=h;
-		num_S=n;
+		num=n;
+		num_S=s;
+		num_H=num-num_S;
+		feet.add(0);
 	}
 	public int getRId() {
 		return ID;
+	}
+	public String getRname() {
+		return name;
 	}
 	public int getNum() {
 		return num;
@@ -44,10 +54,13 @@ public class room {
 	public  ArrayList<String> userList() {
 		return user;
 	}
+	public  ArrayList<Socket> userscList() {
+		return usersc;
+	}
 	public  ArrayList<Integer> userIdList() {
 		return userid;
 	}
-	public Integer getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 	public  ArrayList<Integer> feetList() {
@@ -59,8 +72,23 @@ public class room {
 	public  ArrayList<Integer> hiderList() {
 		return hider;
 	}
-	public void setOwner(int id) {
-		owner=id;
+	public  ArrayList<Socket> seekerscList() {
+		return seekersc;
+	}
+	public  ArrayList<Socket> hiderscList() {
+		return hidersc;
+	}
+	public void setOwner(String name) {
+		owner=name;
+	}
+	public void setusersc(int i,Socket sc) {
+		usersc.set(i,sc);
+	}
+	public void setseekersc(int i,Socket sc) {
+		seekersc.set(i,sc);
+	}
+	public void sethidersc(int i,Socket sc) {
+		hidersc.set(i,sc);
 	}
 	public void setNum(int n) {
 		num=n;
@@ -86,15 +114,24 @@ public class room {
 	public void addFeet(int i,int f) {
 		feet.add(i, f);
 	}
+	public void addusersc(int i,Socket s) {
+		usersc.add(i, s);
+	}
 	public void addSeeker(int id) {
 		seeker.add(id);
 	}
 	public void addHider(int id) {
 		hider.add(id);
 	}
+	public void addSeekersc(int i,Socket s) {
+		seekersc.add(i,s);
+	}
+	public void addHidersc(int i,Socket s) {
+		hidersc.add(i,s);
+	}
 	public int findUser(int id) {
 		int i=-1;
-		i=user.indexOf(id);
+		i=userid.indexOf(id);
 		return i;
 	}
 	public int findUserS(int id) {
@@ -118,5 +155,8 @@ public class room {
 	}
 	public void deleteHider(int i) {
 		hider.remove(i);
+	}
+	public void deleteUsersc(int i) {
+		usersc.remove(i);
 	}
 }

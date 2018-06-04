@@ -7,8 +7,8 @@ import java.util. ArrayList;
 
 public class roomhandler{
 	private  ArrayList<room> Room=new  ArrayList<room>();
-	private void createRoom(int id,String name,int rid,String rname ,int n,int s,int t,int h) {
-		room R=new room(id,name,rid ,rname,n, s, t, h);
+	private void createRoom(int id,String name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
+		room R=new room(id,name,rid ,rname,n, s, t, h,sc);
 		Room.add(R);
 	}
 	//방생성
@@ -39,32 +39,33 @@ public class roomhandler{
 			return;
 		R.deleteUser(i);
 		R.deleteFeet(i);
+		R.deleteUsersc(i);
 		Room.set(I,R);
 	}
 	//유저퇴장
-/*
-	private void broadcast(String rid) throws IOException {
+	private void broadcast(int rid,String msg) throws IOException {
 		int I=findRoom(rid);
 		OutputStream out;
 		DataOutputStream dos;
-		Iterator<Socket> iter=Room.get(I).userList().iterator();
+		Iterator<Socket> iter=Room.get(I).userscList().iterator();
 		while(iter.hasNext()){
 			Socket socket = (Socket)iter.next();
 			out=socket.getOutputStream();
 			dos =new DataOutputStream(out);
 			if(socket != null){
-				dos.writeInt(msg);
+				dos.writeUTF(msg);
 				System.out.println("데이터 전송");
 				dos.close();
 			}
 		}
 	}
+	
 	//브로드케스트
-	private void sendSeeker(String rid,String msg) throws IOException {
+	private void sendSeeker(int rid,String msg) throws IOException {
 		int I=findRoom(rid);
 		OutputStream out;
 		DataOutputStream dos;
-		Iterator<Socket> iter=Room.get(I).seekerList().iterator();
+		Iterator<Socket> iter=Room.get(I).seekerscList().iterator();
 		while(iter.hasNext()){
 			Socket socket = (Socket)iter.next();
 			out=socket.getOutputStream();
@@ -76,11 +77,11 @@ public class roomhandler{
 			}
 		}
 	}
-	private void sendSeeker(String rid,int msg) throws IOException {
+	private void sendSeeker(int rid,int msg) throws IOException {
 		int I=findRoom(rid);
 		OutputStream out;
 		DataOutputStream dos;
-		Iterator<Socket> iter=Room.get(I).seekerList().iterator();
+		Iterator<Socket> iter=Room.get(I).seekerscList().iterator();
 		while(iter.hasNext()){
 			Socket socket = (Socket)iter.next();
 			out=socket.getOutputStream();
@@ -92,11 +93,11 @@ public class roomhandler{
 			}
 		}
 	}
-	private void sendHider(String rid,String msg) throws IOException {
+	private void sendHider(int rid,String msg) throws IOException {
 		int I=findRoom(rid);
 		OutputStream out;
 		DataOutputStream dos;
-		Iterator<Socket> iter=Room.get(I).hiderList().iterator();
+		Iterator<Socket> iter=Room.get(I).hiderscList().iterator();
 		while(iter.hasNext()){
 			Socket socket = (Socket)iter.next();
 			out=socket.getOutputStream();
@@ -108,11 +109,11 @@ public class roomhandler{
 			}
 		}
 	}
-	private void sendHider(String rid,int msg) throws IOException {
+	private void sendHider(int rid,int msg) throws IOException {
 		int I=findRoom(rid);
 		OutputStream out;
 		DataOutputStream dos;
-		Iterator<Socket> iter=Room.get(I).hiderList().iterator();
+		Iterator<Socket> iter=Room.get(I).hiderscList().iterator();
 		while(iter.hasNext()){
 			Socket socket = (Socket)iter.next();
 			out=socket.getOutputStream();
@@ -124,7 +125,6 @@ public class roomhandler{
 			}
 		}
 	}
-	*/
 	private int findRoom(int rid) {
 		int I=-1;
 		for(int i=0;i<Room.size();i++) {
@@ -135,23 +135,23 @@ public class roomhandler{
 		}
 		return I;
 	}
-	public int[] roomList() {
-		int[] i ;
+	public String[] roomList() {
+		String[] str ;
 		if(Room.size()==0) {
-			i=new int[0];
-			return i;
+			str=new String[0];
+			return str;
 		}
-		i =new int[Room.size()];
-		for(int j=0;j<i.length;j++) {
-			i[j]=Room.get(j).getRId();
+		str =new String[Room.size()];
+		for(int j=0;j<str.length;j++) {
+			str[j]=Room.get(j).getRId()+" "+Room.get(j).getRname()+" "+Room.get(j).userList().size()+" "+Room.get(j).getNum();
 		}
-		return i;
+		return str;
 	}
 	//방찾기
 	//게임진행 - 게임종료 - 결과전송
-	public boolean make(int id,String name,int rid,String rname ,int n,int s,int t,int h) {
+	public boolean make(int id,String name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
 		if(findRoom(rid)==-1) {
-			createRoom(id,name,rid,rname ,n,s,t,h);
+			createRoom(id,name,rid,rname ,n,s,t,h,sc);
 			return true;
 		}
 		else
@@ -182,7 +182,7 @@ public class roomhandler{
 			return false;
 		}else {
 			String msg="GS";
-			//broadcast(rid, msg);
+			broadcast(rid, msg);
 			return true;
 		}
 	}
@@ -192,7 +192,7 @@ public class roomhandler{
 			return false;
 		}else {
 			String msg="GO";
-			//broadcast(rid, msg);
+			broadcast(rid, msg);
 			return true;
 		}
 	}
@@ -205,7 +205,7 @@ public class roomhandler{
 		if(i==-1) {
 			return false;
 		}else {
-			//sendSeeker(rid, msg);
+			sendSeeker(rid, msg);
 			return true;
 		}
 	}
@@ -214,7 +214,7 @@ public class roomhandler{
 		if(i==-1) {
 			return false;
 		}else {
-			//sendSeeker(rid, msg);
+			sendSeeker(rid, msg);
 			return true;
 		}
 	}
@@ -223,7 +223,7 @@ public class roomhandler{
 		if(i==-1) {
 			return false;
 		}else {
-			//sendHider(rid, msg);
+			sendHider(rid, msg);
 			return true;
 		}
 	}
@@ -232,7 +232,7 @@ public class roomhandler{
 		if(i==-1) {
 			return false;
 		}else {
-			//sendHider(rid, msg);
+			sendHider(rid, msg);
 			return true;
 		}
 	}
@@ -258,7 +258,7 @@ public class roomhandler{
 			return true;
 		}
 	}
-	public boolean moveToSeeker(int rid,int id) {
+	public synchronized boolean moveToSeeker(int rid,int id,Socket sc) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
@@ -267,11 +267,13 @@ public class roomhandler{
 			if(index!=-1)	
 				Room.get(i).deleteHider(index);
 			Room.get(i).addSeeker(id);
+			int j=Room.get(i).findUserS(id);
+			Room.get(i).addSeekersc(j,sc);
 			return true;
 		}else
 			return false;
 	}
-	public boolean moveToHider(int rid,int id) {
+	public synchronized boolean moveToHider(int rid,int id,Socket sc) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
@@ -280,8 +282,97 @@ public class roomhandler{
 			if(index!=-1)	
 				Room.get(i).deleteSeeker(index);
 			Room.get(i).addHider(id);
+			int j=Room.get(i).findUserH(id);
+			Room.get(i).addHidersc(j,sc);
 			return true;
 		}else
 			return false;
+	}
+	public boolean update(int rid,int id,Socket sc) {
+		int i=findRoom(rid);
+		if(i==-1) {
+			return false;
+		}else
+			return false;
+	}
+	public boolean sitting(int rid,int id,Socket sc) {
+		int i=findRoom(rid);
+		if(i==-1) {
+			return false;
+		}else {
+			int S=Room.get(i).getNumS();
+			int H=Room.get(i).getNumH();
+			if(Room.get(i).seekerList().size()<S) {
+				Room.get(i).addSeeker(id);
+				int j=Room.get(i).findUserS(id);
+				Room.get(i).addSeekersc(j,sc);
+				return true;
+			}else if(Room.get(i).seekerList().size()<H){
+				Room.get(i).addHider(id);
+				int j=Room.get(i).findUserH(id);
+				Room.get(i).addHidersc(j,sc);
+				return true;
+			}else {
+				return false;
+			}
+		}
+			
+	}
+	public boolean setSocket(int rid,int id,Socket sc) {
+		int i=findRoom(rid);
+		if(i==-1) {
+			return false;
+		}else {
+			int u=Room.get(i).findUser(id);
+			int s=Room.get(i).findUserS(id);
+			int h=Room.get(i).findUserH(id);
+			if(u!=-1)
+				Room.get(i).setusersc(u, sc);
+			if(s!=-1)
+				Room.get(i).setseekersc(s, sc);
+			if(h!=-1)
+				Room.get(i).sethidersc(h, sc);
+			return true;
+		}
+	}
+	public boolean write(int rid,Socket sc) {
+		Socket socket=sc;
+		OutputStream out;
+		DataOutputStream dos;
+		int i=findRoom(rid);
+		if(i==-1) {
+			return false;
+		}else {
+			try {
+				out =socket.getOutputStream();
+				dos =new DataOutputStream(out);
+				ArrayList<String> user=Room.get(i).userList();
+				ArrayList<Integer> userid=Room.get(i).userIdList();
+				ArrayList<Integer> feet=Room.get(i).feetList();
+				ArrayList<Integer> seeker=Room.get(i).seekerList();
+				ArrayList<Integer> hider=Room.get(i).hiderList();
+				//인원수 seeker수 hider수
+				dos.writeUTF(String.valueOf(user.size())+" "+String.valueOf(seeker.size())+" "+String.valueOf(hider.size()));
+				dos.flush();
+				//유저 목록 (이름 id 걸음수)
+				for(int j=0;j<user.size();j++) {
+					dos.writeUTF(user.get(j)+" "+String.valueOf(userid.get(j))+" "+String.valueOf(feet.get(j)));
+					dos.flush();
+				}
+				for(int j=0;j<seeker.size();j++) {
+					dos.writeUTF(String.valueOf(seeker.get(j)));
+					dos.flush();
+				}
+				for(int j=0;j<hider.size();j++) {
+					dos.writeUTF(String.valueOf(hider.get(j)));
+					dos.flush();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return true;
+		}
 	}
 }
