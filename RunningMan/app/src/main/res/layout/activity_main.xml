@@ -60,6 +60,7 @@
             android:layout_weight="10"
             android:background="#aaffffff">
             <TableLayout
+                android:id="@+id/table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:stretchColumns="1"
