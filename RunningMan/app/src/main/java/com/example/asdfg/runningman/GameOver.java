@@ -17,7 +17,7 @@ public class GameOver extends AppCompatActivity {
     int ID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.35.95";
+    protected static String ip = "192.9.88.71";
     int port = 7777;
     Intent intent;
     String userName;

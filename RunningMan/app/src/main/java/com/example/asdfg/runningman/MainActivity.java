@@ -2,8 +2,12 @@ package com.example.asdfg.runningman;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -11,6 +15,8 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,24 +24,29 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends Activity {
     Button btn1, btn2, btn3, makeRoom, cancel;
     Intent intent, intent1, intent2;
-    TextView textView;
     String userName, roomList, roomName;
     RadioGroup time, chance;
-    RadioButton min5, min10, min15, sec30, sec60, sec120;
     EditText editText, roomNameText, playerNum, seekerNum;
     PopupWindow window;
     Socket sock;
+    TableRow tableRow;
+    TableLayout table;
+    TextView no,rn,player;
+    View temp;
+    int size;
     int ID = -1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.35.95";
+    protected static String ip = "192.9.88.71";
     int port = 7777;
-
+    String[] roomlist;
+    int [] roomID,n,m;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,19 +60,17 @@ public class MainActivity extends Activity {
             sock = new Socket(ip, port);
             outstream = new DataOutputStream(sock.getOutputStream());
             instream = new DataInputStream(sock.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        editText = findViewById(R.id.searchRoomName);
-        roomName = editText.getText().toString();
 
-        intent = getIntent(); // login한 닉네임
-        userName = intent.getStringExtra("loginID");
-        ID = intent.getIntExtra("code", -1);
-        btn1 = findViewById(R.id.searchBtn); // 방검색하기
-        btn2 = findViewById(R.id.roomMakeBtn); //방만들기
-        btn3 = findViewById(R.id.roomEnterBtn); //방접속하기
-        try {
+            editText = findViewById(R.id.searchRoomName);
+            roomName = editText.getText().toString();
+
+            intent = getIntent(); // login한 닉네임
+            userName = intent.getStringExtra("loginID");
+            ID = intent.getIntExtra("code", -1);
+            btn1 = findViewById(R.id.searchBtn); // 방검색하기
+            btn2 = findViewById(R.id.roomMakeBtn); //방만들기
+            btn3 = findViewById(R.id.roomEnterBtn); //방접속하기
+            table=findViewById(R.id.table);
             if (ID == -1) {
                 outstream.writeUTF("-1");
             } else {
@@ -69,10 +78,59 @@ public class MainActivity extends Activity {
             }
             outstream.flush();
             ID = instream.readInt();
+            outstream.writeUTF("200");
+            outstream.flush();
+            size=instream.readInt();
+            roomlist=new String[size];
+            roomID=new int[size];
+            n=new int[size];
+            m=new int[size];
+            for(int i=0;i<size;i++){
+                String[] str=instream.readUTF().split(" ");
+                roomID[i]=Integer.valueOf(str[0]);
+                roomlist[i]=str[1];
+                n[i]=Integer.valueOf(str[2]);
+                m[i]=Integer.valueOf(str[3]);
+            }
+            for (int i = 0; i < size; i++) {
+                tableRow = new TableRow(this);
+                tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+                no = new TextView(this);
+                rn = new TextView(this);
+                player = new TextView(this);
+                no.setTextColor(Color.parseColor("#ff000000"));
+                no.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                no.setHeight(30);
+                no.setGravity(Gravity.CENTER);
+                no.setPadding(1,1,1,1);
+                no.setText(i+1);
+                rn.setTextColor(Color.parseColor("#ff000000"));
+                rn.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                rn.setHeight(30);
+                rn.setGravity(Gravity.CENTER);
+                rn.setPadding(1,1,1,1);
+                rn.setText(roomlist[i]);
+                player.setTextColor(Color.parseColor("#ff000000"));
+                player.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                player.setHeight(30);
+                player.setGravity(Gravity.CENTER);
+                player.setPadding(1,1,1,1);
+                player.setText(n[i]+"/"+m[i]);
+
+                temp = new View(this);
+                temp.setBackgroundColor(Color.parseColor("#44000000"));
+                temp.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+
+                tableRow.addView(no);
+                tableRow.addView(rn);
+                tableRow.addView(player);
+                table.addView(tableRow);
+                table.addView(temp);
+
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {       // 방찾기
@@ -150,11 +208,13 @@ public class MainActivity extends Activity {
                             }
                             intent1.putExtra("userName", userName);
                             intent1.putExtra("code", ID);
+                            intent1.putExtra("owner", userName);
                             try {
 
 
                                 Date d=new Date();
                                 int i= (int)(d.getTime()%1000000000);
+                                intent1.putExtra("rID", i);
                                 outstream.writeUTF("1 " +String.valueOf(ID) + " " + userName  + " " +String.valueOf(i)+ " " + room + " " + pNum + " " + sNum + " " + String.valueOf(t) + " " + String.valueOf(c));
                                 outstream.flush();
                                 outstream.close();
