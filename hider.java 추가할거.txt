@@ -1,0 +1,52 @@
+   ScrollView scrollView;
+    TableLayout tableLayout;
+    LinearLayout linearLayout;
+    ImageButton tempImage;
+    View temp,temp2;
+
+
+  /*if(블루투스 연결시) 블루투스 술래 주변에 있으면
+        Toast.makeText(getApplicationContext(),"술래가 주변에 있습니다!",Toast.LENGTH_LONG).show(); // 블루투스연결
+        Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(2000);*/
+       text11=findViewById(R.id.text11);
+       //text11.setText(술래이름);
+        handler = new Handler();
+
+        tableLayout = (TableLayout)findViewById(R.id.table11);
+       for(int i=0;i<(6+1)/2;i++) { // i<(Integer.valueOf(hiderNum)+1)/2
+           //   Toast.makeText(getApplicationContext(),"asd",Toast.LENGTH_SHORT).show();
+           TableRow tempRow = new TableRow(Hider.this);
+           tempRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+           for (int j = 0; j < 2; j++) {
+               linearLayout = new LinearLayout(tempRow.getContext());
+               linearLayout.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
+               linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+               nameTag = new TextView(this);
+               nameTag.setText("hider : ?"); // (i*2+j) index의 hider 이름
+               nameTag.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, 150));
+               nameTag.setGravity(Gravity.CENTER);
+               nameTag.setTextSize(20);
+
+               temp = new View(this);
+               temp.setBackgroundColor(Color.argb(255, 255, 255, 255));
+               temp.setLayoutParams(new ViewGroup.LayoutParams(450, 10));
+               temp2 = new View(this);
+               temp2.setBackgroundColor(Color.argb(255, 255, 255, 255));
+               temp2.setLayoutParams(new ViewGroup.LayoutParams(450, 10));
+
+                 tempImage = new ImageButton(this);
+                 tempImage.setLayoutParams(new ViewGroup.LayoutParams(450, 450));
+                 //(i*2+j) index hider의 사진 get
+                 Drawable myImage = getResources().getDrawable(R.drawable.p1);
+                 tempImage.setImageDrawable(myImage);
+                linearLayout.addView(nameTag);
+                 linearLayout.addView(temp);
+                linearLayout.addView(tempImage);
+                linearLayout.addView(temp2);
+                linearLayout.setGravity(Gravity.CENTER);
+               tempRow.addView(linearLayout);
+           }
+           tableLayout.addView(tempRow);
+       }

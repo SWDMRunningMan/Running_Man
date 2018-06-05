@@ -1,0 +1,59 @@
+    TableLayout table111;
+    LinearLayout linearLayout;
+    TextView nameTag,text1;
+    View temp,temp2;
+    ImageButton tempImage;
+ 
+
+  table111 = (TableLayout)findViewById(R.id.table111);
+        text1=findViewById(R.id.text1);
+
+      // text1.setText("술래 이름");
+
+        for(int i=0;i<(6+1)/2;i++) { // i<(Integer.valueOf(hiderNum)+1)/2
+            TableRow tempRow = new TableRow(Seeker.this);
+            tempRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+            for (int j = 0; j < 2; j++) {
+                linearLayout = new LinearLayout(tempRow.getContext());
+                linearLayout.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+                nameTag = new TextView(this);
+                nameTag.setText("hider : ?"); // (i*2+j) index의 hider 이름
+                nameTag.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, 150));
+                nameTag.setGravity(Gravity.CENTER);
+                nameTag.setTextSize(20);
+
+                temp = new View(this);
+                temp.setBackgroundColor(Color.argb(255, 255, 255, 255));
+                temp.setLayoutParams(new ViewGroup.LayoutParams(450, 10));
+                temp2 = new View(this);
+                temp2.setBackgroundColor(Color.argb(255, 255, 255, 255));
+                temp2.setLayoutParams(new ViewGroup.LayoutParams(450, 10));
+
+                tempImage = new ImageButton(this);
+                tempImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final View popupView = getLayoutInflater().inflate(R.layout.biggersize, null);
+                        window = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                        window.setAnimationStyle(-1);
+                        window.setFocusable(true);
+                        window.update();
+                        window.showAsDropDown(table111, 20, 400);
+                        // 사진을 유저껄로 바꿔야함
+                    }
+                });
+                tempImage.setLayoutParams(new ViewGroup.LayoutParams(450, 450));
+                //(i*2+j) index hider의 사진 get
+                Drawable myImage = getResources().getDrawable(R.drawable.p1);
+                tempImage.setImageDrawable(myImage);
+                linearLayout.addView(nameTag);
+                linearLayout.addView(temp);
+                linearLayout.addView(tempImage);
+                linearLayout.addView(temp2);
+                linearLayout.setGravity(Gravity.CENTER);
+                tempRow.addView(linearLayout);
+            }
+            table111.addView(tempRow);
+        }
