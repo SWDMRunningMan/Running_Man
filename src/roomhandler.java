@@ -7,7 +7,7 @@ import java.util. ArrayList;
 
 public class roomhandler{
 	private  ArrayList<room> Room=new  ArrayList<room>();
-	private void createRoom(int id,String name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
+	private void createRoom(String id,String name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
 		room R=new room(id,name,rid ,rname,n, s, t, h,sc);
 		Room.add(R);
 	}
@@ -17,7 +17,7 @@ public class roomhandler{
 		Room.remove(I);
 	}
 	//방삭제
-	private void enterRoom(int id,int rid) {
+	private void enterRoom(String id,int rid) {
 		int I=findRoom(rid);
 		room R=Room.get(I);
 		R.addUser(id);
@@ -25,7 +25,7 @@ public class roomhandler{
 		Room.set(I,R);
 	}
 	//유저입장
-	private void quitRoom(int id,int rid) {
+	private void quitRoom(String id,int rid) {
 		int I=findRoom(rid);
 		room R=Room.get(I);
 		int i=R.findUserS(id);
@@ -149,7 +149,7 @@ public class roomhandler{
 	}
 	//방찾기
 	//게임진행 - 게임종료 - 결과전송
-	public boolean make(int id,String name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
+	public boolean make(String id,String name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
 		if(findRoom(rid)==-1) {
 			createRoom(id,name,rid,rname ,n,s,t,h,sc);
 			return true;
@@ -157,7 +157,7 @@ public class roomhandler{
 		else
 			return false;
 	}
-	public boolean add(int id,int rid) {
+	public boolean add(String id,int rid) {
 		if(findRoom(rid)==-1) {
 			return false;
 		}else {
@@ -165,7 +165,7 @@ public class roomhandler{
 			return true;
 		}
 	}
-	public boolean remove(int id,int rid) {
+	public boolean remove(String id,int rid) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
@@ -236,12 +236,12 @@ public class roomhandler{
 			return true;
 		}
 	}
-	public boolean setFeet(int rid,int sc,int feet){
+	public boolean setFeet(int rid,String id,int feet){
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
 		}else {
-			int index=Room.get(i).findUser(sc);
+			int index=Room.get(i).findUser(id);
 			Room.get(i).addFeet(index,feet);
 			return true;
 		}
@@ -258,7 +258,7 @@ public class roomhandler{
 			return true;
 		}
 	}
-	public synchronized boolean moveToSeeker(int rid,int id,Socket sc) {
+	public synchronized boolean moveToSeeker(int rid,String id,Socket sc) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
@@ -273,7 +273,7 @@ public class roomhandler{
 		}else
 			return false;
 	}
-	public synchronized boolean moveToHider(int rid,int id,Socket sc) {
+	public synchronized boolean moveToHider(int rid,String id,Socket sc) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
@@ -288,14 +288,14 @@ public class roomhandler{
 		}else
 			return false;
 	}
-	public boolean update(int rid,int id,Socket sc) {
+	public boolean update(int rid,String id,Socket sc) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
 		}else
 			return false;
 	}
-	public boolean sitting(int rid,int id,Socket sc) {
+	public boolean sitting(int rid,String id,Socket sc) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
@@ -318,7 +318,7 @@ public class roomhandler{
 		}
 			
 	}
-	public boolean setSocket(int rid,int id,Socket sc) {
+	public boolean setSocket(int rid,String id,Socket sc) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
@@ -347,24 +347,24 @@ public class roomhandler{
 				out =socket.getOutputStream();
 				dos =new DataOutputStream(out);
 				ArrayList<String> user=Room.get(i).userList();
-				ArrayList<Integer> userid=Room.get(i).userIdList();
+				ArrayList<String> userid=Room.get(i).userIdList();
 				ArrayList<Integer> feet=Room.get(i).feetList();
-				ArrayList<Integer> seeker=Room.get(i).seekerList();
-				ArrayList<Integer> hider=Room.get(i).hiderList();
+				ArrayList<String> seeker=Room.get(i).seekerList();
+				ArrayList<String> hider=Room.get(i).hiderList();
 				//인원수 seeker수 hider수
 				dos.writeUTF(String.valueOf(user.size())+" "+String.valueOf(seeker.size())+" "+String.valueOf(hider.size()));
 				dos.flush();
 				//유저 목록 (이름 id 걸음수)
 				for(int j=0;j<user.size();j++) {
-					dos.writeUTF(user.get(j)+" "+String.valueOf(userid.get(j))+" "+String.valueOf(feet.get(j)));
+					dos.writeUTF(user.get(j)+" "+userid.get(j)+" "+String.valueOf(feet.get(j)));
 					dos.flush();
 				}
 				for(int j=0;j<seeker.size();j++) {
-					dos.writeUTF(String.valueOf(seeker.get(j)));
+					dos.writeUTF(seeker.get(j));
 					dos.flush();
 				}
 				for(int j=0;j<hider.size();j++) {
-					dos.writeUTF(String.valueOf(hider.get(j)));
+					dos.writeUTF(hider.get(j));
 					dos.flush();
 				}
 			} catch (Exception e) {

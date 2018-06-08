@@ -1,7 +1,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.Iterator;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -71,14 +70,7 @@ public class server {
 					if(str[0].equals("-1")) {
 						if(str.length>1) {
 							System.out.println(str[1]);
-							dos.writeInt(Integer.valueOf(str[1]));
-							dos.flush();
-						}
-						else {
-							System.out.println("-1");
-							Date d=new Date();
-							long i= (d.getTime()%1000000000)/100;
-							dos.writeInt((int)i);
+							dos.writeUTF(str[1]);
 							dos.flush();
 						}
 					}
@@ -89,14 +81,14 @@ public class server {
 					else if(str[0].equals("1")) {//방생성
 						//ID, 이름,방id,방이름, 전체인원, 술래수, 시간, 힌트
 						System.out.println(msg);
-						R.make( Integer.valueOf(str[1]),str[2],Integer.valueOf(str[3]),str[4],Integer.valueOf(str[5]),Integer.valueOf(str[6]),Integer.valueOf(str[7]),Integer.valueOf(str[8]),socket);
-						R.sitting(Integer.valueOf(str[3]), Integer.valueOf(str[1]), socket);
+						R.make( str[1],str[2],Integer.valueOf(str[3]),str[4],Integer.valueOf(str[5]),Integer.valueOf(str[6]),Integer.valueOf(str[7]),Integer.valueOf(str[8]),socket);
+						R.sitting(Integer.valueOf(str[3]), str[1], socket);
 						System.out.println("방생성 "+ str[1]);
 					}else if(str[0].equals("100")) {//방정보
 						System.out.println(msg);
 						System.out.println("broad cast ");
 						if(str.length==3) {
-							R.setSocket(Integer.valueOf(str[1]), Integer.valueOf(str[2]),socket);
+							R.setSocket(Integer.valueOf(str[1]),str[2],socket);
 						}
 						room Room= R.inform(Integer.valueOf(str[1]));
 						Iterator<Socket> iter=Room.userscList().iterator();
@@ -114,12 +106,12 @@ public class server {
 					}else if(str[0].equals("101")) {//자리이동
 						System.out.println(msg);
 						System.out.println("move to seek ");
-						R.moveToSeeker(Integer.valueOf(str[1]), Integer.valueOf(str[2]), socket);
+						R.moveToSeeker(Integer.valueOf(str[1]),str[2], socket);
 						
 					}else if(str[0].equals("102")) {//자리이동
 						System.out.println(msg);
 						System.out.println("move to hide ");
-						R.moveToHider(Integer.valueOf(str[1]), Integer.valueOf(str[2]), socket);
+						R.moveToHider(Integer.valueOf(str[1]), str[2], socket);
 					}else if(str[0].equals("200")) {//방목록
 						
 						System.out.println(msg);

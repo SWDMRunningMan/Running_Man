@@ -4,10 +4,10 @@ import java.util.ArrayList;
 public class room {
 	private  ArrayList<String> user=new  ArrayList<String>();
 	private  ArrayList<Socket> usersc=new  ArrayList<Socket>();
-	private  ArrayList<Integer> userid=new  ArrayList<Integer>();
+	private  ArrayList<String> userid=new  ArrayList<String>();
 	private  ArrayList<Integer> feet=new  ArrayList<Integer>();
-	private  ArrayList<Integer> seeker=new  ArrayList<Integer>();
-	private ArrayList<Integer> hider=new ArrayList<Integer>();
+	private  ArrayList<String> seeker=new  ArrayList<String>();
+	private ArrayList<String> hider=new ArrayList<String>();
 	private  ArrayList<Socket> seekersc=new  ArrayList<Socket>();
 	private ArrayList<Socket> hidersc=new ArrayList<Socket>();
 	private String owner;
@@ -16,7 +16,7 @@ public class room {
 	private int num,num_S,num_H;
 	private int time;
 	private int hint;
-	public room(int id,String Name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
+	public room(String id,String Name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
 		user.add(Name);
 		userid.add(id);
 		usersc.add(sc);
@@ -57,7 +57,7 @@ public class room {
 	public  ArrayList<Socket> userscList() {
 		return usersc;
 	}
-	public  ArrayList<Integer> userIdList() {
+	public  ArrayList<String> userIdList() {
 		return userid;
 	}
 	public String getOwner() {
@@ -66,10 +66,10 @@ public class room {
 	public  ArrayList<Integer> feetList() {
 		return feet;
 	}
-	public  ArrayList<Integer> seekerList() {
+	public  ArrayList<String> seekerList() {
 		return seeker;
 	}
-	public  ArrayList<Integer> hiderList() {
+	public  ArrayList<String> hiderList() {
 		return hider;
 	}
 	public  ArrayList<Socket> seekerscList() {
@@ -108,7 +108,7 @@ public class room {
 	public void addUser(String name) {
 		user.add(name);
 	}
-	public void addUser(int id) {
+	public void addUserid(String id) {
 		userid.add(id);
 	}
 	public void addFeet(int i,int f) {
@@ -117,10 +117,10 @@ public class room {
 	public void addusersc(int i,Socket s) {
 		usersc.add(i, s);
 	}
-	public void addSeeker(int id) {
+	public void addSeeker(String id) {
 		seeker.add(id);
 	}
-	public void addHider(int id) {
+	public void addHider(String id) {
 		hider.add(id);
 	}
 	public void addSeekersc(int i,Socket s) {
@@ -129,17 +129,17 @@ public class room {
 	public void addHidersc(int i,Socket s) {
 		hidersc.add(i,s);
 	}
-	public int findUser(int id) {
+	public int findUser(String id) {
 		int i=-1;
 		i=userid.indexOf(id);
 		return i;
 	}
-	public int findUserS(int id) {
+	public int findUserS(String id) {
 		int i=-1;
 		i=seeker.indexOf(id);
 		return i;
 	}
-	public int findUserH(int id) {
+	public int findUserH(String id) {
 		int i=-1;
 		i=hider.indexOf(id);
 		return i;
