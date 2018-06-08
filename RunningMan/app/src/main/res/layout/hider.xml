@@ -19,150 +19,44 @@
         android:background="#ffffffff"
         android:layout_below="@+id/text11"
         android:id="@+id/line1"/>
-    <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/table1"
-        android:background="#66ffffff"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/line1"
-        android:layout_centerHorizontal="true">
-        <TableRow>
-            <LinearLayout
-                android:id="@+id/hider11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="vertical">
-
-                <Button
-                    android:layout_height="35dp"
-                    android:id="@+id/catch11"
-                    android:background="#00000000"
-                    android:textAllCaps="false"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="hider : Hong"
-                    android:textSize="20sp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    android:background="#ffffffff" />
-
-                <ImageButton
-                    android:id="@+id/hider11Image"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/p1" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/hider22"
-                android:layout_margin="10dp">
-
-                <Button
-                    android:layout_height="35dp"
-                    android:background="#00000000"
-                    android:id="@+id/catch22"
-                    android:text="hider : Son"
-                    android:textAllCaps="false"
-                    android:textSize="20sp"
-                    android:layout_gravity="center"
-                    android:layout_width="wrap_content"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    android:background="#ffffffff"/>
-                <ImageButton
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:id="@+id/hider22Image"
-                    android:src="@drawable/p2"
-                    android:scaleType="fitXY"
-                    />
-            </LinearLayout>
-        </TableRow>
-        <TableRow>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/hider33"
-                android:layout_margin="10dp">
-                <Button
-                    android:id="@+id/catch33"
-                    android:layout_height="35dp"
-                    android:background="#00000000"
-                    android:textAllCaps="false"
-                    android:layout_width="wrap_content"
-                    android:text="hider : Kim"
-                    android:layout_gravity="center"
-                    android:textSize="20sp"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    android:background="#ffffffff"/>
-                <ImageButton
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:id="@+id/hider33Image"
-                    android:src="@drawable/p3"
-                    android:scaleType="fitXY"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/hider44"
-                android:layout_margin="10dp">
-                <Button
-                    android:id="@+id/catch44"
-                    android:layout_height="35dp"
-                    android:background="#00000000"
-                    android:textAllCaps="false"
-                    android:layout_width="wrap_content"
-                    android:text="hider : Nam"
-                    android:layout_gravity="center"
-                    android:textSize="20sp"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    android:background="#ffffffff"/>
-                <ImageButton
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:id="@+id/hider44Image"
-                    android:src="@drawable/p4"
-                    android:scaleType="fitXY"
-                    />
-            </LinearLayout>
-        </TableRow>
-    </TableLayout>
+        android:layout_marginBottom="60dp"
+        android:id="@+id/scroll"
+        android:layout_centerHorizontal="true"
+        android:background="#66ffffff">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/table11"
+            android:stretchColumns="*">
+        </TableLayout>
+    </ScrollView>
     <View
         android:layout_width="wrap_content"
         android:layout_height="3dp"
-        android:layout_below="@+id/table1"
+        android:layout_below="@+id/scroll"
         android:background="#ffffffff"
         android:id="@+id/line22"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/line22"
-        android:text="남은 시간: 5분 30초"
+        android:text="남은 시간: 5분 300초"
         android:textSize="20sp"
         android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
         android:id="@+id/restTime"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="17초 안에 사진을 보내주세요"
-        android:visibility="gone"
+        android:layout_marginBottom="20dp"
+        android:visibility="visible"
         android:textSize="20sp"
-        android:layout_below="@+id/restTime"
+        android:layout_alignParentBottom="true"
         android:background="#00000000"
         android:id="@+id/takePicture"/>
 </RelativeLayout>

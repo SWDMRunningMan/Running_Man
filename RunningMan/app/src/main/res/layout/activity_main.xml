@@ -60,7 +60,6 @@
             android:layout_weight="10"
             android:background="#aaffffff">
             <TableLayout
-                android:id="@+id/table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:stretchColumns="1"
@@ -74,13 +73,15 @@
                         android:textColor="#ff000000"
                         android:textStyle="bold"
                         android:layout_margin="1dp"
-                        android:gravity="center"/>
+                        android:gravity="center"
+                        android:id="@+id/dropdown"/>
                     <TextView android:text="방 제목"
                         android:textColor="#ff000000"
                         android:textStyle="bold"
                         android:layout_height="30dp"
                         android:layout_margin="1dp"
-                        android:gravity="center"/>
+                        android:gravity="center"
+                        />
                     <TextView android:text="방 인원수"
                         android:textColor="#ff000000"
                         android:textStyle="bold"
@@ -93,7 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     />
-               <TableRow
+                <TableRow
                     android:background="#aaffffff">
                     <TextView
                         android:text="1"
