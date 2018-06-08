@@ -34,7 +34,7 @@ public class Room extends AppCompatActivity {
     int rID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.55.4";
+    protected static String ip = "192.9.88.33";
     int port = 7777;
     String userName;
     String RoomName ;
@@ -176,6 +176,16 @@ public class Room extends AppCompatActivity {
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                try {
+                    Log.v("M", "103");
+                    outstream.writeUTF("103 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                    outstream.flush();
+                    Log.v("M", "100");
+                    outstream.writeUTF("100 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                    outstream.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 finish();
             }
         });
