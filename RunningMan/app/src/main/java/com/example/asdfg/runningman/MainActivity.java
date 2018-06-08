@@ -1,6 +1,7 @@
 package com.example.asdfg.runningman;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -24,7 +24,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends Activity {
@@ -37,13 +36,13 @@ public class MainActivity extends Activity {
     Socket sock;
     TableRow tableRow;
     TableLayout table;
-    TextView no,rn,player,dropdown;
+    TextView no,rn,player;
     View temp;
     int size;
-    int ID = -1;
+    String ID;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.0.19";
+    protected static String ip = "192.168.55.4";
     int port = 7777;
     String[] roomlist;
     int [] roomID,n,m;
@@ -62,32 +61,29 @@ public class MainActivity extends Activity {
             instream = new DataInputStream(sock.getInputStream());
 
             editText = findViewById(R.id.searchRoomName);
-            dropdown=findViewById(R.id.dropdown);
             roomName = editText.getText().toString();
 
             intent = getIntent(); // login한 닉네임
             userName = intent.getStringExtra("loginID");
-            ID = intent.getIntExtra("code", -1);
+            ID = intent.getStringExtra("code");
             btn1 = findViewById(R.id.searchBtn); // 방검색하기
             btn2 = findViewById(R.id.roomMakeBtn); //방만들기
             btn3 = findViewById(R.id.roomEnterBtn); //방접속하기
             table=findViewById(R.id.table);
-            if (ID == -1) {
-                outstream.writeUTF("-1");
-            } else {
-                outstream.writeUTF("-1 " + String.valueOf(ID));
-            }
+            outstream.writeUTF("-1 " + ID);
             outstream.flush();
-            ID = instream.readInt();
+            ID = instream.readUTF();
             outstream.writeUTF("200");
             outstream.flush();
             size=instream.readInt();
+            Log.v("M",String.valueOf(size));
             roomlist=new String[size];
             roomID=new int[size];
             n=new int[size];
             m=new int[size];
             for(int i=0;i<size;i++){
                 String[] str=instream.readUTF().split(" ");
+                Log.v("M",str[0]+" "+str[1]+" "+str[2]+" "+str[3]);
                 roomID[i]=Integer.valueOf(str[0]);
                 roomlist[i]=str[1];
                 n[i]=Integer.valueOf(str[2]);
@@ -104,7 +100,7 @@ public class MainActivity extends Activity {
                 no.setHeight(30);
                 no.setGravity(Gravity.CENTER);
                 no.setPadding(1,1,1,1);
-                no.setText(i+1);
+                no.setText(String.valueOf(i+1));
                 rn.setTextColor(Color.parseColor("#ff000000"));
                 rn.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
                 rn.setHeight(30);
@@ -146,8 +142,7 @@ public class MainActivity extends Activity {
                 window.setAnimationStyle(-1);
                 window.setFocusable(true);
                 window.update();
-              //  window.showAsDropDown(editText, 20, 400);
-               window.showAsDropDown(dropdown,-25,150);
+                window.showAsDropDown(editText, 20, 400);
                 roomNameText = popupView.findViewById(R.id.roomNameText);
                 playerNum = popupView.findViewById(R.id.playerNum);
                 seekerNum = popupView.findViewById(R.id.seekerNum);
@@ -210,7 +205,7 @@ public class MainActivity extends Activity {
                             }
                             intent1.putExtra("userName", userName);
                             intent1.putExtra("code", ID);
-                            intent1.putExtra("owner", userName);
+                            intent1.putExtra("owner", ID);
                             try {
 
 

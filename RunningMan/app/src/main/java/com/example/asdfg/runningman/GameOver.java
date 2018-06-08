@@ -14,10 +14,10 @@ import java.net.Socket;
 
 public class GameOver extends AppCompatActivity {
     Socket sock;
-    int ID=-1;
+    String ID;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.9.88.71";
+    protected static String ip = "192.168.55.4";
     int port = 7777;
     Intent intent;
     String userName;
@@ -41,15 +41,11 @@ public class GameOver extends AppCompatActivity {
         }
         intent = getIntent(); // login한 닉네임
         userName = intent.getStringExtra("loginID");
-        ID=intent.getIntExtra("code",-1);
-         try {
-            if(ID==-1){
-                outstream.writeUTF("-1");
-            }else{
-                outstream.writeUTF("-1 "+String.valueOf(ID));
-            }
+        ID=intent.getStringExtra("code");
+        try {
+            outstream.writeUTF("-1 "+String.valueOf(ID));
             outstream.flush();
-            ID=instream.readInt();
+            ID=instream.readUTF();
         } catch(Exception e) {
             e.printStackTrace();
         }

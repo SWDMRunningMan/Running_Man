@@ -1,5 +1,6 @@
 package com.example.asdfg.runningman;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -29,11 +30,11 @@ public class Room extends AppCompatActivity {
     TextView text1, text2;
     Intent intent1, intent2;
     Socket sock;
-    int ID = -1;
+    String ID;
     int rID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.9.88.71";
+    protected static String ip = "192.168.55.4";
     int port = 7777;
     String userName;
     String RoomName ;
@@ -48,10 +49,10 @@ public class Room extends AppCompatActivity {
     View temp;
     int toggle=0;
     ArrayList<String> user=new  ArrayList<String>();
-    ArrayList<Integer> userid=new  ArrayList<Integer>();
+    ArrayList<String> userid=new  ArrayList<String>();
     ArrayList<Integer> feet=new  ArrayList<Integer>();
-    ArrayList<Integer> seeker=new  ArrayList<Integer>();
-    ArrayList<Integer> hider=new  ArrayList<Integer>();
+    ArrayList<String> seeker=new  ArrayList<String>();
+    ArrayList<String> hider=new  ArrayList<String>();
     int num,num_S,num_H;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +65,7 @@ public class Room extends AppCompatActivity {
             instream = new DataInputStream(sock.getInputStream());
             Intent getIntent = getIntent();
             userName = getIntent.getStringExtra("loginID");
-            ID = getIntent.getIntExtra("code", -1);
+            ID = getIntent.getStringExtra("code");
             RoomName = getIntent.getStringExtra("roomName");
             playerNum = getIntent.getStringExtra("playerNum");
             seekerNum = getIntent.getStringExtra("seekerNum");
@@ -87,22 +88,14 @@ public class Room extends AppCompatActivity {
             서버에서 방정보(유저목록, 누가 어디에 있는지)
             가져오고 자신을 자동으로 seeker나 hider에 위치 시키고 서버로 전송
          */
-
-            if (ID == -1) {
-                outstream.writeUTF("-1");
-            } else {
-                outstream.writeUTF("-1 " + String.valueOf(ID));
-            }
+            outstream.writeUTF("-1 " +ID);
             outstream.flush();
-            ID = instream.readInt();
-
-
-
+            ID = instream.readUTF();
+            if(owner.equals(ID)){
+                btn3.setVisibility(View.VISIBLE);
+            }
             final MyThread thread=new MyThread(sock);
             thread.start();
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,17 +105,19 @@ public class Room extends AppCompatActivity {
             public void onClick(View v) {
                 //text1목록에 유저추가
                 //갱신
-                try {
-                    Log.v("M","101");
-                    outstream.writeUTF("101 "+ String.valueOf(rID)+" "+String.valueOf(ID));
-                    outstream.flush();
-                    Log.v("M","100");
-                    outstream.writeUTF("100 "+ String.valueOf(rID)+" "+String.valueOf(ID));
-                    outstream.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(toggle==1) {
+                    try {
+                        Log.v("M", "101");
+                        outstream.writeUTF("101 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                        outstream.flush();
+                        Log.v("M", "100");
+                        outstream.writeUTF("100 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                        outstream.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    toggle = 0;
                 }
-                toggle=0;
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() { // hider쪽으로 유저 이동
@@ -130,17 +125,19 @@ public class Room extends AppCompatActivity {
             public void onClick(View v) {
                 //text2목록에 유저추가
                 //갱신
-                try {
-                    Log.v("M","102");
-                    outstream.writeUTF("102 "+ String.valueOf(rID)+" "+String.valueOf(ID));
-                    outstream.flush();
-                    Log.v("M","100");
-                    outstream.writeUTF("100 "+ String.valueOf(rID)+" "+String.valueOf(ID));
-                    outstream.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(toggle==0) {
+                    try {
+                        Log.v("M", "102");
+                        outstream.writeUTF("102 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                        outstream.flush();
+                        Log.v("M", "100");
+                        outstream.writeUTF("100 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                        outstream.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    toggle = 1;
                 }
-                toggle=1;
             }
         });
         btn3.setOnClickListener(new View.OnClickListener() {
@@ -199,7 +196,7 @@ public class Room extends AppCompatActivity {
             try {
                 outstream = new DataOutputStream(socket.getOutputStream());
                 instream = new DataInputStream(socket.getInputStream());
-                outstream.writeUTF("100 "+ String.valueOf(rID)+" "+String.valueOf(ID));
+                outstream.writeUTF("100 "+ String.valueOf(rID)+" "+ID);
                 outstream.flush();
             } catch (Exception e) {
             }
@@ -221,16 +218,16 @@ public class Room extends AppCompatActivity {
                             msg=instream.readUTF();
                             str=msg.split(" ");
                             user.add(str[0]);
-                            userid.add(Integer.valueOf(str[1]));
+                            userid.add(str[1]);
                             feet.add(Integer.valueOf(str[2]));
                         }
                         for(int j=0;j<num_S;j++) {
                             msg=instream.readUTF();
-                            seeker.add(Integer.valueOf(msg));
+                            seeker.add(msg);
                         }
                         for(int j=0;j<num_H;j++) {
                             msg=instream.readUTF();
-                            hider.add(Integer.valueOf(msg));
+                            hider.add(msg);
                         }
                         handler.post(new Runnable() {
                             public void run() {

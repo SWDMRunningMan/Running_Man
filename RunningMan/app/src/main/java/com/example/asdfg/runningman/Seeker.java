@@ -1,8 +1,6 @@
 package com.example.asdfg.runningman;
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,7 +13,6 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.style.TabStopSpan;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,26 +24,17 @@ import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.nio.charset.Charset;
-
-import android.app.Activity;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
-import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
+
 public class Seeker extends AppCompatActivity implements CreateNdefMessageCallback{
     Socket sock;
-    int ID=-1;
+    String ID;
     DataOutputStream outstream;
     DataInputStream instream;
     protected static String ip = "192.168.0.19";
@@ -66,6 +54,24 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.seeker);
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
+        try {
+            sock= new Socket(ip, port);
+            outstream = new DataOutputStream(sock.getOutputStream());
+            instream = new DataInputStream(sock.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Intent getIntent = getIntent();
+        userName = getIntent.getStringExtra("loginID");
+        ID=getIntent.getStringExtra("ID");
+        try {
+            outstream.writeUTF("-1 " +ID);
+            outstream.flush();
+            ID = instream.readUTF();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         /*게임진행
            걸음수 기록
            중간에 사진 불러오기
@@ -76,7 +82,7 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
         table111 = (TableLayout)findViewById(R.id.table111);
         text1=findViewById(R.id.text1);
 
-      // text1.setText("술래 이름");
+        // text1.setText("술래 이름");
 
         for(int i=0;i<(6+1)/2;i++) { // i<(Integer.valueOf(hiderNum)+1)/2
             TableRow tempRow = new TableRow(Seeker.this);
@@ -121,7 +127,7 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
                 tempImage[i*2+j].setBackgroundColor(Color.argb(0,255,255,255));
                 tempImage[i*2+j].setLayoutParams(new ViewGroup.LayoutParams(450, 500));
                 //(i*2+j) index hider의 사진 get
-               final Drawable myImage = getResources().getDrawable(R.drawable.empty); // 처음엔 empty 나중엔 유저의사진
+                final Drawable myImage = getResources().getDrawable(R.drawable.empty); // 처음엔 empty 나중엔 유저의사진
                 tempImage[i*2+j].setImageDrawable(myImage);
                 tempImage[i*2+j].setScaleType(ImageView.ScaleType.FIT_XY);
                 tempImage[i*2+j].setOnClickListener(new View.OnClickListener() {
@@ -154,28 +160,7 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
             }
             table111.addView(tempRow);
         }
-      /*  StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
-        try {
-            sock= new Socket(ip, port);
-            outstream = new DataOutputStream(sock.getOutputStream());
-            instream = new DataInputStream(sock.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Intent getIntent = getIntent();
-        userName = getIntent.getStringExtra("loginID");
-        ID=getIntent.getIntExtra("code",-1);
-        try {
-            if (ID == -1) {
-                outstream.writeUTF("-1");
-            } else {
-                outstream.writeUTF("-1 " + String.valueOf(ID));
-            }
-            outstream.flush();
-            ID = instream.readInt();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+      /*
         Intent intent1=new Intent(getApplicationContext(),GameOver.class);
         intent1.putExtra("userName",userName);
         intent1.putExtra("code",ID);

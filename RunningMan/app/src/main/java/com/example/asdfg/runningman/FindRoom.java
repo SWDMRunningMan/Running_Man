@@ -1,6 +1,7 @@
 package com.example.asdfg.runningman;
 
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -20,10 +21,10 @@ public class FindRoom extends AppCompatActivity {
     String str;
     Intent intent;
     Socket sock;
-    int ID=-1;
+    String ID;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.9.88.71";
+    protected static String ip = "192.168.55.4";
     int port = 7777;
     String userName;
     @Override
@@ -39,15 +40,12 @@ public class FindRoom extends AppCompatActivity {
         }
         intent = getIntent(); // login한 닉네임
         userName = intent.getStringExtra("loginID");
-        ID=intent.getIntExtra("code",-1);
+        ID=intent.getStringExtra("code");
         try {
-            if(ID==-1){
-                outstream.writeUTF("-1");
-            }else{
-                outstream.writeUTF("-1 "+String.valueOf(ID));
-            }
+
+                outstream.writeUTF("-1 "+ID);
             outstream.flush();
-            ID=instream.readInt();
+            ID=instream.readUTF();
         } catch(Exception e) {
             e.printStackTrace();
         }
