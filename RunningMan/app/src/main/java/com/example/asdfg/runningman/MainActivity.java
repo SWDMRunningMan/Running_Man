@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,16 +37,19 @@ public class MainActivity extends Activity {
     Socket sock;
     TableRow tableRow;
     TableLayout table;
-    TextView no,rn,player;
+    TextView no, rn, player;
     View temp;
-    int size;
+    int size, index;
+    int i;
     String ID;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.55.4";
+    protected static String ip = "192.9.88.141";
     int port = 7777;
     String[] roomlist;
-    int [] roomID,n,m;
+    int[] roomID, n, m;
+    Handler handler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,50 +73,53 @@ public class MainActivity extends Activity {
             btn1 = findViewById(R.id.searchBtn); // 방검색하기
             btn2 = findViewById(R.id.roomMakeBtn); //방만들기
             btn3 = findViewById(R.id.roomEnterBtn); //방접속하기
-            table=findViewById(R.id.table);
+            table = findViewById(R.id.table);
             outstream.writeUTF("-1 " + ID);
             outstream.flush();
             ID = instream.readUTF();
             outstream.writeUTF("200");
             outstream.flush();
-            size=instream.readInt();
-            Log.v("M",String.valueOf(size));
-            roomlist=new String[size];
-            roomID=new int[size];
-            n=new int[size];
-            m=new int[size];
-            for(int i=0;i<size;i++){
-                String[] str=instream.readUTF().split(" ");
-                Log.v("M",str[0]+" "+str[1]+" "+str[2]+" "+str[3]);
-                roomID[i]=Integer.valueOf(str[0]);
-                roomlist[i]=str[1];
-                n[i]=Integer.valueOf(str[2]);
-                m[i]=Integer.valueOf(str[3]);
+            size = instream.readInt();
+            Log.v("M", String.valueOf(size));
+            roomlist = new String[size];
+            roomID = new int[size];
+            n = new int[size];
+            m = new int[size];
+            for (i = 0; i < size; i++) {
+                String[] str = instream.readUTF().split(" ");
+                Log.v("M", str[0] + " " + str[1] + " " + str[2] + " " + str[3]);
+                roomID[i] = Integer.valueOf(str[0]);
+                roomlist[i] = str[1];
+                n[i] = Integer.valueOf(str[2]);
+                m[i] = Integer.valueOf(str[3]);
             }
-            for (int i = 0; i < size; i++) {
+
+            for (i = 0; i < size; i++) {
+                final int num=i;
                 tableRow = new TableRow(this);
-                tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+                tableRow.setLayoutParams(new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
                 no = new TextView(this);
                 rn = new TextView(this);
                 player = new TextView(this);
+                tableRow.setBackgroundColor(Color.argb(170, 255, 255, 255));
                 no.setTextColor(Color.parseColor("#ff000000"));
                 no.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
-                no.setHeight(30);
+                no.setHeight(90);
                 no.setGravity(Gravity.CENTER);
-                no.setPadding(1,1,1,1);
-                no.setText(String.valueOf(i+1));
+                no.setPadding(1, 1, 1, 1);
+                no.setText(String.valueOf(i + 1));
                 rn.setTextColor(Color.parseColor("#ff000000"));
                 rn.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
-                rn.setHeight(30);
+                rn.setHeight(90);
                 rn.setGravity(Gravity.CENTER);
-                rn.setPadding(1,1,1,1);
+                rn.setPadding(1, 1, 1, 1);
                 rn.setText(roomlist[i]);
                 player.setTextColor(Color.parseColor("#ff000000"));
                 player.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
-                player.setHeight(30);
+                player.setHeight(90);
                 player.setGravity(Gravity.CENTER);
-                player.setPadding(1,1,1,1);
-                player.setText(n[i]+"/"+m[i]);
+                player.setPadding(1, 1, 1, 1);
+                player.setText(n[i] + "/" + m[i]);
 
                 temp = new View(this);
                 temp.setBackgroundColor(Color.parseColor("#44000000"));
@@ -121,10 +128,18 @@ public class MainActivity extends Activity {
                 tableRow.addView(no);
                 tableRow.addView(rn);
                 tableRow.addView(player);
+                tableRow.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        index = roomID[num];
+                    }
+                });
                 table.addView(tableRow);
                 table.addView(temp);
 
             }
+            handler = new Handler();
+            final MyThread thread = new MyThread(sock);
+            thread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -209,10 +224,10 @@ public class MainActivity extends Activity {
                             try {
 
 
-                                Date d=new Date();
-                                int i= (int)(d.getTime()%1000000000);
+                                Date d = new Date();
+                                int i = (int) (d.getTime() % 1000000000);
                                 intent1.putExtra("rID", i);
-                                outstream.writeUTF("1 " +String.valueOf(ID) + " " + userName  + " " +String.valueOf(i)+ " " + room + " " + pNum + " " + sNum + " " + String.valueOf(t) + " " + String.valueOf(c));
+                                outstream.writeUTF("1 " + String.valueOf(ID) + " " + userName + " " + String.valueOf(i) + " " + room + " " + pNum + " " + sNum + " " + String.valueOf(t) + " " + String.valueOf(c));
                                 outstream.flush();
                                 outstream.close();
                                 instream.close();
@@ -234,11 +249,100 @@ public class MainActivity extends Activity {
         });
         btn3.setOnClickListener(new View.OnClickListener() {      // 방 접속하기
             public void onClick(View v) {                  // 방접속
-                //방제목
-                //if(인원수 꽉 차지 않았으면)
-                //roomNameText가 방 list에 존재하면 intent2 = new Intent(getApplicationContext(),roomNameText.getText().toString().class);
+
                 startActivity(intent2);
             }
         });
+    }
+
+    class MyThread extends Thread {
+        Socket socket;
+        DataOutputStream outstream;
+        DataInputStream instream;
+
+        public MyThread(Socket sc) {
+            socket = sc;
+        }
+
+        public void run() {
+            try {
+                outstream = new DataOutputStream(socket.getOutputStream());
+                instream = new DataInputStream(socket.getInputStream());
+            } catch (Exception e) {
+            }
+            while (true) {
+                try {
+                    int I = instream.readInt();
+                    if (I == 1) {
+                        outstream.writeUTF("200");
+                        outstream.flush();
+                        size = instream.readInt();
+                        Log.v("M", String.valueOf(size));
+                        roomlist = new String[size];
+                        roomID = new int[size];
+                        n = new int[size];
+                        m = new int[size];
+                        for (i = 0; i < size; i++) {
+                            String[] str = instream.readUTF().split(" ");
+                            Log.v("M", str[0] + " " + str[1] + " " + str[2] + " " + str[3]);
+                            roomID[i] = Integer.valueOf(str[0]);
+                            roomlist[i] = str[1];
+                            n[i] = Integer.valueOf(str[2]);
+                            m[i] = Integer.valueOf(str[3]);
+                        }
+                        handler.post(new Runnable() {
+                            public void run() {
+                                Log.v("M", "run");
+                                for (i = 0; i < size; i++) {
+                                    final int num=i;
+                                    tableRow = new TableRow(MainActivity.this);
+                                    tableRow.setLayoutParams(new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                                    no = new TextView(MainActivity.this);
+                                    rn = new TextView(MainActivity.this);
+                                    player = new TextView(MainActivity.this);
+                                    tableRow.setBackgroundColor(Color.argb(170, 255, 255, 255));
+                                    no.setTextColor(Color.parseColor("#ff000000"));
+                                    no.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                                    no.setHeight(90);
+                                    no.setGravity(Gravity.CENTER);
+                                    no.setPadding(1, 1, 1, 1);
+                                    no.setText(String.valueOf(i + 1));
+                                    rn.setTextColor(Color.parseColor("#ff000000"));
+                                    rn.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                                    rn.setHeight(90);
+                                    rn.setGravity(Gravity.CENTER);
+                                    rn.setPadding(1, 1, 1, 1);
+                                    rn.setText(roomlist[i]);
+                                    player.setTextColor(Color.parseColor("#ff000000"));
+                                    player.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                                    player.setHeight(90);
+                                    player.setGravity(Gravity.CENTER);
+                                    player.setPadding(1, 1, 1, 1);
+                                    player.setText(n[i] + "/" + m[i]);
+
+                                    temp = new View(MainActivity.this);
+                                    temp.setBackgroundColor(Color.parseColor("#44000000"));
+                                    temp.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+
+                                    tableRow.addView(no);
+                                    tableRow.addView(rn);
+                                    tableRow.addView(player);
+                                    tableRow.setOnClickListener(new View.OnClickListener() {
+                                        public void onClick(View view) {
+                                            index = roomID[num];
+                                        }
+                                    });
+                                    table.addView(tableRow);
+                                    table.addView(temp);
+
+                                }
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                }
+
+            }
+        }
     }
 }
