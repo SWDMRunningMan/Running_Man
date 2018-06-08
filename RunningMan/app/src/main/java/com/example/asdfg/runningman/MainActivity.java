@@ -37,13 +37,13 @@ public class MainActivity extends Activity {
     Socket sock;
     TableRow tableRow;
     TableLayout table;
-    TextView no,rn,player;
+    TextView no,rn,player,dropdown;
     View temp;
     int size;
     int ID = -1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.9.88.71";
+    protected static String ip = "192.168.0.19";
     int port = 7777;
     String[] roomlist;
     int [] roomID,n,m;
@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
             instream = new DataInputStream(sock.getInputStream());
 
             editText = findViewById(R.id.searchRoomName);
+            dropdown=findViewById(R.id.dropdown);
             roomName = editText.getText().toString();
 
             intent = getIntent(); // login한 닉네임
@@ -145,7 +146,8 @@ public class MainActivity extends Activity {
                 window.setAnimationStyle(-1);
                 window.setFocusable(true);
                 window.update();
-                window.showAsDropDown(editText, 20, 400);
+              //  window.showAsDropDown(editText, 20, 400);
+               window.showAsDropDown(dropdown,-25,150);
                 roomNameText = popupView.findViewById(R.id.roomNameText);
                 playerNum = popupView.findViewById(R.id.playerNum);
                 seekerNum = popupView.findViewById(R.id.seekerNum);
