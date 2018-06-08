@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/run"
+    >
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:background="#99ffffff"
+        android:padding="5dp">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/text1"
+            android:textSize="30sp"
+            android:textStyle="italic|bold"
+            android:gravity="center"
+            android:paddingTop="30dp"
+            android:text="Game Over"
+            />
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/text2"
+            android:textSize="30sp"
+            android:textStyle="italic|bold"
+            android:gravity="center"
+            android:paddingTop="30dp"
+            android:text="You walked :  984 feets~"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1. Hong : 1342 feets"
+            android:textSize="30sp"
+            android:textStyle="italic|bold"
+            android:layout_gravity="center"
+            android:paddingTop="30dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2. Yea : 984 feets"
+            android:textSize="30sp"
+            android:textStyle="italic|bold"
+            android:layout_gravity="center"
+            android:paddingTop="30dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3. Son : 792 feets"
+            android:textSize="30sp"
+            android:textStyle="italic|bold"
+            android:layout_gravity="center"
+            android:paddingTop="30dp"
+            android:paddingBottom="30dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

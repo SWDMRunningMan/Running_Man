@@ -1,125 +1,256 @@
-package com.example.geonsu.bluetoothforrnm;
+package com.example.geonsu.runningman;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupWindow;
+import android.widget.RadioGroup;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "BT";
-    Button btn_connect;
-    Button btn_scan;
-    TextView textView_result;
-    BluetoothAdapter btAdapter;
-    String [] scannedDeviceName = new String[1000];
-    String [] scannedDeviceAddress = new String[1000];
-    String myMacAddress;
-    String seekerMacAddress ="8C:8E:F2:33:B7:09";
-    int count =0;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Date;
+
+public class MainActivity extends Activity {
+    Button btn1, btn2, btn3, makeRoom, cancel;
+    Intent intent, intent1, intent2;
+    String userName, roomList, roomName;
+    RadioGroup time, chance;
+    EditText editText, roomNameText, playerNum, seekerNum;
+    PopupWindow window;
+    Socket sock;
+    TableRow tableRow;
+    TableLayout table;
+    TextView no,rn,player;
+    View temp;
+    int size;
+    int i;
+    String ID;
+    DataOutputStream outstream;
+    DataInputStream instream;
+    protected static String ip = "192.9.88.141";
+    int port = 7777;
+    String[] roomlist;
+    int [] roomID,n,m;
+    int index;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Register for broadcasts when a device is discovered
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(broadcastReceiver, filter);
+        // textView = findViewById(R.id.roomList);
+        // roomList= 방 리스트 어디서 갖고오지?
+        // textView.setText(roomList);
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
+        try {
+            sock = new Socket(ip, port);
+            outstream = new DataOutputStream(sock.getOutputStream());
+            instream = new DataInputStream(sock.getInputStream());
 
-        // Register for broadcasts when discovery has finished
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        this.registerReceiver(broadcastReceiver, filter);
+            editText = findViewById(R.id.searchRoomName);
+            roomName = editText.getText().toString();
 
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-        myMacAddress = btAdapter.getAddress();//자신의 맥주소
+            intent = getIntent(); // login한 닉네임
+            userName = intent.getStringExtra("loginID");
+            ID = intent.getStringExtra("code");
+            btn1 = findViewById(R.id.searchBtn); // 방검색하기
+            btn2 = findViewById(R.id.roomMakeBtn); //방만들기
+            btn3 = findViewById(R.id.roomEnterBtn); //방접속하기
+            table=findViewById(R.id.table);
+            outstream.writeUTF("-1 " + ID);
+            outstream.flush();
+            ID = instream.readUTF();
+            outstream.writeUTF("200");
+            outstream.flush();
+            size=instream.readInt();
+            Log.v("M",String.valueOf(size));
+            roomlist=new String[size];
+            roomID=new int[size];
+            n=new int[size];
+            m=new int[size];
+            for(i=0;i<size;i++){
+                String[] str=instream.readUTF().split(" ");
+                Log.v("M",str[0]+" "+str[1]+" "+str[2]+" "+str[3]);
+                roomID[i]=Integer.valueOf(str[0]);
+                roomlist[i]=str[1];
+                n[i]=Integer.valueOf(str[2]);
+                m[i]=Integer.valueOf(str[3]);
+            }
+            for (i = 0; i < size; i++) {
+                for (i = 0; i < size; i++) {
+                    tableRow = new TableRow(this);
+                    tableRow.setLayoutParams(new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                    no = new TextView(this);
+                    rn = new TextView(this);
+                    player = new TextView(this);
+                    tableRow.setBackgroundColor(Color.argb(170,255,255,255));
+                    no.setTextColor(Color.parseColor("#ff000000"));
+                    no.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                    no.setHeight(90);
+                    no.setGravity(Gravity.CENTER);
+                    no.setPadding(1,1,1,1);
+                    no.setText(String.valueOf(i+1));
+                    rn.setTextColor(Color.parseColor("#ff000000"));
+                    rn.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                    rn.setHeight(90);
+                    rn.setGravity(Gravity.CENTER);
+                    rn.setPadding(1,1,1,1);
+                    rn.setText(roomlist[i]);
+                    player.setTextColor(Color.parseColor("#ff000000"));
+                    player.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                    player.setHeight(90);
+                    player.setGravity(Gravity.CENTER);
+                    player.setPadding(1,1,1,1);
+                    player.setText(n[i]+"/"+m[i]);
 
-        textView_result = findViewById(R.id.textView_result);
-        btn_connect = findViewById(R.id.btn_connect);
-        btn_connect.setOnClickListener(new View.OnClickListener() {
+                    temp = new View(this);
+                    temp.setBackgroundColor(Color.parseColor("#44000000"));
+                    temp.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+
+                    tableRow.addView(no);
+                    tableRow.addView(rn);
+                    tableRow.addView(player);
+                    tableRow.setOnClickListener(new View.OnClickListener(){
+                        public void onClick(View view){
+                            index = roomID[i];
+
+                        }
+                    });
+                    table.addView(tableRow);
+                    table.addView(temp);
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        btn1.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                enableBluetooth();//기기의 블루투스를 켠다
+            public void onClick(View v) {       // 방찾기
+                // roomList안에 roomName 검색색
             }
         });
-
-        btn_scan = findViewById(R.id.btn_scan);
-        btn_scan.setOnClickListener(new View.OnClickListener() {
+        btn2.setOnClickListener(new View.OnClickListener() {      // 방만들기
             @Override
-            public void onClick(View view) {
-                doDiscovery();
-            }
-        });
+            public void onClick(View v) {                   // 방만들기
+                final View popupView = getLayoutInflater().inflate(R.layout.popupwindow, null);
+                window = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                window.setAnimationStyle(-1);
+                window.setFocusable(true);
+                window.update();
+                window.showAsDropDown(editText, 20, 400);
+                roomNameText = popupView.findViewById(R.id.roomNameText);
+                playerNum = popupView.findViewById(R.id.playerNum);
+                seekerNum = popupView.findViewById(R.id.seekerNum);
+                time = popupView.findViewById(R.id.timeGroup);
+                chance = popupView.findViewById(R.id.chanceGroup);
+                makeRoom = popupView.findViewById(R.id.makeRoom);
+                cancel = popupView.findViewById(R.id.cancel);
 
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(btAdapter!=null)
-            btAdapter.cancelDiscovery();
-        this.unregisterReceiver(broadcastReceiver);
-    }
+                makeRoom.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        String room = roomNameText.getText().toString();
+                        String pNum = playerNum.getText().toString();
+                        String sNum = seekerNum.getText().toString();
+                        int timeID = time.getCheckedRadioButtonId();
+                        int chanceID = chance.getCheckedRadioButtonId();
+                        if (room.length() < 1)
+                            Toast.makeText(MainActivity.this, "방 제목을 입력하세요", Toast.LENGTH_SHORT).show();
+                        else if (pNum.length() == 0)
+                            Toast.makeText(MainActivity.this, "참여 인원을 입력하세요", Toast.LENGTH_SHORT).show();
+                        else if (sNum.length() == 0)
+                            Toast.makeText(MainActivity.this, "술래 인원을 입력하세요", Toast.LENGTH_SHORT).show();
+                        else if (Integer.parseInt(pNum) <= Integer.parseInt(sNum))
+                            Toast.makeText(MainActivity.this, "술래 인원이 더 많을 수 없습니다", Toast.LENGTH_SHORT).show();
+                        else if (timeID != R.id.min5 && timeID != R.id.min10 && timeID != R.id.min15)
+                            Toast.makeText(MainActivity.this, "플레이 시간을 입력하세요", Toast.LENGTH_SHORT).show();
+                        else if (chanceID != R.id.sec30 && chanceID != R.id.sec60 && chanceID != R.id.sec120)
+                            Toast.makeText(MainActivity.this, "찬스 주기를 입력하세요", Toast.LENGTH_SHORT).show();
+                        else {
 
-    public void enableBluetooth(){
-        if(btAdapter.isEnabled()){
-            //블루투스 켜져있음
-            Toast.makeText(this,"켜져있음",Toast.LENGTH_LONG).show();
-        }else{
-            Toast.makeText(this,"켜야함",Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivity(intent);
-        }
-    }
-    public void doDiscovery(){
-        Log.d(TAG,"doDiscovery()");
-        if(btAdapter.isDiscovering())
-            btAdapter.cancelDiscovery();
-        else
-        {
-            btAdapter.startDiscovery();
-            Log.d(TAG,"startDiscovery()");
-        }
+                            intent1 = new Intent(getApplicationContext(), Room.class);
+                            intent1.putExtra("userName", userName);
+                            intent1.putExtra("roomName", room);
+                            intent1.putExtra("playerNum", pNum);
+                            intent1.putExtra("seekerNum", sNum);
+                            int t = 5;
+                            int c = 0;
+                            if (timeID == R.id.min5) {
+                                intent1.putExtra("time", "5");
+                                t = 5;
+                            }
+                            if (timeID == R.id.min10) {
+                                intent1.putExtra("time", "10");
+                                t = 10;
+                            }
+                            if (timeID == R.id.min15) {
+                                intent1.putExtra("time", "15");
+                            }
 
-    }
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction(); //왜 변수 이름 action?
+                            if (chanceID == R.id.sec30) {
+                                intent1.putExtra("chance", "30");
+                                c = 30;
+                            }
+                            if (chanceID == R.id.sec60) {
+                                intent1.putExtra("chance", "60");
+                                c = 60;
+                            }
+                            if (chanceID == R.id.sec120) {
+                                intent1.putExtra("chance", "120");
+                                c = 120;
+                            }
+                            intent1.putExtra("userName", userName);
+                            intent1.putExtra("code", ID);
+                            intent1.putExtra("owner", ID);
+                            try {
 
-            //device를 찾아내면
-            if(BluetoothDevice.ACTION_FOUND.equals(action)){
-                //BluetoothDevice object를 Intent에서 얻어와라
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                //배열에 기기 이름이랑 맥주소 저장
-                scannedDeviceName[count] = device.getName();
-                scannedDeviceAddress[count] = device.getAddress();
-                count++;
-            }//검색이 끝나면
-            else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
-                if(count==0){
-                    //발견된 기기가 없다
-                    textView_result.setText("발견된 기기가 없음");
-                }else{
-                    for(int i=0;i<count;i++){
-                        Log.d(TAG,"결과 출력 포문");
-                        Log.d(TAG,"이름  =    "+scannedDeviceName[i]);
-                        Log.d(TAG,"주소  =    "+scannedDeviceAddress[i]);
-                        //textView_result.setText(i+"번째"+scannedDevice[i]+"\n");
-                        if(scannedDeviceAddress[i].equals(seekerMacAddress)){
-                            textView_result.setText(i+"번째 기기가 술래"+scannedDeviceName[i]+" "+scannedDeviceAddress[i]);
+
+                                Date d=new Date();
+                                int i= (int)(d.getTime()%1000000000);
+                                intent1.putExtra("rID", i);
+                                outstream.writeUTF("1 " +String.valueOf(ID) + " " + userName  + " " +String.valueOf(i)+ " " + room + " " + pNum + " " + sNum + " " + String.valueOf(t) + " " + String.valueOf(c));
+                                outstream.flush();
+                                outstream.close();
+                                instream.close();
+                                sock.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            startActivity(intent1);
+                            window.dismiss();
                         }
                     }
-                }
-                count =0;
-                Toast.makeText(getApplicationContext(),"검색 끝",Toast.LENGTH_LONG).show();
+                });
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        window.dismiss();
+                    }
+                });
             }
-        }
-    };
+        });
+        btn3.setOnClickListener(new View.OnClickListener() {      // 방 접속하기
+            public void onClick(View v) {                  // 방접속
+                //방제목
+                //if(인원수 꽉 차지 않았으면)
+                //roomNameText가 방 list에 존재하면 intent2 = new Intent(getApplicationContext(),roomNameText.getText().toString().class);
+                startActivity(intent2);
+            }
+        });
+    }
 }

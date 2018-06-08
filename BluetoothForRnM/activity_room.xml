@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@drawable/run"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:text="런 닝 맨"
+        android:textSize="30sp"
+        android:textColor="#ffffffff"
+        android:textStyle="italic"
+        android:id="@+id/setRoomName"
+        />
+
+    <Button
+        android:id="@+id/seekerButton"
+        android:layout_marginLeft="15dp"
+        android:layout_width="70dp"
+        android:layout_height="35dp"
+        android:background="#22ffffff"
+        android:text="Seekers"
+        android:gravity="center"
+        android:textAllCaps="false" />
+    <TableLayout
+        android:padding="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#44ffffff"
+        android:stretchColumns="*"
+        android:id="@+id/seekerTable">
+
+    </TableLayout>
+    <Button
+        android:layout_marginLeft="15dp"
+        android:layout_width="70dp"
+        android:layout_height="35dp"
+        android:text="Hiders"
+        android:textAllCaps="false"
+        android:gravity="center"
+        android:id="@+id/hiderButton"
+        android:background="#22ffffff"/>
+    <TableLayout
+        android:padding="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#44ffffff"
+        android:stretchColumns="*"
+        android:id="@+id/hiderTable">
+
+    </TableLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="시작하기"
+            android:layout_toLeftOf="@+id/roomExit"
+            android:layout_margin="10dp"
+            android:background="#00ffffff"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:id="@+id/startGame"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="나가기"
+            android:layout_margin="10dp"
+            android:background="#00ffffff"
+            android:layout_alignParentRight="true"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:id="@+id/roomExit"/>
+    </RelativeLayout>
+</LinearLayout>

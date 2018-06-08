@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/run"
+    >
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/text1"
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        android:text="Seeker : Yea"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#ffffffff"
+        android:layout_below="@+id/text1"
+        android:id="@+id/line"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/line"
+        android:layout_marginBottom="60dp"
+        android:id="@+id/scroll1"
+        android:layout_centerHorizontal="true"
+        android:background="#66ffffff">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/table111"
+            android:stretchColumns="*">
+        </TableLayout>
+    </ScrollView>
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_below="@+id/scroll1"
+        android:background="#ffffffff"
+        android:id="@+id/line2"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="남은 시간: 5분 30초"
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/restTime"
+        android:layout_marginBottom="5dp"/>
+</RelativeLayout>
