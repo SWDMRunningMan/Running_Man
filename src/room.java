@@ -51,6 +51,9 @@ public class room {
 	public int getHint() {
 		return hint;
 	}
+	public Socket getUserSc(int i) {
+		return usersc.get(i);
+	}
 	public  ArrayList<String> userList() {
 		return user;
 	}

@@ -6,7 +6,9 @@ import java.util.Iterator;
 import java.util. ArrayList;
 
 public class roomhandler{
-	private  ArrayList<room> Room=new  ArrayList<room>();
+	private ArrayList<room> Room=new  ArrayList<room>();
+	public ArrayList<Socket> users=new ArrayList<Socket>();
+	public ArrayList<String> usersid=new ArrayList<String>();
 	private void createRoom(String id,String name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
 		room R=new room(id,name,rid ,rname,n, s, t, h,sc);
 		Room.add(R);
@@ -17,15 +19,17 @@ public class roomhandler{
 		Room.remove(I);
 	}
 	//방삭제
-	private void enterRoom(String id,int rid) {
+	private void enterRoom(String id,int rid,Socket sc) {
 		int I=findRoom(rid);
 		room R=Room.get(I);
 		R.addUser(id);
 		R.addHider(id);
+		users.remove(sc);
+		usersid.remove(id);
 		Room.set(I,R);
 	}
 	//유저입장
-	private void quitRoom(String id,int rid) {
+	private void quitRoom(String id,int rid,Socket sc) {
 		int I=findRoom(rid);
 		room R=Room.get(I);
 		int i=R.findUserS(id);
@@ -40,6 +44,8 @@ public class roomhandler{
 		R.deleteUser(i);
 		R.deleteFeet(i);
 		R.deleteUsersc(i);
+		users.add(sc);
+		usersid.add(id);
 		Room.set(I,R);
 	}
 	//유저퇴장
@@ -157,20 +163,20 @@ public class roomhandler{
 		else
 			return false;
 	}
-	public boolean add(String id,int rid) {
+	public boolean add(String id,int rid,Socket sc) {
 		if(findRoom(rid)==-1) {
 			return false;
 		}else {
-			enterRoom(id,rid);
+			enterRoom(id,rid,sc);
 			return true;
 		}
 	}
-	public boolean remove(String id,int rid) {
+	public boolean remove(int rid,String id,Socket sc) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
 		}else {
-			quitRoom(id,rid);
+			quitRoom(id,rid,sc);
 			if(Room.get(i).userList().size()==0)
 				deleteRoom(rid);
 			return true;
@@ -326,6 +332,8 @@ public class roomhandler{
 			int u=Room.get(i).findUser(id);
 			int s=Room.get(i).findUserS(id);
 			int h=Room.get(i).findUserH(id);
+			int t=usersid.indexOf(id);
+			users.add(t,sc);
 			if(u!=-1)
 				Room.get(i).setusersc(u, sc);
 			if(s!=-1)

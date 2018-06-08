@@ -75,7 +75,10 @@ public class server {
 						}
 					}
 					else if(str[0].equals("0")) {//로그인
+						
 						String ID=str[1];
+						R.users.add(socket);
+						R.usersid.add(ID);
 						System.out.println("ID = "+ID);
 					}
 					else if(str[0].equals("1")) {//방생성
@@ -83,6 +86,18 @@ public class server {
 						System.out.println(msg);
 						R.make( str[1],str[2],Integer.valueOf(str[3]),str[4],Integer.valueOf(str[5]),Integer.valueOf(str[6]),Integer.valueOf(str[7]),Integer.valueOf(str[8]),socket);
 						R.sitting(Integer.valueOf(str[3]), str[1], socket);
+						R.users.remove(socket);
+						Iterator<Socket> iter=R.users.iterator();
+						while(iter.hasNext()){
+							Socket S = (Socket)iter.next();
+							OutputStream o=S.getOutputStream();
+							DataOutputStream d =new DataOutputStream(o);
+							if(S != null){
+								d.writeInt(1);
+								d.flush();
+								System.out.println("데이터 전송");
+							}
+						}
 						System.out.println("방생성 "+ str[1]);
 					}else if(str[0].equals("100")) {//방정보
 						System.out.println(msg);
@@ -112,6 +127,10 @@ public class server {
 						System.out.println(msg);
 						System.out.println("move to hide ");
 						R.moveToHider(Integer.valueOf(str[1]), str[2], socket);
+					}else if(str[0].equals("103")) {//나감
+						System.out.println(msg);
+						System.out.println("exit ");
+						R.remove(Integer.valueOf(str[1]), str[2],socket);
 					}else if(str[0].equals("200")) {//방목록
 						
 						System.out.println(msg);
@@ -124,6 +143,47 @@ public class server {
 							dos.flush();
 						}
 						
+					}else if(str[0].equals("300")) {//게임시작
+						
+						System.out.println(msg);
+						System.out.println("game start ");
+						room Room= R.inform(Integer.valueOf(str[1]));
+						Iterator<Socket> iter=Room.userscList().iterator();
+						while(iter.hasNext()){
+							Socket S = (Socket)iter.next();
+							OutputStream o=S.getOutputStream();
+							DataOutputStream d =new DataOutputStream(o);
+							if(S != null){
+								d.writeInt(300);
+								d.flush();
+								System.out.println("데이터 전송");
+							}
+						}
+					}else if(str[0].equals("400")) {//사진전송
+						System.out.println(msg);
+						System.out.println("picture send ");
+						room Room= R.inform(Integer.valueOf(str[1]));
+						int size=Integer.valueOf(str[2]);
+						byte[] data=new byte[size];
+						for(int i=0;i<size;i++) {
+							data[i]=dis.readByte();
+						}
+						Iterator<Socket> iter=Room.userscList().iterator();
+						while(iter.hasNext()){
+							Socket S = (Socket)iter.next();
+							OutputStream o=S.getOutputStream();
+							DataOutputStream d =new DataOutputStream(o);
+							if(S != null){
+								d.writeInt(400);
+								d.flush();
+								d.writeInt(size);
+								d.flush();
+								for(int i=0;i<size;i++) {
+									d.writeByte(data[i]);
+								}
+								System.out.println("데이터 전송");
+							}
+						}
 					}
 				}
 			}catch(Exception e) {
