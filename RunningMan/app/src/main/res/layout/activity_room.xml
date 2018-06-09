@@ -69,7 +69,8 @@
             android:background="#00ffffff"
             android:textStyle="bold"
             android:textSize="15sp"
-            android:id="@+id/startGame"/>
+            android:id="@+id/startGame"
+            android:visibility="gone"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

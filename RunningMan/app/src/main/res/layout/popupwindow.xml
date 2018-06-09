@@ -36,24 +36,25 @@
             android:layout_height="wrap_content"
             android:background="#ffffffff"
             android:padding="2dp"
-            android:id="@+id/table">
+            android:id="@+id/table"
+            android:stretchColumns="*">
             <TableRow android:background="#aaffffff">
-                <TextView android:text="Room Name: "
+                <TextView android:text="방 제목: "
                     />
-                <EditText android:hint="Enter room name"
+                <EditText android:hint="방 제목을 입력하세요"
                     android:singleLine="true"
                     android:lines="1"
                     android:id="@+id/roomNameText"
                     android:layout_span="3"/>
             </TableRow>
             <TableRow android:background="#aaffffff">
-                <TextView android:text="Player Number: "
+                <TextView android:text="총 인원: "
                     />
                 <EditText android:layout_width="40dp"
                     android:singleLine="true"
                     android:lines="1"
                     android:id="@+id/playerNum"/>
-                <TextView android:text=" Seeker Number: "
+                <TextView android:text="  술래 수: "
                     />
                 <EditText android:layout_width="40dp"
                     android:id="@+id/seekerNum"
@@ -70,9 +71,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#ffffffff"
-            android:padding="2dp">
+            android:padding="2dp"
+            android:stretchColumns="2,3,4">
             <TableRow android:background="#aaffffff">
-                <TextView android:text="Time Limit"/>
+                <TextView android:text="시간 제한"
+                    android:gravity="center"/>
                 <RadioGroup
                     android:orientation="horizontal"
                     android:id="@+id/timeGroup">
@@ -94,7 +97,8 @@
                 </RadioGroup>
             </TableRow>
             <TableRow android:background="#aaffffff">
-                <TextView android:text="Chance Period "/>
+                <TextView android:text="찬스 주기 "
+                    android:gravity="center"/>
                 <RadioGroup
                     android:orientation="horizontal"
                     android:id="@+id/chanceGroup">
@@ -128,7 +132,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" Make Room"
+            android:text=" 방 만들기"
             android:textAllCaps="false"
             android:textStyle="bold"
             android:textSize="18dp"
@@ -139,7 +143,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="취소"
             android:drawableLeft="@drawable/exit"
             android:textAllCaps="false"
             android:background="#00ffffff"
