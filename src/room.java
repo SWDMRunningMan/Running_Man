@@ -2,6 +2,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class room {
+	public int count=0;
 	private  ArrayList<String> user=new  ArrayList<String>();
 	private  ArrayList<Socket> usersc=new  ArrayList<Socket>();
 	private  ArrayList<String> userid=new  ArrayList<String>();
@@ -108,17 +109,20 @@ public class room {
 	public void setHint(int n) {
 		hint=n;
 	}
+	public void setfeet(int i,int f) {
+		feet.set(i,f);
+	}
 	public void addUser(String name) {
 		user.add(name);
 	}
 	public void addUserid(String id) {
 		userid.add(id);
 	}
-	public void addFeet(int i,int f) {
-		feet.add(i, f);
+	public void addFeet(int f) {
+		feet.add(f);
 	}
-	public void addusersc(int i,Socket s) {
-		usersc.add(i, s);
+	public void addusersc(Socket s) {
+		usersc.add(s);
 	}
 	public void addSeeker(String id) {
 		seeker.add(id);

@@ -1,6 +1,3 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -14,6 +11,7 @@ public class server {
 	
 	private   final int PORT = 7777;
 	Vector<Handler> vc;
+	Vector<Socket> user;
 	roomhandler R=new roomhandler();
 	public server() throws Exception {
 		System.out.println("The server is running.");
@@ -22,10 +20,12 @@ public class server {
  		vc = new Vector<Handler>();
 		try {
 			while (true) {
-				Handler hd = new Handler(listener.accept());
+				Socket s=listener.accept();
+				Handler hd = new Handler(s);
 				hd.start();
 				System.out.println("서버연결");
-				vc.add(hd);
+				vc.add(hd);	
+				//user.add(s);
 				for(int i=0;i<vc.size();i++) {
 					System.out.println(vc.get(i));
 				}
@@ -39,6 +39,8 @@ public class server {
 	public void removeClient(Handler hd) {
 		// Remove client to vector.
 		vc.remove(hd);
+		R.user.remove(hd.socket);
+		//user.remove(hd.socket);
 	}
 	
 	//handler connect with client.
@@ -50,6 +52,7 @@ public class server {
 		private DataOutputStream dos;
 		public Handler(Socket sc) {
 			socket = sc;
+			R.user.add(sc);
 		}
 
 
@@ -70,6 +73,9 @@ public class server {
 					if(str[0].equals("-1")) {
 						if(str.length>1) {
 							System.out.println(str[1]);
+							if(str.length==3) {
+								R.setSocket(Integer.valueOf(str[2]),str[1],socket);
+							}
 							dos.writeUTF(str[1]);
 							dos.flush();
 						}
@@ -77,8 +83,6 @@ public class server {
 					else if(str[0].equals("0")) {//로그인
 						
 						String ID=str[1];
-						R.users.add(socket);
-						R.usersid.add(ID);
 						System.out.println("ID = "+ID);
 					}
 					else if(str[0].equals("1")) {//방생성
@@ -86,14 +90,13 @@ public class server {
 						System.out.println(msg);
 						R.make( str[1],str[2],Integer.valueOf(str[3]),str[4],Integer.valueOf(str[5]),Integer.valueOf(str[6]),Integer.valueOf(str[7]),Integer.valueOf(str[8]),socket);
 						R.sitting(Integer.valueOf(str[3]), str[1], socket);
-						R.users.remove(socket);
-						Iterator<Socket> iter=R.users.iterator();
+						Iterator<Socket> iter=R.user.iterator();
 						while(iter.hasNext()){
 							Socket S = (Socket)iter.next();
 							OutputStream o=S.getOutputStream();
 							DataOutputStream d =new DataOutputStream(o);
 							if(S != null){
-								d.writeInt(1);
+								d.writeInt(11);
 								d.flush();
 								System.out.println("데이터 전송");
 							}
@@ -102,9 +105,7 @@ public class server {
 					}else if(str[0].equals("100")) {//방정보
 						System.out.println(msg);
 						System.out.println("broad cast ");
-						if(str.length==3) {
-							R.setSocket(Integer.valueOf(str[1]),str[2],socket);
-						}
+						
 						room Room= R.inform(Integer.valueOf(str[1]));
 						Iterator<Socket> iter=Room.userscList().iterator();
 						while(iter.hasNext()){
@@ -131,7 +132,32 @@ public class server {
 						System.out.println(msg);
 						System.out.println("exit ");
 						R.remove(Integer.valueOf(str[1]), str[2],socket);
-					}else if(str[0].equals("200")) {//방목록
+					}
+					else if(str[0].equals("104")) {//방접속
+						System.out.println(msg);
+						System.out.println("enter ");
+						room Room= R.inform(Integer.valueOf(str[1]));
+						if(Room.getNum()<=Room.userList().size()) {
+							dos.writeInt(-1);
+							dos.flush();
+						}else{
+							R.add(str[2], str[3],Integer.valueOf(str[1]), socket);
+							dos.writeInt(1);
+							dos.flush();
+							dos.writeUTF(Room.getOwner());
+							dos.flush();
+							dos.writeInt(Room.getNum());
+							dos.flush();
+							dos.writeInt(Room.getNumS());
+							dos.flush();
+							dos.writeInt(Room.getTime());
+							dos.flush();
+							dos.writeInt(Room.getHint());
+							dos.flush();
+							
+						}
+					}
+					else if(str[0].equals("200")) {//방목록
 						
 						System.out.println(msg);
 						System.out.println("room list ");
@@ -184,6 +210,30 @@ public class server {
 								System.out.println("데이터 전송");
 							}
 						}
+					}else if(str[0].equals("500")) {//게임끝
+						System.out.println(msg);
+						System.out.println("game end ");
+						room Room= R.inform(Integer.valueOf(str[1]));
+						int size=Room.getNum();
+						int count=Room.count;
+						if(count==size) {
+						Iterator<Socket> iter=Room.userscList().iterator();
+							while(iter.hasNext()){
+								Socket S = (Socket)iter.next();
+								OutputStream o=S.getOutputStream();
+								DataOutputStream d =new DataOutputStream(o);
+								if(S != null){
+									d.writeInt(500);
+									d.flush();
+									d.writeInt(size);
+									d.flush();
+									for(int i=0;i<size;i++) {
+										d.writeInt(Room.feetList().get(i));
+									}
+								System.out.println("데이터 전송");
+								}
+							}
+						}
 					}
 				}
 			}catch(Exception e) {
@@ -198,19 +248,7 @@ public class server {
 		}
 		
 	}
-	public   Connection getConnection() throws ClassNotFoundException, SQLException {
-		// connect SQL database.
-		String url = "jdbc:mysql://localhost:3306/sparegtime";// 경로
-		String user = "root";// ID
-		String pass = "1234";// password
 
-		Connection conn = null;
-		Class.forName("com.mysql.jdbc.Driver");
-		conn = DriverManager.getConnection(url, user, pass);
-		System.out.println("접속");
-
-		return conn;
-	}
 	
 	public static void main(String[] args) throws Exception {
 		//start server

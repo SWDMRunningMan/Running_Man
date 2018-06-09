@@ -7,8 +7,7 @@ import java.util. ArrayList;
 
 public class roomhandler{
 	private ArrayList<room> Room=new  ArrayList<room>();
-	public ArrayList<Socket> users=new ArrayList<Socket>();
-	public ArrayList<String> usersid=new ArrayList<String>();
+	public ArrayList<Socket> user=new ArrayList<Socket>();
 	private void createRoom(String id,String name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
 		room R=new room(id,name,rid ,rname,n, s, t, h,sc);
 		Room.add(R);
@@ -19,14 +18,14 @@ public class roomhandler{
 		Room.remove(I);
 	}
 	//방삭제
-	private void enterRoom(String id,int rid,Socket sc) {
+	private void enterRoom(String id,String name,int rid,Socket sc) {
 		int I=findRoom(rid);
-		room R=Room.get(I);
-		R.addUser(id);
-		R.addHider(id);
-		users.remove(sc);
-		usersid.remove(id);
-		Room.set(I,R);
+
+		Room.get(I).addUser(name);
+		Room.get(I).addUserid(id);
+		Room.get(I).addusersc(sc);
+		Room.get(I).addFeet(0);
+		sitting(rid, id, sc);
 	}
 	//유저입장
 	private void quitRoom(String id,int rid,Socket sc) {
@@ -34,19 +33,16 @@ public class roomhandler{
 		room R=Room.get(I);
 		int i=R.findUserS(id);
 		if(i!=-1)
-			R.deleteSeeker(i);
+			Room.get(I).deleteSeeker(i);
 		i=R.findUserH(id);
 		if(i!=-1)
-			R.deleteHider(i);
+			Room.get(I).deleteHider(i);
 		i=R.findUser(id);
 		if(i==-1)
 			return;
-		R.deleteUser(i);
-		R.deleteFeet(i);
-		R.deleteUsersc(i);
-		users.add(sc);
-		usersid.add(id);
-		Room.set(I,R);
+		Room.get(I).deleteUser(i);
+		Room.get(I).deleteFeet(i);
+		Room.get(I).deleteUsersc(i);
 	}
 	//유저퇴장
 	private void broadcast(int rid,String msg) throws IOException {
@@ -163,11 +159,11 @@ public class roomhandler{
 		else
 			return false;
 	}
-	public boolean add(String id,int rid,Socket sc) {
+	public boolean add(String id,String name,int rid,Socket sc) {
 		if(findRoom(rid)==-1) {
 			return false;
 		}else {
-			enterRoom(id,rid,sc);
+			enterRoom(id,name,rid,sc);
 			return true;
 		}
 	}
@@ -248,7 +244,7 @@ public class roomhandler{
 			return false;
 		}else {
 			int index=Room.get(i).findUser(id);
-			Room.get(i).addFeet(index,feet);
+			Room.get(i).setfeet(index,feet);
 			return true;
 		}
 	}
@@ -332,8 +328,6 @@ public class roomhandler{
 			int u=Room.get(i).findUser(id);
 			int s=Room.get(i).findUserS(id);
 			int h=Room.get(i).findUserH(id);
-			int t=usersid.indexOf(id);
-			users.add(t,sc);
 			if(u!=-1)
 				Room.get(i).setusersc(u, sc);
 			if(s!=-1)
@@ -360,10 +354,13 @@ public class roomhandler{
 				ArrayList<String> seeker=Room.get(i).seekerList();
 				ArrayList<String> hider=Room.get(i).hiderList();
 				//인원수 seeker수 hider수
+				System.out.println(user.size()+" "+seeker.size()+" "+hider.size());
+				System.out.println(user);
 				dos.writeUTF(String.valueOf(user.size())+" "+String.valueOf(seeker.size())+" "+String.valueOf(hider.size()));
 				dos.flush();
 				//유저 목록 (이름 id 걸음수)
 				for(int j=0;j<user.size();j++) {
+					System.out.println(user.get(j)+" "+userid.get(j)+" "+feet.get(j));
 					dos.writeUTF(user.get(j)+" "+userid.get(j)+" "+String.valueOf(feet.get(j)));
 					dos.flush();
 				}
