@@ -1,12 +1,8 @@
 package com.example.asdfg.runningman;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -20,16 +16,12 @@ import android.hardware.SensorManager;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.style.TabStopSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,25 +33,15 @@ import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.nio.charset.Charset;
-
-import android.app.Activity;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
-import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 
-import static android.view.View.VISIBLE;
 public class Seeker extends AppCompatActivity implements CreateNdefMessageCallback {
     Socket sock;
     String ID;
@@ -69,7 +51,6 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
     protected static String ip = "192.168.0.19";
     int port = 7777, step = 0, min, sec = 0, chance, alive = 4, count = 0;
     PopupWindow window;
-    Intent intent;
     String userName;
     TableLayout table111;
     LinearLayout linearLayout;
@@ -312,6 +293,7 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
                     count++;
 
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
                 handler.post(new Runnable() {
                     public void run() {

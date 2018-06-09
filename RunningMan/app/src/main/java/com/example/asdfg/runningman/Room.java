@@ -97,7 +97,6 @@ public class Room extends AppCompatActivity {
             final MyThread thread=new MyThread(sock);
             thread.start();
         } catch (Exception e) {
-            e.printStackTrace();
         }
 
         btn1.setOnClickListener(new View.OnClickListener() { // seeker쪽으로 유저 이동
@@ -148,36 +147,6 @@ public class Room extends AppCompatActivity {
                     outstream.writeInt(300);
                     outstream.flush();
                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                if (toggle==0) {    // *seeker인 경우
-                    intent1.putExtra("ID",ID);
-                    intent1.putExtra("rID", rID);
-                    intent1.putExtra("num_S", num_S);
-                    intent1.putExtra("num_H", num_H);
-                    intent1.putExtra("time", time);
-                    intent1.putExtra("chance", chance);
-                    intent1.putExtra("user", user);
-                    intent1.putExtra("userid", userid);
-                    intent1.putExtra("seeker", seeker);
-                    intent1.putExtra("hider", hider);
-                    startActivity(intent1);
-                    finish();
-                }
-                if(toggle==1 ){    ///*hider인 경우
-                    intent2.putExtra("ID",ID);
-                    intent2.putExtra("rID", rID);
-                    intent2.putExtra("num_S", num_S);
-                    intent2.putExtra("num_H", num_H);
-                    intent2.putExtra("time", time);
-                    intent2.putExtra("chance", chance);
-                    intent2.putExtra("user", user);
-                    intent2.putExtra("userid", userid);
-                    intent2.putExtra("seeker", seeker);
-                    intent2.putExtra("hider", hider);
-                    startActivity(intent2);
-                    finish();
                 }
 
             }
@@ -192,10 +161,6 @@ public class Room extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Intent intent=new Intent(getApplicationContext(),MainActivity.class);
-                intent.putExtra("loginID", userName );
-                intent.putExtra("code", ID);
-                startActivity(intent);
                 finish();
             }
         });
@@ -205,14 +170,20 @@ public class Room extends AppCompatActivity {
 
     }
     protected void onDestroy(){
+        Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+        intent.putExtra("loginID", userName );
+        intent.putExtra("code", ID);
+        startActivity(intent);
         super.onDestroy();
         if(toggle2!=1){
             try {
                 Log.v("M", "103");
                 outstream.writeUTF("103 " + String.valueOf(rID) + " " + String.valueOf(ID));
                 outstream.flush();
+                outstream.close();
+                instream.close();
+                sock.close();
             } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -230,8 +201,10 @@ public class Room extends AppCompatActivity {
                 instream = new DataInputStream(socket.getInputStream());
                 outstream.writeUTF("100 " + String.valueOf(rID) + " " + ID);
                 outstream.flush();
-
+            } catch (Exception e) {
+            }
                 while (true) {
+                    try {
                         int m = instream.readInt();
                         if (m == 100) {
                             user.clear();
@@ -357,11 +330,10 @@ public class Room extends AppCompatActivity {
                                 finish();
                             }
                         }
-
+                    } catch (Exception e) {
+                    }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
         }
     }
 }

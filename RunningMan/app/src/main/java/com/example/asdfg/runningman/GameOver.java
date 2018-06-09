@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -79,5 +80,18 @@ public class GameOver extends AppCompatActivity {
         /*
 
         */
+    }
+    protected void onDestroy() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.putExtra("loginID", userName);
+        intent.putExtra("code", ID);
+        startActivity(intent);
+        super.onDestroy();
+        try {
+            outstream.close();
+            instream.close();
+            sock.close();
+        } catch (IOException e) {
+        }
     }
 }

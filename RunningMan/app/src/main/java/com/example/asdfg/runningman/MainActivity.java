@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
     ArrayList <String> roomlist;
     ArrayList <Integer> roomID, n, m;
     Handler handler;
-
+    int next=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,6 +186,7 @@ public class MainActivity extends Activity {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            next=1;
                             startActivity(intent1);
                             finish();
                             window.dismiss();
@@ -212,7 +213,19 @@ public class MainActivity extends Activity {
             }
         });
     }
+    protected void onDestroy(){
+        Intent intent=new Intent(getApplicationContext(),Login.class);
+        if(next==0)
+            startActivity(intent);
+        super.onDestroy();
+            try {
+                outstream.close();
+                instream.close();
+                sock.close();
 
+            } catch (IOException e) {
+            }
+    }
     class MyThread extends Thread {
         Socket socket;
         DataOutputStream outstream;
@@ -249,6 +262,7 @@ public class MainActivity extends Activity {
                         intent1.putExtra("code", ID);
                         intent1.putExtra("owner", owner);
                         intent1.putExtra("rID", roomID.get(index));
+                        next=1;
                         startActivity(intent1);
                         finish();
                     }
