@@ -1,5 +1,6 @@
 package com.example.asdfg.runningman;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -21,9 +22,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import static android.view.View.VISIBLE;
-
-
 
 public class Room extends AppCompatActivity {
     TextView setRoomName;
@@ -36,12 +34,12 @@ public class Room extends AppCompatActivity {
     int rID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip ="192.168.0.19";
+    protected static String ip = "192.168.0.5";
     int port = 7777;
     String userName;
     String RoomName ;
-    String playerNum ;
-    String seekerNum ;
+    int playerNum ;
+    int seekerNum ;
     String time ;
     String chance ;
     String owner;
@@ -50,6 +48,7 @@ public class Room extends AppCompatActivity {
     TextView empty;
     View temp;
     int toggle=0;
+    int toggle2=0;
     ArrayList<String> user=new  ArrayList<String>();
     ArrayList<String> userid=new  ArrayList<String>();
     ArrayList<Integer> feet=new  ArrayList<Integer>();
@@ -69,8 +68,8 @@ public class Room extends AppCompatActivity {
             userName = getIntent.getStringExtra("loginID");
             ID = getIntent.getStringExtra("code");
             RoomName = getIntent.getStringExtra("roomName");
-            playerNum = getIntent.getStringExtra("playerNum");
-            seekerNum = getIntent.getStringExtra("seekerNum");
+            playerNum = getIntent.getIntExtra("playerNum",-1);
+            seekerNum = getIntent.getIntExtra("seekerNum",-1);
             time = getIntent.getStringExtra("time");
             chance = getIntent.getStringExtra("chance");
             owner= getIntent.getStringExtra("owner");
@@ -90,7 +89,7 @@ public class Room extends AppCompatActivity {
             서버에서 방정보(유저목록, 누가 어디에 있는지)
             가져오고 자신을 자동으로 seeker나 hider에 위치 시키고 서버로 전송
          */
-            outstream.writeUTF("-1 " +ID);
+            outstream.writeUTF("-1 "+ID+" " +rID);
             outstream.flush();
             ID = instream.readUTF();
             if(owner.equals(ID)){
@@ -145,6 +144,14 @@ public class Room extends AppCompatActivity {
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                toggle2=1;
+                try {
+                    outstream.writeInt(300);
+                    outstream.flush();
+               } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 if (toggle==0) {    // *seeker인 경우
                     intent1.putExtra("ID",ID);
                     intent1.putExtra("rID", rID);
@@ -173,18 +180,38 @@ public class Room extends AppCompatActivity {
                     startActivity(intent2);
                     finish();
                 }
+
             }
         });
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                try {
+                    Log.v("M", "103");
+                    outstream.writeUTF("103 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                    outstream.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 finish();
             }
         });
-        /*
-         * thread로 유저목록 실시간으로 불러오기
-         */
+    /*
+     * thread로 유저목록 실시간으로 불러오기
+     */
 
+    }
+    protected void onDestroy(){
+        super.onDestroy();
+        if(toggle2!=1){
+            try {
+                Log.v("M", "103");
+                outstream.writeUTF("103 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                outstream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
     class MyThread extends Thread {
         Socket socket;
@@ -297,6 +324,37 @@ public class Room extends AppCompatActivity {
                                 }
                             }
                         });
+                    }
+                    if(m==300){
+                        toggle2=1;
+                        if (toggle==0) {    // *seeker인 경우
+                            intent1.putExtra("ID",ID);
+                            intent1.putExtra("rID", rID);
+                            intent1.putExtra("num_S", num_S);
+                            intent1.putExtra("num_H", num_H);
+                            intent1.putExtra("time", time);
+                            intent1.putExtra("chance", chance);
+                            intent1.putExtra("user", user);
+                            intent1.putExtra("userid", userid);
+                            intent1.putExtra("seeker", seeker);
+                            intent1.putExtra("hider", hider);
+                            startActivity(intent1);
+                            finish();
+                        }
+                        if(toggle==1 ){    ///*hider인 경우
+                            intent2.putExtra("ID",ID);
+                            intent2.putExtra("rID", rID);
+                            intent2.putExtra("num_S", num_S);
+                            intent2.putExtra("num_H", num_H);
+                            intent2.putExtra("time", time);
+                            intent2.putExtra("chance", chance);
+                            intent2.putExtra("user", user);
+                            intent2.putExtra("userid", userid);
+                            intent2.putExtra("seeker", seeker);
+                            intent2.putExtra("hider", hider);
+                            startActivity(intent2);
+                            finish();
+                        }
                     }
                 } catch (Exception e) {
                 }

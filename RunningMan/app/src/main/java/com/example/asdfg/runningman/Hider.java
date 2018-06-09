@@ -16,6 +16,10 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.nfc.NdefMessage;
@@ -57,18 +61,13 @@ import java.util.List;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static android.widget.LinearLayout.VERTICAL;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorListener;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 
-public class Hider extends AppCompatActivity implements SensorEventListener {
+public class Hider extends AppCompatActivity {
     Socket sock;
     private static final String TAG = "BT";
     PopupWindow window;
     String ID;
+    int rID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
     protected static String ip =  "192.168.0.19";
@@ -111,21 +110,12 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
     private static final int DATA_Z = SensorManager.DATA_Z;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.hider);
-
-        /*게임진행
-           걸음수 기록
-           중간에 사진 보내기
-           메세지 받았을 때 사진 찍어서 보내기
-           확인누르면 UI변경
-           시간종료시 종료
-         */
-        
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
+       setContentView(R.layout.hider);
+        // 받은 인텐트의 인스턴스를 취득한다
+       StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
         try {
             sock= new Socket(ip, port);
             outstream = new DataOutputStream(sock.getOutputStream());
@@ -136,9 +126,9 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
         intent = getIntent(); // login한 닉네임
         userName = intent.getStringExtra("loginID");
         ID=intent.getStringExtra("ID");
-
+        rID= intent.getIntExtra("rID", -1);
         try {
-            outstream.writeUTF("-1 "+String.valueOf(ID));
+            outstream.writeUTF("-1 "+ID+" " +rID);
             outstream.flush();
             ID=instream.readUTF();
         } catch(Exception e) {
@@ -161,7 +151,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
                     if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN){
                         startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
                     }
-                    else{
+                   else{
                         startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
                     }
                 }
@@ -189,97 +179,97 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
         enableBluetooth();
         doDiscovery();
 
-       text11=findViewById(R.id.text11);
-       //text11.setText(술래이름);
+        text11=findViewById(R.id.text11);
+        //text11.setText(술래이름);
 
         handler = new Handler();
 
         tableLayout = (TableLayout)findViewById(R.id.table11);
-       for(int i=0;i<(6+1)/2;i++) { // i<(Integer.valueOf(hiderNum)+1)/2
-           //   Toast.makeText(getApplicationContext(),"asd",Toast.LENGTH_SHORT).show();
-           TableRow tempRow = new TableRow(Hider.this);
-           tempRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-           for (int j = 0; j < 2; j++) {
-               linearLayout = new LinearLayout(tempRow.getContext());
-               linearLayout.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
-               linearLayout.setOrientation(LinearLayout.VERTICAL);
+        for(int i=0;i<(6+1)/2;i++) { // i<(Integer.valueOf(hiderNum)+1)/2
+            //   Toast.makeText(getApplicationContext(),"asd",Toast.LENGTH_SHORT).show();
+            TableRow tempRow = new TableRow(Hider.this);
+            tempRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+            for (int j = 0; j < 2; j++) {
+                linearLayout = new LinearLayout(tempRow.getContext());
+                linearLayout.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
 
-               nameTag = new Button(this);
-               nameTag.setText("hider : ?"); // (i*2+j) index의 hider 이름
-               nameTag.setLayoutParams(new TableRow.LayoutParams(450, 150));
-               nameTag.setGravity(Gravity.CENTER);
-               nameTag.setTextSize(20);
-               nameTag.setTypeface(null, Typeface.BOLD_ITALIC);
-               nameTag.setBackgroundColor(Color.argb(0,255,255,255));
-               nameTag.setTypeface(null, Typeface.BOLD_ITALIC);
-               nameTag.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View view) {
-                       AlertDialog.Builder dd = new AlertDialog.Builder(Hider.this);
-                       dd.setTitle("신고");
-                       dd.setMessage(nameTag.getText().toString()+ "님을 신고하시겠습니까?"); //
-                       dd.setNegativeButton("아니오",null);
-                       dd.setPositiveButton("예",new DialogInterface.OnClickListener(){
+                nameTag = new Button(this);
+                nameTag.setText("hider : ?"); // (i*2+j) index의 hider 이름
+                nameTag.setLayoutParams(new TableRow.LayoutParams(450, 150));
+                nameTag.setGravity(Gravity.CENTER);
+                nameTag.setTextSize(20);
+                nameTag.setTypeface(null, Typeface.BOLD_ITALIC);
+                nameTag.setBackgroundColor(Color.argb(0,255,255,255));
+                nameTag.setTypeface(null, Typeface.BOLD_ITALIC);
+                nameTag.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder dd = new AlertDialog.Builder(Hider.this);
+                        dd.setTitle("신고");
+                        dd.setMessage(nameTag.getText().toString()+ "님을 신고하시겠습니까?"); //
+                        dd.setNegativeButton("아니오",null);
+                        dd.setPositiveButton("예",new DialogInterface.OnClickListener(){
                            public void onClick(DialogInterface dialog,int whichButton){
-                               // 신고하면 유저들에게 뿌려주기
-                           }
-                       });
+                                // 신고하면 유저들에게 뿌려주기
+                            }
+                        });
 
-                       dd.show();
-                   }
-               });
-               temp = new View(this);
-               temp.setBackgroundColor(Color.argb(255, 255, 255, 255));
-               temp.setLayoutParams(new ViewGroup.LayoutParams(450, 10));
-               temp2 = new View(this);
-               temp2.setBackgroundColor(Color.argb(255, 255, 255, 255));
-               temp2.setLayoutParams(new ViewGroup.LayoutParams(450, 10));
+                        dd.show();
+                    }
+                });
+                temp = new View(this);
+                temp.setBackgroundColor(Color.argb(255, 255, 255, 255));
+                temp.setLayoutParams(new ViewGroup.LayoutParams(450, 10));
+                temp2 = new View(this);
+                temp2.setBackgroundColor(Color.argb(255, 255, 255, 255));
+                temp2.setLayoutParams(new ViewGroup.LayoutParams(450, 10));
 
-                 tempImage[i*2+j] = new ImageButton(this);
-                 tempImage[i*2+j].setBackgroundColor(Color.argb(0,255,255,255));
-                 tempImage[i*2+j].setLayoutParams(new ViewGroup.LayoutParams(450, 500));
-                 //(i*2+j) index hider의 사진 get
-                 final Drawable myImage = getResources().getDrawable(R.drawable.empty);  // 처음엔 empty 나중엔 유저의사진
-                 tempImage[i*2+j].setImageDrawable(myImage);
-               tempImage[i*2+j].setScaleType(ImageView.ScaleType.FIT_XY);
-               tempImage[i * 2 + j].setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View view) {
-                       final View popupView = getLayoutInflater().inflate(R.layout.biggersize, null);
-                       window = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
-                       window.setAnimationStyle(-1);
-                       window.setFocusable(true);
-                       bigSize = popupView.findViewById(R.id.p1ID);
-                       bigSize.setImageDrawable(myImage);
-                       bigSize.setOnClickListener(new View.OnClickListener() {
-                           @Override
-                           public void onClick(View view) {
-                               window.dismiss();
-                           }
-                       });
-                       window.update();
-                       window .showAtLocation(tableLayout,Gravity.CENTER,0,50);
-                       // 사진을 유저껄로 바꿔야함
-                   }
-               });
+                tempImage[i*2+j] = new ImageButton(this);
+                tempImage[i*2+j].setBackgroundColor(Color.argb(0,255,255,255));
+                tempImage[i*2+j].setLayoutParams(new ViewGroup.LayoutParams(450, 500));
+                //(i*2+j) index hider의 사진 get
+                final Drawable myImage = getResources().getDrawable(R.drawable.empty);  // 처음엔 empty 나중엔 유저의사진
+                tempImage[i*2+j].setImageDrawable(myImage);
+                tempImage[i*2+j].setScaleType(ImageView.ScaleType.FIT_XY);
+                tempImage[i * 2 + j].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final View popupView = getLayoutInflater().inflate(R.layout.biggersize, null);
+                        window = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                        window.setAnimationStyle(-1);
+                        window.setFocusable(true);
+                        bigSize = popupView.findViewById(R.id.p1ID);
+                        bigSize.setImageDrawable(myImage);
+                        bigSize.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                window.dismiss();
+                            }
+                        });
+                        window.update();
+                        window .showAtLocation(tableLayout,Gravity.CENTER,0,50);
+                        // 사진을 유저껄로 바꿔야함
+                    }
+                });
                 linearLayout.addView(nameTag);
-                 linearLayout.addView(temp);
+                linearLayout.addView(temp);
                 linearLayout.addView(tempImage[i*2+j]);
                 linearLayout.addView(temp2);
                 linearLayout.setGravity(Gravity.CENTER);
-               tempRow.addView(linearLayout);
-           }
-           tableLayout.addView(tempRow);
-       }
+                tempRow.addView(linearLayout);
+            }
+            tableLayout.addView(tempRow);
+        }
 
         restTime = findViewById(R.id.restTime);
 
-   //     Intent getIntent = getIntent();
+        //     Intent getIntent = getIntent();
 //        min = Integer.parseInt(getIntent.getStringExtra("time").toString());
-  //      chance = Integer.parseInt(getIntent.getStringExtra("chance").toString());
+        //      chance = Integer.parseInt(getIntent.getStringExtra("chance").toString());
 
         min=5; chance=30;
-       MyThread dd = new MyThread();
+        MyThread dd = new MyThread();
         dd.start();
 
         button = findViewById(R.id.takePicture);
@@ -288,10 +278,11 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
             public void onClick(View view) {
                 Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 File picture = savePictureFile();
-                takePicture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(picture));
+               takePicture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(picture));
                 startActivityForResult(takePicture,1);
             }
-        });
+
+       });
     }
     private void init(){
         _pendingIntent = PendingIntent.getActivity(this,0,new Intent(this,getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
@@ -299,7 +290,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
         try{
             ndefDetected.addDataType(_MIME_TYPE);
         }catch(IntentFilter.MalformedMimeTypeException e){
-         Log.e(this.toString(),e.getMessage());
+            Log.e(this.toString(),e.getMessage());
         }
         _readIntentFilters = new IntentFilter[]{ndefDetected};
     }
@@ -309,7 +300,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
         enableTagWriteMode();
     }
     private void enableNdefExchangeMode(){
-       // mNfcAdapter.setNdefPushMessageCallback(_getNdefMessage(),this);
+        // mNfcAdapter.setNdefPushMessageCallback(_getNdefMessage(),this);
         mNfcAdapter.enableForegroundDispatch(this,_pendingIntent,_readIntentFilters,null);
     }
     private void enableTagWriteMode(){
@@ -325,9 +316,10 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()))
         {
             _readMessage();
-        }
+       }
 
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
+
+       if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
         {
             _readMessage();
         }
@@ -340,7 +332,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
              아웃!
              btAdapter.cancelDiscovery();
         */
-       // Toast.makeText(this, "Message : " + msgs.get(0), Toast.LENGTH_LONG).show();
+        // Toast.makeText(this, "Message : " + msgs.get(0), Toast.LENGTH_LONG).show();
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -351,17 +343,17 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
         factory.inPurgeable=true;
 
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath,factory);
-      try {
-          ExifInterface exif = new ExifInterface(imagePath);
-          int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
-          int exifDegree = exifOrientationToDegrees(exifOrientation);
-          Matrix matrix = new Matrix();
-          matrix.postRotate(exifDegree);
+        try {
+            ExifInterface exif = new ExifInterface(imagePath);
+            int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
+            int exifDegree = exifOrientationToDegrees(exifOrientation);
+            Matrix matrix = new Matrix();
+            matrix.postRotate(exifDegree);
 
-          Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-          tempImage[0].setImageBitmap(rotated); // index 바꾸기
-          // rotated 서버에 전송
-      }catch(Exception e){e.printStackTrace();}
+            Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            tempImage[0].setImageBitmap(rotated); // index 바꾸기
+            // rotated 서버에 전송
+        }catch(Exception e){e.printStackTrace();}
         //Toast.makeText(getApplicationContext(), "" + (bitmap.getWidth()), Toast.LENGTH_SHORT).show();
 
     }
@@ -376,36 +368,35 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
     }
     private File savePictureFile(){
         String fileName = "hider1"; // 유저이름으로하면 좋을듯
-     File pictureStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"Running");
-     if(!pictureStorage.exists())
-         pictureStorage.mkdirs();
-     try{
-         File file = File.createTempFile(fileName,".jpg",pictureStorage);
-         imagePath=file.getAbsolutePath();
-         Intent mediaScan = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-         File f = new File(imagePath);
-         Uri contentUri = Uri.fromFile(f);
-         mediaScan.setData(contentUri);
-         this.sendBroadcast(mediaScan);
-         return file;
-     }catch(IOException e){
-         e.printStackTrace();
-     }
+        File pictureStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"Running");
+        if(!pictureStorage.exists())
+            pictureStorage.mkdirs();
+        try{
+            File file = File.createTempFile(fileName,".jpg",pictureStorage);
+            imagePath=file.getAbsolutePath();
+            Intent mediaScan = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            File f = new File(imagePath);
+            Uri contentUri = Uri.fromFile(f);
+            mediaScan.setData(contentUri);
+            this.sendBroadcast(mediaScan);
+            return file;
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         return null;
     }
     protected void onStart(){
         super.onStart();
         if(accelerometerSensor!=null)
-            sensorManager.registerListener(this,accelerometerSensor,SensorManager.SENSOR_DELAY_GAME);
+            sensorManager.registerListener((SensorEventListener) this,accelerometerSensor,SensorManager.SENSOR_DELAY_GAME);
     }
     protected void onStop(){
         super.onStop();
         //if(sensorManager!=null)
         // sensorManager.unregisterListener(this); 센싱 안하도록 하는 부분
     }
-    @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy){
-;
+        ;
     }
     public void onSensorChanged(SensorEvent event) {//센서 리슨 하는 부분
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -446,13 +437,11 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
         }
     }
     public void doDiscovery(){
-        Log.d(TAG,"doDiscovery()");
         if(btAdapter.isDiscovering())
             btAdapter.cancelDiscovery();
         else
         {
             btAdapter.startDiscovery();
-            Log.d(TAG,"startDiscovery()");
         }
 
     }
@@ -470,11 +459,11 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
                     Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(2000);
                 }
-              //  Toast.makeText(getApplicationContext(),device.getName() + "\n"+device.getAddress(),Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(getApplicationContext(),device.getName() + "\n"+device.getAddress(),Toast.LENGTH_SHORT).show();
             }//검색이 끝나면
             else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
             {
-                    doDiscovery();
+                doDiscovery();
             }
         }
     };
@@ -503,13 +492,13 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
                 }
                 handler.post(new Runnable() {
                     public void run() {
-                        restTime.setText("남은 시간: " + min + "분 " + sec + "초");
+                       restTime.setText("남은 시간: " + min + "분 " + sec + "초");
 
                         if (count >= chance && (count % chance) <= 20) {
                             button.setVisibility(VISIBLE);
                             button.setText(20 - (count % chance) + "초안에 사진을 보내세요");
                         } else
-                             button.setVisibility(GONE);
+                            button.setVisibility(GONE);
 
                     }
                 });

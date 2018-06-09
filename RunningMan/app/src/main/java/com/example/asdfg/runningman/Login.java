@@ -1,10 +1,8 @@
 package com.example.asdfg.runningman;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +10,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -24,11 +21,11 @@ public class Login extends AppCompatActivity {
     Button enterBtn,exitBtn;
     Intent intent;
     Socket sock;
-    String ID="8C:8E:F2:33:B7:09";
+    String ID;
     BluetoothAdapter btAdapter;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip =  "192.168.0.19";  // 학교와이파이만 가능
+    protected static String ip = "192.168.0.5";
     int port = 7777;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +35,9 @@ public class Login extends AppCompatActivity {
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         try {
-            ID = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");//자신의 맥주소
-           // Toast.makeText(getApplicationContext(),""+ID,Toast.LENGTH_SHORT).show();
+            ID = btAdapter.getAddress();//자신의 맥주소
         }catch (Exception e){
-            //ID="8C:8E:F2:33:B7:09";
+            ID="8C:8E:F2:33:B7:09";
         }
 
         try {
@@ -61,9 +57,6 @@ public class Login extends AppCompatActivity {
                 String name = loginID.getText().toString();
                 if(name.length()>=1) {
                     try {
-                        outstream.writeUTF("-1 " + ID);
-                        outstream.flush();
-                        ID = instream.readUTF();
                         outstream.writeUTF("0 " + name);
                         outstream.flush();
                         outstream.close();

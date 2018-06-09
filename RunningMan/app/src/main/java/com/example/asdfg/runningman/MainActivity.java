@@ -25,6 +25,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends Activity {
@@ -44,10 +45,10 @@ public class MainActivity extends Activity {
     String ID;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.0.19";
+    protected static String ip = "192.168.0.5";
     int port = 7777;
-    String[] roomlist;
-    int[] roomID, n, m;
+    ArrayList <String> roomlist;
+    ArrayList <Integer> roomID, n, m;
     Handler handler;
 
     @Override
@@ -64,8 +65,8 @@ public class MainActivity extends Activity {
             outstream = new DataOutputStream(sock.getOutputStream());
             instream = new DataInputStream(sock.getInputStream());
 
-            editText = findViewById(R.id.searchRoomName);
-            roomName = editText.getText().toString();
+            //editText = findViewById(R.id.searchRoomName);
+            //roomName = editText.getText().toString();
 
             intent = getIntent(); // login한 닉네임
             userName = intent.getStringExtra("loginID");
@@ -74,6 +75,7 @@ public class MainActivity extends Activity {
             btn2 = findViewById(R.id.roomMakeBtn); //방만들기
             btn3 = findViewById(R.id.roomEnterBtn); //방접속하기
             table = findViewById(R.id.table);
+
             outstream.writeUTF("-1 " + ID);
             outstream.flush();
             ID = instream.readUTF();
@@ -81,17 +83,17 @@ public class MainActivity extends Activity {
             outstream.flush();
             size = instream.readInt();
             Log.v("M", String.valueOf(size));
-            roomlist = new String[size];
-            roomID = new int[size];
-            n = new int[size];
-            m = new int[size];
+            roomlist =new ArrayList <String>();
+            roomID = new ArrayList <Integer>();
+            n = new ArrayList <Integer>();
+            m = new ArrayList <Integer>();
             for (i = 0; i < size; i++) {
                 String[] str = instream.readUTF().split(" ");
                 Log.v("M", str[0] + " " + str[1] + " " + str[2] + " " + str[3]);
-                roomID[i] = Integer.valueOf(str[0]);
-                roomlist[i] = str[1];
-                n[i] = Integer.valueOf(str[2]);
-                m[i] = Integer.valueOf(str[3]);
+                roomID.add(Integer.valueOf(str[0]));
+                roomlist.add(str[1]);
+                n.add(Integer.valueOf(str[2]));
+                m.add(Integer.valueOf(str[3]));
             }
 
             for (i = 0; i < size; i++) {
@@ -113,13 +115,13 @@ public class MainActivity extends Activity {
                 rn.setHeight(90);
                 rn.setGravity(Gravity.CENTER);
                 rn.setPadding(1, 1, 1, 1);
-                rn.setText(roomlist[i]);
+                rn.setText(roomlist.get(i));
                 player.setTextColor(Color.parseColor("#ff000000"));
                 player.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
                 player.setHeight(90);
                 player.setGravity(Gravity.CENTER);
                 player.setPadding(1, 1, 1, 1);
-                player.setText(n[i] + "/" + m[i]);
+                player.setText(n.get(i) + "/" + m.get(i));
 
                 temp = new View(this);
                 temp.setBackgroundColor(Color.parseColor("#44000000"));
@@ -130,7 +132,7 @@ public class MainActivity extends Activity {
                 tableRow.addView(player);
                 tableRow.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
-                        index = roomID[num];
+                        index = num;
                     }
                 });
                 table.addView(tableRow);
@@ -144,10 +146,15 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         btn1.setOnClickListener(new View.OnClickListener() {
+
             @Override
+
             public void onClick(View v) {       // 새로고침
+
                 // 새로고침
+
             }
+
         });
         btn2.setOnClickListener(new View.OnClickListener() {      // 방만들기
             @Override
@@ -157,7 +164,7 @@ public class MainActivity extends Activity {
                 window.setAnimationStyle(-1);
                 window.setFocusable(true);
                 window.update();
-                window.showAsDropDown(editText, 20, 400);
+                window.showAsDropDown(findViewById(R.id.dropdown), 20, 400);
                 roomNameText = popupView.findViewById(R.id.roomNameText);
                 playerNum = popupView.findViewById(R.id.playerNum);
                 seekerNum = popupView.findViewById(R.id.seekerNum);
@@ -249,8 +256,14 @@ public class MainActivity extends Activity {
         });
         btn3.setOnClickListener(new View.OnClickListener() {      // 방 접속하기
             public void onClick(View v) {                  // 방접속
+                try {
+                    outstream.writeUTF("104 "+roomID.get(index)+ " "+ID+" "+userName);
+                    outstream.flush();
 
-                startActivity(intent2);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
     }
@@ -273,22 +286,43 @@ public class MainActivity extends Activity {
             while (true) {
                 try {
                     int I = instream.readInt();
-                    if (I == 1) {
+                    if(I ==-1){
+                        Toast.makeText(getApplicationContext(), "자리가 꽉 찼습니다.", Toast.LENGTH_SHORT).show();
+                    }else if (I ==1){
+                        intent1 = new Intent(getApplicationContext(), Room.class);
+                        String owner=instream.readUTF();
+                        int pNum=instream.readInt();
+                        int sNum=instream.readInt();
+                        int time=instream.readInt();
+                        int chance=instream.readInt();
+                        intent1.putExtra("userName", userName);
+                        intent1.putExtra("roomName", roomlist.get(index));
+                        intent1.putExtra("playerNum", pNum);
+                        intent1.putExtra("seekerNum", sNum);
+                        intent1.putExtra("time", time);
+                        intent1.putExtra("chance", chance);
+                        intent1.putExtra("code", ID);
+                        intent1.putExtra("owner", owner);
+                        intent1.putExtra("rID", roomID.get(index));
+                        startActivity(intent1);
+                        finish();
+                    }
+                    if (I == 11) {
                         outstream.writeUTF("200");
                         outstream.flush();
                         size = instream.readInt();
                         Log.v("M", String.valueOf(size));
-                        roomlist = new String[size];
-                        roomID = new int[size];
-                        n = new int[size];
-                        m = new int[size];
+                        roomlist.clear();
+                        roomID.clear();
+                        n .clear();
+                        m .clear();
                         for (i = 0; i < size; i++) {
                             String[] str = instream.readUTF().split(" ");
                             Log.v("M", str[0] + " " + str[1] + " " + str[2] + " " + str[3]);
-                            roomID[i] = Integer.valueOf(str[0]);
-                            roomlist[i] = str[1];
-                            n[i] = Integer.valueOf(str[2]);
-                            m[i] = Integer.valueOf(str[3]);
+                            roomID.add(Integer.valueOf(str[0]));
+                            roomlist.add(str[1]);
+                            n.add(Integer.valueOf(str[2]));
+                            m.add(Integer.valueOf(str[3]));
                         }
                         handler.post(new Runnable() {
                             public void run() {
@@ -312,13 +346,13 @@ public class MainActivity extends Activity {
                                     rn.setHeight(90);
                                     rn.setGravity(Gravity.CENTER);
                                     rn.setPadding(1, 1, 1, 1);
-                                    rn.setText(roomlist[i]);
+                                    rn.setText(roomlist.get(i));
                                     player.setTextColor(Color.parseColor("#ff000000"));
                                     player.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
                                     player.setHeight(90);
                                     player.setGravity(Gravity.CENTER);
                                     player.setPadding(1, 1, 1, 1);
-                                    player.setText(n[i] + "/" + m[i]);
+                                    player.setText(n.get(i) + "/" + m.get(i));
 
                                     temp = new View(MainActivity.this);
                                     temp.setBackgroundColor(Color.parseColor("#44000000"));
@@ -329,7 +363,7 @@ public class MainActivity extends Activity {
                                     tableRow.addView(player);
                                     tableRow.setOnClickListener(new View.OnClickListener() {
                                         public void onClick(View view) {
-                                            index = roomID[num];
+                                            index = num;
                                         }
                                     });
                                     table.addView(tableRow);

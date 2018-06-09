@@ -60,10 +60,10 @@ import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 
 import static android.view.View.VISIBLE;
-
-public class Seeker extends AppCompatActivity implements CreateNdefMessageCallback,SensorEventListener {
+public class Seeker extends AppCompatActivity implements CreateNdefMessageCallback {
     Socket sock;
     String ID;
+    int rID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
     protected static String ip = "192.168.0.19";
@@ -100,15 +100,12 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
     private static final int DATA_Z = SensorManager.DATA_Z;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor;
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.seeker);
-
-
-       /* StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
         try {
-            sock= new Socket(ip, port);
+            sock = new Socket(ip, port);
             outstream = new DataOutputStream(sock.getOutputStream());
             instream = new DataInputStream(sock.getInputStream());
         } catch (IOException e) {
@@ -116,15 +113,15 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
         }
         Intent getIntent = getIntent();
         userName = getIntent.getStringExtra("loginID");
-        ID=getIntent.getStringExtra("ID");
+        ID = getIntent.getStringExtra("ID");
+        rID= getIntent.getIntExtra("rID", -1);
         try {
-            outstream.writeUTF("-1 " +ID);
+            outstream.writeUTF("-1 "+ID+" " +rID);
             outstream.flush();
             ID = instream.readUTF();
         } catch (Exception e) {
             e.printStackTrace();
         }
-*/
         /*게임진행
            걸음수 기록
            중간에 사진 불러오기
@@ -135,9 +132,13 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
         restTime = findViewById(R.id.restTime);
         table111 = (TableLayout) findViewById(R.id.table111);
         text1 = findViewById(R.id.text1);
+        handler = new Handler();
+        // text1.setText("술래 이름");
+        restTime = findViewById(R.id.restTime);
+        table111 = (TableLayout) findViewById(R.id.table111);
+        text1 = findViewById(R.id.text1);
 
         // text1.setText("술래 이름");
-
         handler = new Handler();
 
         for (int i = 0; i < (6 + 1) / 2; i++) { // i<(Integer.valueOf(hiderNum)+1)/2
@@ -227,7 +228,7 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,600); // 나중에 min*60+sec으로 바꿔야할듯
         startActivity(discoverableIntent);
 
-       myMacAddress= android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
+        myMacAddress= android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
         //Toast.makeText(getApplicationContext(),myMacAddress,Toast.LENGTH_SHORT).show();
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -266,12 +267,12 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
     protected void onStart(){
         super.onStart();
         if(accelerometerSensor!=null)
-            sensorManager.registerListener(this,accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
+            sensorManager.registerListener((SensorEventListener) this,accelerometerSensor, SensorManager.SENSOR_DELAY_GAME);
     }
     protected void onStop(){
         super.onStop();
         //if(sensorManager!=null)
-        // sensorManager.unregisterListener(this); 센싱 안하도록 하는 부분
+       // sensorManager.unregisterListener(this); 센싱 안하도록 하는 부분
     }
     public void onAccuracyChanged(Sensor sensor, int accuracy){
         ;

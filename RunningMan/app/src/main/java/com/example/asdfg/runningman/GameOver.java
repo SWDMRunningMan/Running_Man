@@ -15,11 +15,12 @@ import java.net.Socket;
 
 public class GameOver extends AppCompatActivity {
     Socket sock;
-    int ID=-1;
+    String ID;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.0.19";
+    protected static String ip = "192.168.0.5";
     int port = 7777;
+    int rID=-1;
     Intent intent;
     String userName,step;
     LinearLayout linearLayout;
@@ -43,16 +44,12 @@ public class GameOver extends AppCompatActivity {
         }
         intent = getIntent(); // login한 닉네임
         userName = intent.getStringExtra("loginID");
-        ID=intent.getIntExtra("code",-1);
-        step = intent.getStringExtra("step");
+        ID=intent.getStringExtra("code");
+        rID=intent.getIntExtra("rID", -1);
         try {
-            if(ID==-1){
-                outstream.writeUTF("-1");
-            }else{
-                outstream.writeUTF("-1 "+String.valueOf(ID));
-            }
+            outstream.writeUTF("-1 "+ID+" " +rID);
             outstream.flush();
-            ID=instream.readInt();
+            ID=instream.readUTF();
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -81,6 +78,6 @@ public class GameOver extends AppCompatActivity {
         });
         /*
 
-         */
+        */
     }
 }
