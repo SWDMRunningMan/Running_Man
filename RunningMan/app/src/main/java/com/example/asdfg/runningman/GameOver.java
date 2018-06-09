@@ -6,6 +6,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -14,14 +15,15 @@ import java.net.Socket;
 
 public class GameOver extends AppCompatActivity {
     Socket sock;
-    String ID;
+    int ID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.55.4";
+    protected static String ip = "192.168.0.19";
     int port = 7777;
     Intent intent;
-    String userName;
+    String userName,step;
     LinearLayout linearLayout;
+    TextView yourwalking,first,second,third;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,14 +43,32 @@ public class GameOver extends AppCompatActivity {
         }
         intent = getIntent(); // login한 닉네임
         userName = intent.getStringExtra("loginID");
-        ID=intent.getStringExtra("code");
+        ID=intent.getIntExtra("code",-1);
+        step = intent.getStringExtra("step");
         try {
-            outstream.writeUTF("-1 "+String.valueOf(ID));
+            if(ID==-1){
+                outstream.writeUTF("-1");
+            }else{
+                outstream.writeUTF("-1 "+String.valueOf(ID));
+            }
             outstream.flush();
-            ID=instream.readUTF();
+            ID=instream.readInt();
         } catch(Exception e) {
             e.printStackTrace();
         }
+
+        yourwalking = findViewById(R.id.yourwalking);
+        first=findViewById(R.id.first);
+        second=findViewById(R.id.second);
+        third=findViewById(R.id.third);
+
+        yourwalking.setText(step + " 걸음 걸었습니다!");
+       /* 서버에서 1등 2등 3등 아이디 & 걸음 수 갖고오기
+        first.setText(누가 + " 걸음 걸었습니다");
+        second.setText(누가 + " 걸음 걸었습니다");
+        third.setText(누가 + " 걸음 걸었습니다");
+         */
+
         linearLayout=findViewById(R.id.layout);
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +81,6 @@ public class GameOver extends AppCompatActivity {
         });
         /*
 
-        */
+         */
     }
 }

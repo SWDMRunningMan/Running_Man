@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
     String ID;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.9.88.141";
+    protected static String ip = "192.168.0.19";
     int port = 7777;
     String[] roomlist;
     int[] roomID, n, m;
@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
             intent = getIntent(); // login한 닉네임
             userName = intent.getStringExtra("loginID");
             ID = intent.getStringExtra("code");
-            btn1 = findViewById(R.id.searchBtn); // 방검색하기
+            btn1 = findViewById(R.id.refreshBtn); // 방검색하기
             btn2 = findViewById(R.id.roomMakeBtn); //방만들기
             btn3 = findViewById(R.id.roomEnterBtn); //방접속하기
             table = findViewById(R.id.table);
@@ -145,8 +145,8 @@ public class MainActivity extends Activity {
         }
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {       // 방찾기
-                // roomList안에 roomName 검색색
+            public void onClick(View v) {       // 새로고침
+                // 새로고침
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() {      // 방만들기

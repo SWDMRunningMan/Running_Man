@@ -4,6 +4,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.style.TabStopSpan;
@@ -102,8 +105,8 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.seeker);
 
-      /*
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
+
+       /* StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
         try {
             sock= new Socket(ip, port);
             outstream = new DataOutputStream(sock.getOutputStream());
@@ -120,8 +123,8 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
             ID = instream.readUTF();
         } catch (Exception e) {
             e.printStackTrace();
-        }        */
-
+        }
+*/
         /*게임진행
            걸음수 기록
            중간에 사진 불러오기
@@ -199,7 +202,7 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
                             }
                         });
                         window.update();
-                        window .showAtLocation(table111,Gravity.CENTER,0,0);
+                        window .showAtLocation(table111,Gravity.CENTER,0,50);
                         // 사진을 유저껄로 바꿔야함
                     }
                 });
@@ -219,11 +222,13 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
         dd.start();
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        enableBluetooth();
-        //myMacAddress = BluetoothAdapter.getDefaultAdapter().getAddress(); //자신의 맥주소
+
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,600); // 나중에 min*60+sec으로 바꿔야할듯
+        startActivity(discoverableIntent);
+
        myMacAddress= android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
         //Toast.makeText(getApplicationContext(),myMacAddress,Toast.LENGTH_SHORT).show();
-
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter.isEnabled()) {
@@ -246,79 +251,6 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
         mNfcAdapter.setNdefPushMessageCallback(this,this);
     }
 
-     /*   private void init() {
-            _pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-            IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-            try {
-                ndefDetected.addDataType(_MIME_TYPE);
-            } catch (IntentFilter.MalformedMimeTypeException e) {
-                Log.e(this.toString(), e.getMessage());
-            }
-            _readIntentFilters = new IntentFilter[]{ndefDetected};
-        }*/
-      /*  protected void onResume () {
-            super.onResume();
-            enableNdefExchangeMode();
-            enableTagWriteMode();
-        }*/
-   /*     private void enableNdefExchangeMode () {
-           // mNfcAdapter.setNdefPushMessageCallback(_getNdefMessage(),this);
-            mNfcAdapter.enableForegroundDispatch(this, _pendingIntent, _readIntentFilters, null);
-        }*/
-     /*   private void enableTagWriteMode () {
-            IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
-            _writeIntentFilters = new IntentFilter[]{tagDetected};
-            mNfcAdapter.enableForegroundDispatch(this, _pendingIntent, _writeIntentFilters, null);
-        }*/
-   /* protected void onNewIntent(Intent intent)
-    {
-        super.onNewIntent(intent);
-
-        _intent = intent;
-
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()))
-        {
-            _writeMessage();
-        }
-
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
-        {
-            _writeMessage();
-        }
-    }
-
-    private NdefMessage _getNdefMessage()
-    {
-        String stringMessage = myMacAddress;
-
-        NdefMessage message = NFCUtils.getNewMessage(_MIME_TYPE, stringMessage.getBytes());
-
-        return message;
-    }
-    private void _writeMessage()
-    {
-        Tag detectedTag = _intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
-        if (NFCUtils.writeMessageToTag(_getNdefMessage(), detectedTag))
-        {
-            Toast.makeText(this, "Successfully wrote message to NFC tag", Toast.LENGTH_LONG).show();
-        } else
-        {
-            Toast.makeText(this, "Write failed", Toast.LENGTH_LONG).show();
-        }
-    }
-*/
-
-    public void enableBluetooth(){
-        if(btAdapter.isEnabled()){
-            //블루투스 켜져있음
-            //Toast.makeText(this,"켜져있음",Toast.LENGTH_LONG).show();
-        }else{
-            //Toast.makeText(this,"켜야함",Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivity(intent);
-        }
-    }
     public NdefMessage createNdefMessage(NfcEvent event){
         String text=myMacAddress;
         NdefMessage msg = new NdefMessage(new NdefRecord[]{
@@ -397,6 +329,7 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
         Intent intent1=new Intent(getApplicationContext(),GameOver.class);
         intent1.putExtra("userName",userName);
         intent1.putExtra("code",ID);
+        intent1.putExtra("step",step);
         startActivity(intent1);*/
 
             // step 서버에 보내기

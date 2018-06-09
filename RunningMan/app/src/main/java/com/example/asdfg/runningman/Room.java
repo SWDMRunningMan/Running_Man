@@ -1,6 +1,5 @@
 package com.example.asdfg.runningman;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -22,6 +21,9 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import static android.view.View.VISIBLE;
+
+
 
 public class Room extends AppCompatActivity {
     TextView setRoomName;
@@ -34,7 +36,7 @@ public class Room extends AppCompatActivity {
     int rID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.9.88.33";
+    protected static String ip ="192.168.0.19";
     int port = 7777;
     String userName;
     String RoomName ;
@@ -176,22 +178,12 @@ public class Room extends AppCompatActivity {
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    Log.v("M", "103");
-                    outstream.writeUTF("103 " + String.valueOf(rID) + " " + String.valueOf(ID));
-                    outstream.flush();
-                    Log.v("M", "100");
-                    outstream.writeUTF("100 " + String.valueOf(rID) + " " + String.valueOf(ID));
-                    outstream.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 finish();
             }
         });
-    /*
-     * thread로 유저목록 실시간으로 불러오기
-     */
+        /*
+         * thread로 유저목록 실시간으로 불러오기
+         */
 
     }
     class MyThread extends Thread {

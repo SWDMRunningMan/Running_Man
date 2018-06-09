@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -27,7 +28,7 @@ public class Login extends AppCompatActivity {
     BluetoothAdapter btAdapter;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.55.4";
+    protected static String ip =  "192.168.0.19";  // 학교와이파이만 가능
     int port = 7777;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +38,10 @@ public class Login extends AppCompatActivity {
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         try {
-             ID = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");//자신의 맥주소
+            ID = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");//자신의 맥주소
+           // Toast.makeText(getApplicationContext(),""+ID,Toast.LENGTH_SHORT).show();
         }catch (Exception e){
-           // ID="8C:8E:F2:33:B7:09";
+            //ID="8C:8E:F2:33:B7:09";
         }
 
         try {

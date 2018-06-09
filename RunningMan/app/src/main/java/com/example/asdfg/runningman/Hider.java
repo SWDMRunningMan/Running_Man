@@ -1,5 +1,6 @@
 package com.example.asdfg.runningman;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -27,6 +28,7 @@ import android.os.Parcelable;
 import android.os.StrictMode;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -69,7 +71,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
     String ID;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip =  "192.9.88.141";
+    protected static String ip =  "192.168.0.19";
     private PendingIntent _pendingIntent;
     private IntentFilter[] _readIntentFilters;
     private IntentFilter[] _writeIntentFilters;
@@ -191,9 +193,14 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
         // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(broadcastReceiver, filter);
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION},5);
+
+
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        myMacAddress = btAdapter.getAddress(); //자신의 맥주소
+        myMacAddress = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");; //자신의 맥주소
 
         enableBluetooth();
         doDiscovery();
@@ -267,7 +274,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
                            }
                        });
                        window.update();
-                       window .showAtLocation(tableLayout,Gravity.CENTER,0,0);
+                       window .showAtLocation(tableLayout,Gravity.CENTER,0,50);
                        // 사진을 유저껄로 바꿔야함
                    }
                });
@@ -347,8 +354,9 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
 
       /*  if(msgs.get(0)==seekerMacAddress)  // msgs.get(0) == nfc로 전해받은 상대의 맥주소
              아웃!
+             btAdapter.cancelDiscovery();
         */
-        Toast.makeText(this, "Message : " + msgs.get(0), Toast.LENGTH_LONG).show();
+       // Toast.makeText(this, "Message : " + msgs.get(0), Toast.LENGTH_LONG).show();
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -478,6 +486,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
                     Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(2000);
                 }
+                Toast.makeText(getApplicationContext(),device.getName() + "\n"+device.getAddress(),Toast.LENGTH_SHORT).show();
             }//검색이 끝나면
             else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
             {
@@ -516,7 +525,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
                             button.setVisibility(VISIBLE);
                             button.setText(20 - (count % chance) + "초안에 사진을 보내세요");
                         } else
-                          ;//  button.setVisibility(GONE);
+                             button.setVisibility(GONE);
 
                     }
                 });
@@ -528,7 +537,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
             Intent intent2=new Intent(getApplicationContext(),GameOver.class);
             intent2.putExtra("userName",userName);
             intent2.putExtra("code",ID);
-
+            intent2.putExtra("step",step);
             // step 서버에 보내기
             startActivity(intent2);
 
