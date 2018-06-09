@@ -37,9 +37,9 @@ public class Login extends AppCompatActivity {
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         try {
-            ID = btAdapter.getAddress();//자신의 맥주소
+             ID = android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");//자신의 맥주소
         }catch (Exception e){
-            ID="8C:8E:F2:33:B7:09";
+           // ID="8C:8E:F2:33:B7:09";
         }
 
         try {
