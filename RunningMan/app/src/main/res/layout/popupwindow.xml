@@ -17,12 +17,12 @@
     android:padding="10dp"
     android:layout_gravity="center"
     android:textSize="25sp"
-    android:text="Make Room"
+    android:text="방 만들기"
     android:id="@+id/textMake" />
     <ImageView
         android:layout_width="150dp"
         android:layout_height="50dp"
-        android:src="@drawable/empty"
+        android:src="@drawable/runningman_logo"
         android:scaleType="fitXY"/>
 </LinearLayout>
 
