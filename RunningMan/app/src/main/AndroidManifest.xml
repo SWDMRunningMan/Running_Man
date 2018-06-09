@@ -9,7 +9,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.NFC" />
-    <uses-feature android:name="android:hardware.nfc"/>
+
+    <uses-feature android:name="android:hardware.nfc"
+        android:required="true"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,7 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:screenOrientation="portrait">
-        <activity android:name=".Hider"
+        <activity android:name=".Seeker"
+            android:screenOrientation="portrait"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,17 +31,23 @@
             </intent-filter>
         </activity>
         <activity android:name=".Room"
+            android:screenOrientation="portrait"
             />
         <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"
             />
         <activity android:name=".FindRoom"
+            android:screenOrientation="portrait"
             />
         <activity android:name=".GameOver"
+            android:screenOrientation="portrait"
             />
-        <activity android:name="Login">
+        <activity android:name="Login"
+            android:screenOrientation="portrait">
 
         </activity>
-        <activity android:name=".Seeker">
+        <activity android:name=".Hider"
+            android:screenOrientation="portrait">
 
         </activity>
     </application>
