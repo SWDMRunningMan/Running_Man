@@ -2,9 +2,12 @@ package com.example.asdfg.runningman;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -15,12 +18,15 @@ import android.hardware.SensorManager;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.style.TabStopSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,38 +58,46 @@ import android.nfc.NfcEvent;
 
 import static android.view.View.VISIBLE;
 
-public class Seeker extends AppCompatActivity implements CreateNdefMessageCallback,SensorEventListener{
+public class Seeker extends AppCompatActivity implements CreateNdefMessageCallback,SensorEventListener {
     Socket sock;
     String ID;
     DataOutputStream outstream;
     DataInputStream instream;
     protected static String ip = "192.168.0.19";
-    int port = 7777,step=0,min,sec=0,chance,alive=4,count=0;
+    int port = 7777, step = 0, min, sec = 0, chance, alive = 4, count = 0;
     PopupWindow window;
     Intent intent;
     String userName;
     TableLayout table111;
     LinearLayout linearLayout;
-    TextView text1,restTime;
+    TextView text1, restTime;
     Button nameTag;
-    View temp,temp2;
+    View temp, temp2;
     Handler handler;
+    BluetoothAdapter btAdapter;
+    String myMacAddress;
     ImageButton[] tempImage = new ImageButton[10];
     ImageButton bigSize;
-    public static final int TYPE_TEXT=1;
+    public static final int TYPE_TEXT = 1;
+    private PendingIntent _pendingIntent;
+    private IntentFilter[] _readIntentFilters;
+    private IntentFilter[] _writeIntentFilters;
+    private Intent _intent;
+    private final String _MIME_TYPE = "text/plain";
     private NfcAdapter mNfcAdapter;
     private long lastTime;
     private float speed;
     private float lastX;
     private float lastY;
     private float lastZ;
-    private float x,y,z;
+    private float x, y, z;
     private static final int SHAKE_THRESHOLD = 800;
     private static final int DATA_X = SensorManager.DATA_X;
     private static final int DATA_Y = SensorManager.DATA_Y;
     private static final int DATA_Z = SensorManager.DATA_Z;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.seeker);
@@ -116,14 +130,14 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
            시간종료시 종료
          */
         restTime = findViewById(R.id.restTime);
-        table111 = (TableLayout)findViewById(R.id.table111);
-        text1=findViewById(R.id.text1);
+        table111 = (TableLayout) findViewById(R.id.table111);
+        text1 = findViewById(R.id.text1);
 
         // text1.setText("술래 이름");
 
         handler = new Handler();
 
-        for(int i=0;i<(6+1)/2;i++) { // i<(Integer.valueOf(hiderNum)+1)/2
+        for (int i = 0; i < (6 + 1) / 2; i++) { // i<(Integer.valueOf(hiderNum)+1)/2
             TableRow tempRow = new TableRow(Seeker.this);
             tempRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
             for (int j = 0; j < 2; j++) {
@@ -136,17 +150,17 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
                 nameTag.setLayoutParams(new TableRow.LayoutParams(450, 150));
                 nameTag.setGravity(Gravity.CENTER);
                 nameTag.setTextSize(20);
-                nameTag.setBackgroundColor(Color.argb(0,255,255,255));
+                nameTag.setBackgroundColor(Color.argb(0, 255, 255, 255));
                 nameTag.setTypeface(null, Typeface.BOLD_ITALIC);
                 nameTag.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         AlertDialog.Builder dd = new AlertDialog.Builder(Seeker.this);
                         dd.setTitle("신고");
-                        dd.setMessage(nameTag.getText().toString()+ "님을 신고하시겠습니까?"); //
-                        dd.setNegativeButton("아니오",null);
-                        dd.setPositiveButton("예",new DialogInterface.OnClickListener(){
-                            public void onClick(DialogInterface dialog,int whichButton){
+                        dd.setMessage(nameTag.getText().toString() + "님을 신고하시겠습니까?"); //
+                        dd.setNegativeButton("아니오", null);
+                        dd.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
                                 // 신고하면 유저들에게 뿌려주기
                             }
                         });
@@ -162,14 +176,14 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
                 temp2.setBackgroundColor(Color.argb(255, 255, 255, 255));
                 temp2.setLayoutParams(new ViewGroup.LayoutParams(450, 10));
 
-                tempImage[i*2+j] = new ImageButton(this);
-                tempImage[i*2+j].setBackgroundColor(Color.argb(0,255,255,255));
-                tempImage[i*2+j].setLayoutParams(new ViewGroup.LayoutParams(450, 500));
+                tempImage[i * 2 + j] = new ImageButton(this);
+                tempImage[i * 2 + j].setBackgroundColor(Color.argb(0, 255, 255, 255));
+                tempImage[i * 2 + j].setLayoutParams(new ViewGroup.LayoutParams(450, 500));
                 //(i*2+j) index hider의 사진 get
-               final Drawable myImage = getResources().getDrawable(R.drawable.empty); // 처음엔 empty 나중엔 유저의사진
-                tempImage[i*2+j].setImageDrawable(myImage);
-                tempImage[i*2+j].setScaleType(ImageView.ScaleType.FIT_XY);
-                tempImage[i*2+j].setOnClickListener(new View.OnClickListener() {
+                final Drawable myImage = getResources().getDrawable(R.drawable.empty); // 처음엔 empty 나중엔 유저의사진
+                tempImage[i * 2 + j].setImageDrawable(myImage);
+                tempImage[i * 2 + j].setScaleType(ImageView.ScaleType.FIT_XY);
+                tempImage[i * 2 + j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         final View popupView = getLayoutInflater().inflate(R.layout.biggersize, null);
@@ -185,31 +199,128 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
                             }
                         });
                         window.update();
-                        window.showAsDropDown(table111, 20, 200);
+                        window .showAtLocation(table111,Gravity.CENTER,0,0);
                         // 사진을 유저껄로 바꿔야함
                     }
                 });
 
                 linearLayout.addView(nameTag);
                 linearLayout.addView(temp);
-                linearLayout.addView(tempImage[i*2+j]);
+                linearLayout.addView(tempImage[i * 2 + j]);
                 linearLayout.addView(temp2);
                 linearLayout.setGravity(Gravity.CENTER);
                 tempRow.addView(linearLayout);
             }
             table111.addView(tempRow);
         }
-        min=5; chance=30;
+        min = 5;
+        chance = 30;
         MyThread dd = new MyThread();
         dd.start();
 
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        enableBluetooth();
+        //myMacAddress = BluetoothAdapter.getDefaultAdapter().getAddress(); //자신의 맥주소
+       myMacAddress= android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
+        //Toast.makeText(getApplicationContext(),myMacAddress,Toast.LENGTH_SHORT).show();
+
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (mNfcAdapter.isEnabled()) {
+            // nfc on
+        } else { // nfc off
+            AlertDialog.Builder ad = new AlertDialog.Builder(this);
+            ad.setTitle("NFC Connection Error");
+            ad.setMessage("NFC를 키시겠습니까?");
+            ad.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichbutton) {
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
+                    } else {
+                        startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                    }
+                }
+            });
+            ad.show();
+        }
         mNfcAdapter.setNdefPushMessageCallback(this,this);
     }
 
+     /*   private void init() {
+            _pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+            IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+            try {
+                ndefDetected.addDataType(_MIME_TYPE);
+            } catch (IntentFilter.MalformedMimeTypeException e) {
+                Log.e(this.toString(), e.getMessage());
+            }
+            _readIntentFilters = new IntentFilter[]{ndefDetected};
+        }*/
+      /*  protected void onResume () {
+            super.onResume();
+            enableNdefExchangeMode();
+            enableTagWriteMode();
+        }*/
+   /*     private void enableNdefExchangeMode () {
+           // mNfcAdapter.setNdefPushMessageCallback(_getNdefMessage(),this);
+            mNfcAdapter.enableForegroundDispatch(this, _pendingIntent, _readIntentFilters, null);
+        }*/
+     /*   private void enableTagWriteMode () {
+            IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+            _writeIntentFilters = new IntentFilter[]{tagDetected};
+            mNfcAdapter.enableForegroundDispatch(this, _pendingIntent, _writeIntentFilters, null);
+        }*/
+   /* protected void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+
+        _intent = intent;
+
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()))
+        {
+            _writeMessage();
+        }
+
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
+        {
+            _writeMessage();
+        }
+    }
+
+    private NdefMessage _getNdefMessage()
+    {
+        String stringMessage = myMacAddress;
+
+        NdefMessage message = NFCUtils.getNewMessage(_MIME_TYPE, stringMessage.getBytes());
+
+        return message;
+    }
+    private void _writeMessage()
+    {
+        Tag detectedTag = _intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+        if (NFCUtils.writeMessageToTag(_getNdefMessage(), detectedTag))
+        {
+            Toast.makeText(this, "Successfully wrote message to NFC tag", Toast.LENGTH_LONG).show();
+        } else
+        {
+            Toast.makeText(this, "Write failed", Toast.LENGTH_LONG).show();
+        }
+    }
+*/
+
+    public void enableBluetooth(){
+        if(btAdapter.isEnabled()){
+            //블루투스 켜져있음
+            //Toast.makeText(this,"켜져있음",Toast.LENGTH_LONG).show();
+        }else{
+            //Toast.makeText(this,"켜야함",Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivity(intent);
+        }
+    }
     public NdefMessage createNdefMessage(NfcEvent event){
-        String text="맥 주소는 뭐야";
+        String text=myMacAddress;
         NdefMessage msg = new NdefMessage(new NdefRecord[]{
                 createMimeRecord("mac address",text.getBytes())});
         return msg;

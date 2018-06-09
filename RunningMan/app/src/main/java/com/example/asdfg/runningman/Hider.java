@@ -1,5 +1,7 @@
 package com.example.asdfg.runningman;
 
+import android.app.ActionBar;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -17,6 +19,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -32,9 +35,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.PermissionRequest;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -46,6 +51,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -55,13 +61,20 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorListener;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
 public class Hider extends AppCompatActivity implements SensorEventListener {
     Socket sock;
     private static final String TAG = "BT";
+    PopupWindow window;
     String ID;
     DataOutputStream outstream;
     DataInputStream instream;
     protected static String ip =  "192.9.88.141";
+    private PendingIntent _pendingIntent;
+    private IntentFilter[] _readIntentFilters;
+    private IntentFilter[] _writeIntentFilters;
+    private Intent _intent;
+    private final String _MIME_TYPE = "text/plain";
     int port = 7777;
     Intent intent;
     String userName;
@@ -74,6 +87,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
     ScrollView scrollView;
     TableLayout tableLayout;
     LinearLayout linearLayout;
+    ImageButton bigSize;
     ImageButton[] tempImage = new ImageButton[10];
     View temp,temp2;
     private String imagePath;
@@ -82,6 +96,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
     String [] scannedDeviceAddress = new String[1000];
     String myMacAddress;
     String seekerMacAddress ="1C:AF:05:94:64:B2";
+    NfcAdapter mNfcAdapter;
     private long lastTime;
     private float speed;
     private float lastX;
@@ -131,6 +146,28 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);//센서 메니저를 생성
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);//센서 객체를 형성
 
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if(mNfcAdapter.isEnabled()) {
+            // nfc on
+        }
+        else{ // nfc off
+            AlertDialog.Builder ad = new AlertDialog.Builder(this);
+            ad.setTitle("NFC Connection Error");
+            ad.setMessage("NFC를 키시겠습니까?");
+            ad.setPositiveButton("OK",new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog,int whichbutton){
+                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN){
+                        startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
+                    }
+                    else{
+                        startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                    }
+                }
+            });
+            ad.show();
+        }
+        init();
+      /*
         // 받은 인텐트의 인스턴스를 취득한다
         Intent intent = getIntent();
         // 인텐트 액션이 ACTION_NDEF_DISCOVERED인 경우에 실행한다
@@ -146,7 +183,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
             String text = new String(msg.getRecords()[0].getPayload());
             Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
         }
-
+*/
         // Register for broadcasts when a device is discovered 블루투스
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.registerReceiver(broadcastReceiver, filter);
@@ -211,9 +248,29 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
                  tempImage[i*2+j].setBackgroundColor(Color.argb(0,255,255,255));
                  tempImage[i*2+j].setLayoutParams(new ViewGroup.LayoutParams(450, 500));
                  //(i*2+j) index hider의 사진 get
-                 Drawable myImage = getResources().getDrawable(R.drawable.empty);
+                 final Drawable myImage = getResources().getDrawable(R.drawable.empty);  // 처음엔 empty 나중엔 유저의사진
                  tempImage[i*2+j].setImageDrawable(myImage);
                tempImage[i*2+j].setScaleType(ImageView.ScaleType.FIT_XY);
+               tempImage[i * 2 + j].setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View view) {
+                       final View popupView = getLayoutInflater().inflate(R.layout.biggersize, null);
+                       window = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                       window.setAnimationStyle(-1);
+                       window.setFocusable(true);
+                       bigSize = popupView.findViewById(R.id.p1ID);
+                       bigSize.setImageDrawable(myImage);
+                       bigSize.setOnClickListener(new View.OnClickListener() {
+                           @Override
+                           public void onClick(View view) {
+                               window.dismiss();
+                           }
+                       });
+                       window.update();
+                       window .showAtLocation(tableLayout,Gravity.CENTER,0,0);
+                       // 사진을 유저껄로 바꿔야함
+                   }
+               });
                 linearLayout.addView(nameTag);
                  linearLayout.addView(temp);
                 linearLayout.addView(tempImage[i*2+j]);
@@ -245,7 +302,54 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
             }
         });
     }
+    private void init(){
+        _pendingIntent = PendingIntent.getActivity(this,0,new Intent(this,getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
+        IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        try{
+            ndefDetected.addDataType(_MIME_TYPE);
+        }catch(IntentFilter.MalformedMimeTypeException e){
+         Log.e(this.toString(),e.getMessage());
+        }
+        _readIntentFilters = new IntentFilter[]{ndefDetected};
+    }
+    protected void onResume(){
+        super.onResume();
+        enableNdefExchangeMode();
+        enableTagWriteMode();
+    }
+    private void enableNdefExchangeMode(){
+       // mNfcAdapter.setNdefPushMessageCallback(_getNdefMessage(),this);
+        mNfcAdapter.enableForegroundDispatch(this,_pendingIntent,_readIntentFilters,null);
+    }
+    private void enableTagWriteMode(){
+        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+        _writeIntentFilters = new IntentFilter[]{tagDetected};
+        mNfcAdapter.enableForegroundDispatch(this,_pendingIntent,_writeIntentFilters,null);
+    }
+    protected void onNewIntent(Intent intent){
+        super.onNewIntent(intent);
 
+        _intent = intent;
+
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()))
+        {
+            _readMessage();
+        }
+
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
+        {
+            _readMessage();
+        }
+    }
+    private void _readMessage()
+    {
+        List<String> msgs = NFCUtils.getStringsFromNfcIntent(_intent);
+
+      /*  if(msgs.get(0)==seekerMacAddress)  // msgs.get(0) == nfc로 전해받은 상대의 맥주소
+             아웃!
+        */
+        Toast.makeText(this, "Message : " + msgs.get(0), Toast.LENGTH_LONG).show();
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // 서버에전달
@@ -266,7 +370,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
           tempImage[0].setImageBitmap(rotated); // index 바꾸기
           // rotated 서버에 전송
       }catch(Exception e){e.printStackTrace();}
-        Toast.makeText(getApplicationContext(), "" + (bitmap.getWidth()), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "" + (bitmap.getWidth()), Toast.LENGTH_SHORT).show();
 
     }
     public int exifOrientationToDegrees(int exifOrientation){
