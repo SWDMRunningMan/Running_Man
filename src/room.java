@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 public class room {
 	public int count=0;
+	public int isStart=0;
 	private  ArrayList<String> user=new  ArrayList<String>();
 	private  ArrayList<Socket> usersc=new  ArrayList<Socket>();
 	private  ArrayList<String> userid=new  ArrayList<String>();
@@ -165,5 +166,8 @@ public class room {
 	}
 	public void deleteUsersc(int i) {
 		usersc.remove(i);
+	}
+	public void deleteUserid(int i) {
+		userid.remove(i);
 	}
 }

@@ -69,8 +69,9 @@ public class server {
 					if(msg==null) {
 						return;
 					}
-					String str[]=msg.split(" ");
-					if(str[0].equals("-1")) {
+				String str[]=msg.split(" ");
+
+				if(str[0].equals("-1")) {
 						if(str.length>1) {
 							System.out.println(str[1]);
 							if(str.length==3) {
@@ -162,6 +163,7 @@ public class server {
 						System.out.println(msg);
 						System.out.println("room list ");
 						String[] S=R.roomList();
+						
 						dos.writeInt(S.length);
 						dos.flush();
 						for(int i=0;i<S.length;i++) {
@@ -182,9 +184,10 @@ public class server {
 							if(S != null){
 								d.writeInt(300);
 								d.flush();
-								System.out.println("데이터 전송");
+								System.out.println("게임시작");
 							}
 						}
+						R.gameStart(Integer.valueOf(str[1]));
 					}else if(str[0].equals("400")) {//사진전송
 						System.out.println(msg);
 						System.out.println("picture send ");
@@ -207,16 +210,13 @@ public class server {
 								for(int i=0;i<size;i++) {
 									d.writeByte(data[i]);
 								}
-								System.out.println("데이터 전송");
+								System.out.println("사진 전송");
 							}
 						}
 					}else if(str[0].equals("500")) {//게임끝
 						System.out.println(msg);
 						System.out.println("game end ");
 						room Room= R.inform(Integer.valueOf(str[1]));
-						int size=Room.getNum();
-						int count=Room.count;
-						if(count==size) {
 						Iterator<Socket> iter=Room.userscList().iterator();
 							while(iter.hasNext()){
 								Socket S = (Socket)iter.next();
@@ -225,14 +225,37 @@ public class server {
 								if(S != null){
 									d.writeInt(500);
 									d.flush();
+								System.out.println("게임 종료");
+								}
+							}
+						}
+					else if(str[0].equals("501")) {//걸음수 전달
+						System.out.println(msg);
+						System.out.println("game end ");
+						room Room= R.inform(Integer.valueOf(str[1]));
+						int size=Room.getNum();
+						int count=Room.count;
+						int feet=dis.readInt();
+						R.setFeet(Integer.valueOf(str[1]),str[2],feet);
+						if(count==size) {
+						Iterator<Socket> iter=Room.userscList().iterator();
+							while(iter.hasNext()){
+								Socket S = (Socket)iter.next();
+								OutputStream o=S.getOutputStream();
+								DataOutputStream d =new DataOutputStream(o);
+								if(S != null){
+									d.writeInt(501);
+									d.flush();
 									d.writeInt(size);
 									d.flush();
-									for(int i=0;i<size;i++) {
+  								    for(int i=0;i<size;i++) {
 										d.writeInt(Room.feetList().get(i));
 									}
+  								    
 								System.out.println("데이터 전송");
 								}
 							}
+							R.gameOver(Integer.valueOf(str[1]));
 						}
 					}
 				}
