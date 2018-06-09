@@ -1,7 +1,6 @@
 package com.example.asdfg.runningman;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -87,58 +86,6 @@ public class MainActivity extends Activity {
             roomID = new ArrayList <Integer>();
             n = new ArrayList <Integer>();
             m = new ArrayList <Integer>();
-            for (i = 0; i < size; i++) {
-                String[] str = instream.readUTF().split(" ");
-                Log.v("M", str[0] + " " + str[1] + " " + str[2] + " " + str[3]);
-                roomID.add(Integer.valueOf(str[0]));
-                roomlist.add(str[1]);
-                n.add(Integer.valueOf(str[2]));
-                m.add(Integer.valueOf(str[3]));
-            }
-
-            for (i = 0; i < size; i++) {
-                final int num=i;
-                tableRow = new TableRow(this);
-                tableRow.setLayoutParams(new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                no = new TextView(this);
-                rn = new TextView(this);
-                player = new TextView(this);
-                tableRow.setBackgroundColor(Color.argb(170, 255, 255, 255));
-                no.setTextColor(Color.parseColor("#ff000000"));
-                no.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
-                no.setHeight(90);
-                no.setGravity(Gravity.CENTER);
-                no.setPadding(1, 1, 1, 1);
-                no.setText(String.valueOf(i + 1));
-                rn.setTextColor(Color.parseColor("#ff000000"));
-                rn.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
-                rn.setHeight(90);
-                rn.setGravity(Gravity.CENTER);
-                rn.setPadding(1, 1, 1, 1);
-                rn.setText(roomlist.get(i));
-                player.setTextColor(Color.parseColor("#ff000000"));
-                player.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
-                player.setHeight(90);
-                player.setGravity(Gravity.CENTER);
-                player.setPadding(1, 1, 1, 1);
-                player.setText(n.get(i) + "/" + m.get(i));
-
-                temp = new View(this);
-                temp.setBackgroundColor(Color.parseColor("#44000000"));
-                temp.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-
-                tableRow.addView(no);
-                tableRow.addView(rn);
-                tableRow.addView(player);
-                tableRow.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View view) {
-                        index = num;
-                    }
-                });
-                table.addView(tableRow);
-                table.addView(temp);
-
-            }
             handler = new Handler();
             final MyThread thread = new MyThread(sock);
             thread.start();
@@ -236,13 +183,11 @@ public class MainActivity extends Activity {
                                 intent1.putExtra("rID", i);
                                 outstream.writeUTF("1 " + String.valueOf(ID) + " " + userName + " " + String.valueOf(i) + " " + room + " " + pNum + " " + sNum + " " + String.valueOf(t) + " " + String.valueOf(c));
                                 outstream.flush();
-                                outstream.close();
-                                instream.close();
-                                sock.close();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             startActivity(intent1);
+                            finish();
                             window.dismiss();
                         }
                     }
@@ -327,6 +272,7 @@ public class MainActivity extends Activity {
                         handler.post(new Runnable() {
                             public void run() {
                                 Log.v("M", "run");
+                                table.removeAllViews();
                                 for (i = 0; i < size; i++) {
                                     final int num=i;
                                     tableRow = new TableRow(MainActivity.this);
