@@ -8,11 +8,11 @@
     <LinearLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_margin="10dp"
+        android:layout_margin="30dp"
         android:background="#99ffffff"
         android:padding="5dp">
         <TextView
@@ -23,22 +23,23 @@
             android:textStyle="italic|bold"
             android:gravity="center"
             android:paddingTop="30dp"
-            android:text="Game Over"
+            android:text="게임 종료"
             />
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:id="@+id/text2"
+            android:id="@+id/yourwalking"
             android:textSize="30sp"
             android:textStyle="italic|bold"
             android:gravity="center"
             android:paddingTop="30dp"
-            android:text="You walked :  984 feets~"
+            android:text="몇 걸음 걸으셨습니다."
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1. Hong : 1342 feets"
+            android:id="@+id/first"
             android:textSize="30sp"
             android:textStyle="italic|bold"
             android:layout_gravity="center"
@@ -47,6 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="2. Yea : 984 feets"
+            android:id="@+id/second"
             android:textSize="30sp"
             android:textStyle="italic|bold"
             android:layout_gravity="center"
@@ -56,6 +58,7 @@
             android:layout_height="wrap_content"
             android:text="3. Son : 792 feets"
             android:textSize="30sp"
+            android:id="@+id/third"
             android:textStyle="italic|bold"
             android:layout_gravity="center"
             android:paddingTop="30dp"
