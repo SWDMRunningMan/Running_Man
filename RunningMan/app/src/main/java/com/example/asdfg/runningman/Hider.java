@@ -124,7 +124,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
            확인누르면 UI변경
            시간종료시 종료
          */
-        /*
+        
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
         try {
             sock= new Socket(ip, port);
@@ -143,7 +143,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
             ID=instream.readUTF();
         } catch(Exception e) {
             e.printStackTrace();
-        }*/
+        }
 
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);//센서 메니저를 생성
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);//센서 객체를 형성
@@ -169,23 +169,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
             ad.show();
         }
         init();
-      /*
-        // 받은 인텐트의 인스턴스를 취득한다
-        Intent intent = getIntent();
-        // 인텐트 액션이 ACTION_NDEF_DISCOVERED인 경우에 실행한다
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-            // 받은 인텐트에서 Ndef 메시지를 취득한다
-            Parcelable[] rawMsgs = intent
-                    .getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 
-            // Android Beam에서는 한 번에 한 개의 메시지만 송수신 가능
-            NdefMessage msg = (NdefMessage) rawMsgs[0];
-
-            // 첫 번째 레코드에 MIME데이터가 포함된다
-            String text = new String(msg.getRecords()[0].getPayload());
-            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-        }
-*/
         // Register for broadcasts when a device is discovered 블루투스
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.registerReceiver(broadcastReceiver, filter);
@@ -486,7 +470,7 @@ public class Hider extends AppCompatActivity implements SensorEventListener {
                     Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(2000);
                 }
-                Toast.makeText(getApplicationContext(),device.getName() + "\n"+device.getAddress(),Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(getApplicationContext(),device.getName() + "\n"+device.getAddress(),Toast.LENGTH_SHORT).show();
             }//검색이 끝나면
             else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
             {
