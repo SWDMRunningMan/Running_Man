@@ -2,7 +2,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util. ArrayList;
+import java.util.ArrayList;
 
 public class roomhandler{
 	private ArrayList<room> Room=new  ArrayList<room>();
@@ -34,11 +34,13 @@ public class roomhandler{
 		if(i!=-1) {
 			Room.get(I).deleteSeeker(i);
 			Room.get(I).deleteSeekersc(i);
+			Room.get(I).deleteSeeker2(i);
 		}
 		i=R.findUserH(id);
 		if(i!=-1) {
 			Room.get(I).deleteHider(i);
 			Room.get(I).deleteHidersc(i);
+			Room.get(I).deleteHider2(i);
 		}
 		i=R.findUser(id);
 		if(i==-1)
@@ -148,9 +150,12 @@ public class roomhandler{
 			return false;
 		}else if(Room.get(i).getNumS()!=Room.get(i).seekerList().size()){
 			int index=Room.get(i).findUserH(id);
-			if(index!=-1)	
+			if(index!=-1) {
 				Room.get(i).deleteHider(index);
+				Room.get(i).deleteHider2(index);
+			}
 			Room.get(i).addSeeker(id);
+			Room.get(i).addSeeker2(id);
 			int j=Room.get(i).findUserS(id);
 			Room.get(i).addSeekersc(j,sc);
 			return true;
@@ -163,9 +168,12 @@ public class roomhandler{
 			return false;
 		}else if(Room.get(i).getNumH()!=Room.get(i).hiderList().size()){
 			int index=Room.get(i).findUserS(id);
-			if(index!=-1)	
+			if(index!=-1)	{
 				Room.get(i).deleteSeeker(index);
+				Room.get(i).deleteSeeker2(index);
+			}
 			Room.get(i).addHider(id);
+			Room.get(i).addHider2(id);
 			int j=Room.get(i).findUserH(id);
 			Room.get(i).addHidersc(j,sc);
 			return true;
@@ -181,11 +189,13 @@ public class roomhandler{
 			int H=Room.get(i).getNumH();
 			if(Room.get(i).seekerList().size()<S) {
 				Room.get(i).addSeeker(id);
+				Room.get(i).addSeeker2(id);
 				int j=Room.get(i).findUserS(id);
 				Room.get(i).addSeekersc(j,sc);
 				return true;
 			}else if(Room.get(i).seekerList().size()<H){
 				Room.get(i).addHider(id);
+				Room.get(i).addHider2(id);
 				int j=Room.get(i).findUserH(id);
 				Room.get(i).addHidersc(j,sc);
 				return true;
@@ -228,6 +238,8 @@ public class roomhandler{
 				ArrayList<Integer> feet=Room.get(i).feetList();
 				ArrayList<String> seeker=Room.get(i).seekerList();
 				ArrayList<String> hider=Room.get(i).hiderList();
+				ArrayList<String> seeker2=Room.get(i).seeker2List();
+				ArrayList<String> hider2=Room.get(i).hider2List();
 				//인원수 seeker수 hider수
 				dos.writeUTF(String.valueOf(user.size())+" "+String.valueOf(seeker.size())+" "+String.valueOf(hider.size()));
 				dos.flush();
@@ -238,10 +250,12 @@ public class roomhandler{
 				}
 				for(int j=0;j<seeker.size();j++) {
 					dos.writeUTF(seeker.get(j));
+					//dos.writeUTF(seeker.get(j)+" "+seeker2.get(j));
 					dos.flush();
 				}
 				for(int j=0;j<hider.size();j++) {
 					dos.writeUTF(hider.get(j));
+					//dos.writeUTF(hider.get(j)+" "+hider2.get(j));
 					dos.flush();
 				}
 			} catch (Exception e) {
