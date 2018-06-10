@@ -133,6 +133,7 @@ public class server {
 						System.out.println(msg);
 						System.out.println("exit ");
 						R.remove(Integer.valueOf(str[1]), str[2],socket);
+						dos.writeInt(11);
 					}
 					else if(str[0].equals("104")) {//방접속
 						System.out.println(msg);
@@ -211,6 +212,24 @@ public class server {
 									d.writeByte(data[i]);
 								}
 								System.out.println("사진 전송");
+							}
+						}
+					}else if(str[0].equals("401")) {//잡힌거 전송
+						System.out.println(msg);
+						System.out.println("out send ");
+						room Room= R.inform(Integer.valueOf(str[1]));
+						Iterator<Socket> iter=Room.userscList().iterator();
+						while(iter.hasNext()){
+							Socket S = (Socket)iter.next();
+							OutputStream o=S.getOutputStream();
+							DataOutputStream d =new DataOutputStream(o);
+							if(S != null){
+								d.writeInt(401);
+								d.flush();
+								d.writeUTF(str[2]);
+								d.flush();
+
+								System.out.println("아웃");
 							}
 						}
 					}else if(str[0].equals("500")) {//게임끝

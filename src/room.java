@@ -10,6 +10,8 @@ public class room {
 	private  ArrayList<Integer> feet=new  ArrayList<Integer>();
 	private  ArrayList<String> seeker=new  ArrayList<String>();
 	private ArrayList<String> hider=new ArrayList<String>();
+	private  ArrayList<String> seeker2=new  ArrayList<String>();
+	private ArrayList<String> hider2=new ArrayList<String>();
 	private  ArrayList<Socket> seekersc=new  ArrayList<Socket>();
 	private ArrayList<Socket> hidersc=new ArrayList<Socket>();
 	private String owner;
@@ -76,6 +78,12 @@ public class room {
 	}
 	public  ArrayList<String> hiderList() {
 		return hider;
+	}
+	public  ArrayList<String> seeker2List() {
+		return seeker2;
+	}
+	public  ArrayList<String> hider2List() {
+		return hider2;
 	}
 	public  ArrayList<Socket> seekerscList() {
 		return seekersc;
@@ -163,6 +171,12 @@ public class room {
 	}
 	public void deleteHider(int i) {
 		hider.remove(i);
+	}
+	public void deleteSeekersc(int i) {
+		seekersc.remove(i);
+	}
+	public void deleteHidersc(int i) {
+		hidersc.remove(i);
 	}
 	public void deleteUsersc(int i) {
 		usersc.remove(i);

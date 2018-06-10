@@ -31,11 +31,15 @@ public class roomhandler{
 		int I=findRoom(rid);
 		room R=Room.get(I);
 		int i=R.findUserS(id);
-		if(i!=-1)
+		if(i!=-1) {
 			Room.get(I).deleteSeeker(i);
+			Room.get(I).deleteSeekersc(i);
+		}
 		i=R.findUserH(id);
-		if(i!=-1)
+		if(i!=-1) {
 			Room.get(I).deleteHider(i);
+			Room.get(I).deleteHidersc(i);
+		}
 		i=R.findUser(id);
 		if(i==-1)
 			return;
