@@ -1,5 +1,3 @@
-package server;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,22 +11,24 @@ public class roomhandler{
 		room R=new room(id,name,rid ,rname,n, s, t, h,sc);
 		Room.add(R);
 	}
-	//¹æ»ı¼º
+	//ë°©ìƒì„±
 	private void deleteRoom(int rid){
 		int I=findRoom(rid);
 		Room.remove(I);
 	}
-	//¹æ»èÁ¦
-	private void enterRoom(String id,String name,int rid,Socket sc) {
+	//ë°©ì‚­ì œ
+	private boolean enterRoom(String id,String name,int rid,Socket sc) {
 		int I=findRoom(rid);
-
-		Room.get(I).addUser(name);
-		Room.get(I).addUserid(id);
-		Room.get(I).addusersc(sc);
-		Room.get(I).addFeet(0);
-		sitting(rid,name, id, sc);
+		boolean b=sitting(rid,name, id, sc);
+		if(b==true) {
+			Room.get(I).addUser(name);
+			Room.get(I).addUserid(id);
+			Room.get(I).addusersc(sc);
+			Room.get(I).addFeet(0);
+		}
+		return b;
 	}
-	//À¯ÀúÀÔÀå
+	//ìœ ì €ì…ì¥
 	private void quitRoom(String id,int rid,Socket sc) {
 		int I=findRoom(rid);
 		room R=Room.get(I);
@@ -52,7 +52,7 @@ public class roomhandler{
 		Room.get(I).deleteUsersc(i);
 		Room.get(I).deleteUserid(i);
 	}
-	//À¯ÀúÅğÀå
+	//ìœ ì €í‡´ì¥
 	private int findRoom(int rid) {
 		int I=-1;
 		for(int i=0;i<Room.size();i++) {
@@ -83,8 +83,8 @@ public class roomhandler{
 		}
 		return str;
 	}
-	//¹æÃ£±â
-	//°ÔÀÓÁøÇà - °ÔÀÓÁ¾·á - °á°úÀü¼Û
+	//ë°©ì°¾ê¸°
+	//ê²Œì„ì§„í–‰ - ê²Œì„ì¢…ë£Œ - ê²°ê³¼ì „ì†¡
 	public boolean make(String id,String name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
 		if(findRoom(rid)==-1) {
 			createRoom(id,name,rid,rname ,n,s,t,h,sc);
@@ -97,8 +97,7 @@ public class roomhandler{
 		if(findRoom(rid)==-1) {
 			return false;
 		}else {
-			enterRoom(id,name,rid,sc);
-			return true;
+			return enterRoom(id,name,rid,sc);
 		}
 	}
 	public boolean remove(int rid,String id,Socket sc) {
@@ -194,7 +193,7 @@ public class roomhandler{
 				int j=Room.get(i).findUserS(id);
 				Room.get(i).addSeekersc(j,sc);
 				return true;
-			}else if(Room.get(i).seekerList().size()<H){
+			}else if(Room.get(i).hiderList().size()<H){
 				Room.get(i).addHider(id);
 				Room.get(i).addHider2(name);
 				int j=Room.get(i).findUserH(id);
@@ -243,10 +242,10 @@ public class roomhandler{
 				ArrayList<String> hider2=Room.get(i).hider2List();
 				String time=String.valueOf(Room.get(i).getTime());
 				String chance = String.valueOf(Room.get(i).getHint());
-				//ÀÎ¿ø¼ö seeker¼ö hider¼ö
+				//ì¸ì›ìˆ˜ seekerìˆ˜ hiderìˆ˜
 				dos.writeUTF(String.valueOf(user.size())+" "+String.valueOf(seeker.size())+" "+String.valueOf(hider.size()) + " " + time + " " + chance);
 				dos.flush();
-				//À¯Àú ¸ñ·Ï (ÀÌ¸§ id °ÉÀ½¼ö)
+				//ìœ ì € ëª©ë¡ (ì´ë¦„ id ê±¸ìŒìˆ˜)
 				for(int j=0;j<user.size();j++) {
 					dos.writeUTF(user.get(j)+" "+userid.get(j)+" "+String.valueOf(feet.get(j)));
 					dos.flush();
