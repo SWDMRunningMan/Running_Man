@@ -1,4 +1,4 @@
-package com.example.asdfg.runningman;
+package com.runningman.asdfg.runningman;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,6 +21,28 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Handler;
+import android.os.StrictMode;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.ArrayList;
+
 
 public class Room extends AppCompatActivity {
     TableLayout seekerTable, hiderTable;
@@ -32,7 +54,7 @@ public class Room extends AppCompatActivity {
     int rID=-1;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.0.5";
+    protected static String ip = "192.168.0.19";
     int port = 7777;
     String userName;
     String RoomName ;
@@ -52,6 +74,8 @@ public class Room extends AppCompatActivity {
     ArrayList<Integer> feet=new  ArrayList<>();
     ArrayList<String> seeker=new  ArrayList<>();
     ArrayList<String> hider=new  ArrayList<>();
+    ArrayList<String> seeker2=new  ArrayList<>();
+    ArrayList<String> hider2=new  ArrayList<>();
     int num,num_S,num_H;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +87,15 @@ public class Room extends AppCompatActivity {
             outstream = new DataOutputStream(sock.getOutputStream());
             instream = new DataInputStream(sock.getInputStream());
             Intent getIntent = getIntent();
-            userName = getIntent.getStringExtra("loginID");
+            userName = getIntent.getStringExtra("userName");
             ID = getIntent.getStringExtra("code");
             RoomName = getIntent.getStringExtra("roomName");
-            playerNum = getIntent.getIntExtra("playerNum",-1);
-            seekerNum = getIntent.getIntExtra("seekerNum",-1);
+            playerNum = Integer.parseInt(getIntent.getStringExtra("playerNum"));
+            seekerNum = Integer.parseInt(getIntent.getStringExtra("seekerNum"));
             time = getIntent.getStringExtra("time");
             chance = getIntent.getStringExtra("chance");
             owner= getIntent.getStringExtra("owner");
-            rID= getIntent.getIntExtra("rID", -1);
+            rID= Integer.parseInt(getIntent.getStringExtra("rID"));
             btn1 = findViewById(R.id.seekerButton);//seeker
             btn2 = findViewById(R.id.hiderButton);//hider
             btn3 = findViewById(R.id.startGame);//start
@@ -107,10 +131,10 @@ public class Room extends AppCompatActivity {
                 if(toggle==1) {
                     try {
                         Log.v("M", "101");
-                        outstream.writeUTF("101 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                        outstream.writeUTF("101 " + String.valueOf(rID) + " " + String.valueOf(ID) + " " + userName);
                         outstream.flush();
                         Log.v("M", "100");
-                        outstream.writeUTF("100 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                        outstream.writeUTF("100 " + String.valueOf(rID) + " " + String.valueOf(ID)+ " " + userName);
                         outstream.flush();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -127,10 +151,10 @@ public class Room extends AppCompatActivity {
                 if(toggle==0) {
                     try {
                         Log.v("M", "102");
-                        outstream.writeUTF("102 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                        outstream.writeUTF("102 " + String.valueOf(rID) + " " + String.valueOf(ID)+ " " + userName);
                         outstream.flush();
                         Log.v("M", "100");
-                        outstream.writeUTF("100 " + String.valueOf(rID) + " " + String.valueOf(ID));
+                        outstream.writeUTF("100 " + String.valueOf(rID) + " " + String.valueOf(ID)+ " " + userName);
                         outstream.flush();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -144,9 +168,9 @@ public class Room extends AppCompatActivity {
             public void onClick(View v) {
                 toggle2=1;
                 try {
-                    outstream.writeInt(300);
+                    outstream.writeUTF("300 " +String.valueOf(rID));
                     outstream.flush();
-               } catch (IOException e) {
+                } catch (IOException e) {
                 }
 
             }
@@ -164,16 +188,16 @@ public class Room extends AppCompatActivity {
                 finish();
             }
         });
-    /*
-     * thread로 유저목록 실시간으로 불러오기
-     */
+        /*
+         * thread로 유저목록 실시간으로 불러오기
+         */
 
     }
     protected void onDestroy(){
         Intent intent=new Intent(getApplicationContext(),MainActivity.class);
         intent.putExtra("loginID", userName );
         intent.putExtra("code", ID);
-        startActivity(intent);
+       // startActivity(intent);
         super.onDestroy();
         if(toggle2!=1){
             try {
@@ -203,136 +227,149 @@ public class Room extends AppCompatActivity {
                 outstream.flush();
             } catch (Exception e) {
             }
-                while (true) {
-                    try {
-                        int m = instream.readInt();
-                        if (m == 100) {
-                            user.clear();
-                            userid.clear();
-                            feet.clear();
-                            seeker.clear();
-                            hider.clear();
-                            String msg;
-                            String str[];
+            while (true) {
+                try {
+                    int m = instream.readInt();
+                    if (m == 100) {
+                        user.clear();
+                        userid.clear();
+                        feet.clear();
+                        seeker.clear();
+                        hider.clear();
+                        String msg;
+                        String str[];
+                        msg = instream.readUTF();
+                        str = msg.split(" ");
+                        num = Integer.valueOf(str[0]);
+                        num_S = Integer.valueOf(str[1]);
+                        num_H = Integer.valueOf(str[2]);
+                        time = str[3];
+                        chance = str[4];
+
+                        for (int j = 0; j < num; j++) {
                             msg = instream.readUTF();
                             str = msg.split(" ");
-                            num = Integer.valueOf(str[0]);
-                            num_S = Integer.valueOf(str[1]);
-                            num_H = Integer.valueOf(str[2]);
-                            for (int j = 0; j < num; j++) {
-                                msg = instream.readUTF();
-                                str = msg.split(" ");
-                                user.add(str[0]);
-                                userid.add(str[1]);
-                                feet.add(Integer.valueOf(str[2]));
-                            }
-                            for (int j = 0; j < num_S; j++) {
-                                msg = instream.readUTF();
-                                seeker.add(msg);
-                            }
-                            for (int j = 0; j < num_H; j++) {
-                                msg = instream.readUTF();
-                                hider.add(msg);
-                            }
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    Log.v("M", "run");
-                                    seekerTable.removeAllViews();
-                                    hiderTable.removeAllViews();
-                                    for (int i = 0; i < seekerNum; i++) {
-                                        tableRow = new TableRow(Room.this);
-                                        tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-                                        empty = new TextView(Room.this);
-                                        if (i < num_S) {
-                                            String N = null;
-                                            Log.v("M", num + " " + num_S);
-                                            for (int j = 0; j < num; j++) {
+                            user.add(str[0]);
+                            userid.add(str[1]);
+                            feet.add(Integer.valueOf(str[2]));
+                        }
+                        for (int j = 0; j < num_S; j++) {
+                            msg = instream.readUTF();
+                            String temp[] = msg.split(" ");
+                            seeker.add(temp[0]);
+                            seeker2.add(temp[1]);
+                            //seeker2.add(msg);
+                        }
+                        for (int j = 0; j < num_H; j++) {
+                            msg = instream.readUTF();
+                            String temp[] = msg.split(" ");
+                            hider.add(temp[0]);
+                            hider2.add(temp[1]);
+                            //hider2.add(msg);
+                        }
+                        handler.post(new Runnable() {
+                            public void run() {
+                                Log.v("M", "run");
+                                seekerTable.removeAllViews();
+                                hiderTable.removeAllViews();
+                                for (int i = 0; i < seekerNum; i++) {
+                                    tableRow = new TableRow(Room.this);
+                                    tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+                                    empty = new TextView(Room.this);
+                                    if (i < num_S) {
+                                        String N = null;
+                                        Log.v("M", num + " " + num_S);
+                                        for (int j = 0; j < num; j++) {
 
-                                                if (userid.get(j).equals(seeker.get(i))) {
-                                                    N = user.get(j);
+                                            if (userid.get(j).equals(seeker.get(i))) {
+                                                N = user.get(j);
 
-                                                    break;
-                                                }
+                                                break;
                                             }
-                                            empty.setText(N);
-                                        } else
-                                            empty.setText("empty");
-                                        empty.setTextSize(15);
-                                        empty.setPadding(5, 7, 5, 7);
-                                        empty.setGravity(Gravity.CENTER);
-                                        empty.setBackgroundColor(Color.argb(176, 255, 255, 255));
-                                        empty.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                                        temp = new View(Room.this);
-                                        temp.setBackgroundColor(Color.argb(255, 255, 255, 255));
-                                        temp.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 10));
-                                        tableRow.addView(empty);
-                                        seekerTable.addView(tableRow);
-                                        seekerTable.addView(temp);
-                                    }
-                                    for (int i = 0; i < playerNum - seekerNum; i++) {
-                                        tableRow = new TableRow(Room.this);
-                                        tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-                                        empty = new TextView(Room.this);
-                                        if (i < num_H) {
-                                            String N = null;
-                                            for (int j = 0; j < num; j++) {
-                                                if (userid.get(j).equals(hider.get(i))) {
-                                                    N = user.get(j);
-                                                    break;
-                                                }
-                                            }
-                                            empty.setText(N);
-                                        } else
-                                            empty.setText("empty");
-                                        empty.setTextSize(15);
-                                        empty.setPadding(5, 7, 5, 7);
-                                        empty.setGravity(Gravity.CENTER);
-                                        empty.setBackgroundColor(Color.argb(176, 255, 255, 255));
-                                        empty.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                                        temp = new View(Room.this);
-                                        temp.setBackgroundColor(Color.argb(255, 255, 255, 255));
-                                        temp.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 10));
-                                        tableRow.addView(empty);
-                                        hiderTable.addView(tableRow);
-                                        hiderTable.addView(temp);
-                                    }
+                                        }
+                                        empty.setText(N);
+                                    } else
+                                        empty.setText("empty");
+                                    empty.setTextSize(15);
+                                    empty.setPadding(5, 7, 5, 7);
+                                    empty.setGravity(Gravity.CENTER);
+                                    empty.setBackgroundColor(Color.argb(176, 255, 255, 255));
+                                    empty.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                                    temp = new View(Room.this);
+                                    temp.setBackgroundColor(Color.argb(255, 255, 255, 255));
+                                    temp.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 10));
+                                    tableRow.addView(empty);
+                                    seekerTable.addView(tableRow);
+                                    seekerTable.addView(temp);
                                 }
-                            });
-                        }
-                        if (m == 300) {
-                            toggle2 = 1;
-                            if (toggle == 0) {    // *seeker인 경우
-                                intent1.putExtra("ID", ID);
-                                intent1.putExtra("rID", rID);
-                                intent1.putExtra("num_S", num_S);
-                                intent1.putExtra("num_H", num_H);
-                                intent1.putExtra("time", time);
-                                intent1.putExtra("chance", chance);
-                                intent1.putExtra("user", user);
-                                intent1.putExtra("userid", userid);
-                                intent1.putExtra("seeker", seeker);
-                                intent1.putExtra("hider", hider);
-                                startActivity(intent1);
-                                finish();
+                                for (int i = 0; i < playerNum - seekerNum; i++) {
+                                    tableRow = new TableRow(Room.this);
+                                    tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+                                    empty = new TextView(Room.this);
+                                    if (i < num_H) {
+                                        String N = null;
+                                        for (int j = 0; j < num; j++) {
+                                            if (userid.get(j).equals(hider.get(i))) {
+                                                N = user.get(j);
+                                                break;
+                                            }
+                                        }
+                                        empty.setText(N);
+                                    } else
+                                        empty.setText("empty");
+                                    empty.setTextSize(15);
+                                    empty.setPadding(5, 7, 5, 7);
+                                    empty.setGravity(Gravity.CENTER);
+                                    empty.setBackgroundColor(Color.argb(176, 255, 255, 255));
+                                    empty.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                                    temp = new View(Room.this);
+                                    temp.setBackgroundColor(Color.argb(255, 255, 255, 255));
+                                    temp.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 10));
+                                    tableRow.addView(empty);
+                                    hiderTable.addView(tableRow);
+                                    hiderTable.addView(temp);
+                                }
                             }
-                            if (toggle == 1) {    ///*hider인 경우
-                                intent2.putExtra("ID", ID);
-                                intent2.putExtra("rID", rID);
-                                intent2.putExtra("num_S", num_S);
-                                intent2.putExtra("num_H", num_H);
-                                intent2.putExtra("time", time);
-                                intent2.putExtra("chance", chance);
-                                intent2.putExtra("user", user);
-                                intent2.putExtra("userid", userid);
-                                intent2.putExtra("seeker", seeker);
-                                intent2.putExtra("hider", hider);
-                                startActivity(intent2);
-                                finish();
-                            }
-                        }
-                    } catch (Exception e) {
+                        });
                     }
+                    if (m == 300) {
+                        toggle2 = 1;
+                        if (toggle == 0) {    // *seeker인 경우
+                            intent1.putExtra("ID", ID);
+                            intent1.putExtra("rID", String.valueOf(rID));
+                            intent1.putExtra("num_S", String.valueOf(num_S));
+                            intent1.putExtra("num_H", String.valueOf(num_H));
+                            intent1.putExtra("time", time);
+                            intent1.putExtra("chance", chance);
+                            intent1.putExtra("user", user);
+                            intent1.putExtra("userid", userid);
+                            intent1.putExtra("seeker", seeker);
+                            intent1.putExtra("seeker2",seeker2);
+                            intent1.putExtra("hider", hider);
+                            intent1.putExtra("hider2",hider2);
+                            startActivity(intent1);
+                            finish();
+                        }
+                        if (toggle == 1) {    ///*hider인 경우
+                            intent2.putExtra("ID", ID);
+                            intent2.putExtra("rID", String.valueOf(rID));
+                            intent2.putExtra("num_S", String.valueOf(num_S));
+                            intent2.putExtra("num_H", String.valueOf(num_H));
+                            intent2.putExtra("time", time);
+                            intent2.putExtra("chance", chance);
+                            intent2.putExtra("user", user);
+                            intent2.putExtra("userid", userid);
+                            intent2.putExtra("seeker", seeker);
+                            intent2.putExtra("seeker2",seeker2);
+                            intent2.putExtra("hider", hider);
+                            intent2.putExtra("hider2",hider2);
+                            startActivity(intent2);
+                            finish();
+                        }
+                    }
+                } catch (Exception e) {
                 }
+            }
 
         }
     }

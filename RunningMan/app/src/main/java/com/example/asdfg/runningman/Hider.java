@@ -1,5 +1,4 @@
-package com.example.asdfg.runningman;
-
+package com.runningman.asdfg.runningman;
 import android.Manifest;
 import android.app.ActionBar;
 import android.app.PendingIntent;
@@ -57,12 +56,13 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class Hider extends AppCompatActivity {
+public class Hider extends AppCompatActivity implements SensorEventListener{
     Socket sock;
     private static final String TAG = "BT";
     PopupWindow window;
@@ -76,14 +76,15 @@ public class Hider extends AppCompatActivity {
     private IntentFilter[] _writeIntentFilters;
     private Intent _intent;
     private final String _MIME_TYPE = "text/plain";
-    int port = 7777;
+    int port = 7777,num_S,num_H,index;
     Intent intent;
     String userName;
     ImageButton hider11,hider22,hider33,hider44;
-    Integer min=5,sec=0,count=0,chance,step=0;
+    int min=0,sec=0,count=0,chance,step=0;
     TextView restTime,text11;
     Button button,nameTag;
     Handler handler;
+    Bitmap rotated;
     int alive=4;    // Integer.valueOf(hiderNum);
     ScrollView scrollView;
     TableLayout tableLayout;
@@ -110,12 +111,17 @@ public class Hider extends AppCompatActivity {
     private static final int DATA_Z = SensorManager.DATA_Z;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor;
+    ArrayList<Integer> feet=new  ArrayList<>();
+    ArrayList<String> seeker=new  ArrayList<>();
+    ArrayList<String> hider=new  ArrayList<>();
+    ArrayList<String> seeker2=new  ArrayList<>();
+    ArrayList<String> hider2=new  ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       setContentView(R.layout.hider);
+        setContentView(R.layout.hider);
         // 받은 인텐트의 인스턴스를 취득한다
-       StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
         try {
             sock= new Socket(ip, port);
             outstream = new DataOutputStream(sock.getOutputStream());
@@ -124,9 +130,19 @@ public class Hider extends AppCompatActivity {
             e.printStackTrace();
         }
         intent = getIntent(); // login한 닉네임
-        userName = intent.getStringExtra("loginID");
+        userName = intent.getStringExtra("user"); // 로그인 화면 아이디
+        myMacAddress = intent.getStringExtra("userid"); // 유저맥주소
         ID=intent.getStringExtra("ID");
-        rID= intent.getIntExtra("rID", -1);
+        rID= Integer.parseInt(intent.getStringExtra("rID")); // 방 고유번호
+        num_H = Integer.parseInt(intent.getStringExtra("num_H"));
+        num_S = Integer.parseInt(intent.getStringExtra("num_S"));
+        seeker = intent.getStringArrayListExtra("seeker");
+        hider = intent.getStringArrayListExtra("hider");
+        seeker2 = intent.getStringArrayListExtra("seeker2");
+        hider2 = intent.getStringArrayListExtra("hider2");
+        min = Integer.parseInt(intent.getStringExtra("time"));
+        chance = Integer.parseInt(intent.getStringExtra("chance"));
+         Toast.makeText(getApplicationContext(),hider.get(0)+ " : " + num_H,Toast.LENGTH_SHORT).show();
         try {
             outstream.writeUTF("-1 "+ID+" " +rID);
             outstream.flush();
@@ -151,7 +167,7 @@ public class Hider extends AppCompatActivity {
                     if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN){
                         startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
                     }
-                   else{
+                    else{
                         startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
                     }
                 }
@@ -180,22 +196,25 @@ public class Hider extends AppCompatActivity {
         doDiscovery();
 
         text11=findViewById(R.id.text11);
-        //text11.setText(술래이름);
-
+        text11.setText("술래 이름: ");
+        for(int i=0;i<num_S;i++){
+            text11.append(seeker2.get(i)+" "); //  text11.append(seeker2.get(i)+" ");
+        }
         handler = new Handler();
 
         tableLayout = (TableLayout)findViewById(R.id.table11);
-        for(int i=0;i<(6+1)/2;i++) { // i<(Integer.valueOf(hiderNum)+1)/2
-            //   Toast.makeText(getApplicationContext(),"asd",Toast.LENGTH_SHORT).show();
+        for(int i=0;i<(num_H+1)/2;i++) { // i<(Integer.valueOf(hiderNum)+1)/2
             TableRow tempRow = new TableRow(Hider.this);
             tempRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-            for (int j = 0; j < 2; j++) {
+            for (int j = 0; j < (num_H+1)%2+1; j++) {
                 linearLayout = new LinearLayout(tempRow.getContext());
                 linearLayout.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
                 linearLayout.setOrientation(LinearLayout.VERTICAL);
 
                 nameTag = new Button(this);
-                nameTag.setText("hider : ?"); // (i*2+j) index의 hider 이름
+                nameTag.setText("유저 : " + hider2.get(i*2+j) ); //  nameTag.setText("유저 : " + hider2.get(i*2+j));
+                if(hider.get(i*2+j).equals(userName)) // if(hider2.get(i*2+j).equals(userName))
+                    index = i*2+j;
                 nameTag.setLayoutParams(new TableRow.LayoutParams(450, 150));
                 nameTag.setGravity(Gravity.CENTER);
                 nameTag.setTextSize(20);
@@ -210,7 +229,7 @@ public class Hider extends AppCompatActivity {
                         dd.setMessage(nameTag.getText().toString()+ "님을 신고하시겠습니까?"); //
                         dd.setNegativeButton("아니오",null);
                         dd.setPositiveButton("예",new DialogInterface.OnClickListener(){
-                           public void onClick(DialogInterface dialog,int whichButton){
+                            public void onClick(DialogInterface dialog,int whichButton){
                                 // 신고하면 유저들에게 뿌려주기
                             }
                         });
@@ -240,7 +259,10 @@ public class Hider extends AppCompatActivity {
                         window.setAnimationStyle(-1);
                         window.setFocusable(true);
                         bigSize = popupView.findViewById(R.id.p1ID);
-                        bigSize.setImageDrawable(myImage);
+                        if(rotated==null)
+                         bigSize.setImageDrawable(myImage);
+                        else
+                            bigSize.setImageBitmap(rotated);
                         bigSize.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -264,11 +286,6 @@ public class Hider extends AppCompatActivity {
 
         restTime = findViewById(R.id.restTime);
 
-        //     Intent getIntent = getIntent();
-//        min = Integer.parseInt(getIntent.getStringExtra("time").toString());
-        //      chance = Integer.parseInt(getIntent.getStringExtra("chance").toString());
-
-        min=5; chance=30;
         MyThread dd = new MyThread();
         dd.start();
 
@@ -278,11 +295,11 @@ public class Hider extends AppCompatActivity {
             public void onClick(View view) {
                 Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 File picture = savePictureFile();
-               takePicture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(picture));
+                takePicture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(picture));
                 startActivityForResult(takePicture,1);
             }
 
-       });
+        });
     }
     private void init(){
         _pendingIntent = PendingIntent.getActivity(this,0,new Intent(this,getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
@@ -316,10 +333,10 @@ public class Hider extends AppCompatActivity {
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()))
         {
             _readMessage();
-       }
+        }
 
 
-       if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
         {
             _readMessage();
         }
@@ -328,10 +345,14 @@ public class Hider extends AppCompatActivity {
     {
         List<String> msgs = NFCUtils.getStringsFromNfcIntent(_intent);
 
-      /*  if(msgs.get(0)==seekerMacAddress)  // msgs.get(0) == nfc로 전해받은 상대의 맥주소
-             아웃!
-             btAdapter.cancelDiscovery();
-        */
+        for(int q=0;q<num_S;q++) {
+            if (msgs.get(0) == seeker.get(q))  // msgs.get(0) == nfc로 전해받은 상대의 맥주소
+            {
+                // 아웃처리
+                alive--;
+                btAdapter.cancelDiscovery();
+            }
+        }
         // Toast.makeText(this, "Message : " + msgs.get(0), Toast.LENGTH_LONG).show();
     }
     @Override
@@ -350,9 +371,11 @@ public class Hider extends AppCompatActivity {
             Matrix matrix = new Matrix();
             matrix.postRotate(exifDegree);
 
-            Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            tempImage[0].setImageBitmap(rotated); // index 바꾸기
+            rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            tempImage[index].setImageBitmap(rotated); // index 바꾸기
+
             // rotated 서버에 전송
+
         }catch(Exception e){e.printStackTrace();}
         //Toast.makeText(getApplicationContext(), "" + (bitmap.getWidth()), Toast.LENGTH_SHORT).show();
 
@@ -454,10 +477,12 @@ public class Hider extends AppCompatActivity {
             //블루투스 감지
             if(BluetoothDevice.ACTION_FOUND.equals(action)){
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if(device.getAddress().equals(seekerMacAddress)) {    // seeker 맥 어드레스 서버에서 받아와야함
-                    Toast.makeText(getApplicationContext(),"술래가 주변에 있습니다!",Toast.LENGTH_LONG).show(); // 블루투스연결
-                    Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-                    vibrator.vibrate(2000);
+                for(int q=0;q<num_S;q++) {
+                    if (device.getAddress().equals(seeker.get(q))) {    // seeker 맥 어드레스 서버에서 받아와야함
+                        Toast.makeText(getApplicationContext(), "술래가 주변에 있습니다!", Toast.LENGTH_LONG).show(); // 블루투스연결
+                        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        vibrator.vibrate(2000);
+                    }
                 }
                 //  Toast.makeText(getApplicationContext(),device.getName() + "\n"+device.getAddress(),Toast.LENGTH_SHORT).show();
             }//검색이 끝나면
@@ -492,7 +517,7 @@ public class Hider extends AppCompatActivity {
                 }
                 handler.post(new Runnable() {
                     public void run() {
-                       restTime.setText("남은 시간: " + min + "분 " + sec + "초");
+                        restTime.setText("남은 시간: " + min + "분 " + sec + "초");
 
                         if (count >= chance && (count % chance) <= 20) {
                             button.setVisibility(VISIBLE);
@@ -509,7 +534,7 @@ public class Hider extends AppCompatActivity {
             }
             Intent intent2=new Intent(getApplicationContext(),GameOver.class);
             intent2.putExtra("userName",userName);
-            intent2.putExtra("code",ID);
+            intent2.putExtra("code",ID); // 맥주소
             intent2.putExtra("step",step);
             // step 서버에 보내기
             startActivity(intent2);

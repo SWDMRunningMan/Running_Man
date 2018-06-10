@@ -1,4 +1,4 @@
-package com.example.asdfg.runningman;
+package com.runningman.asdfg.runningman;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
     String ID;
     DataOutputStream outstream;
     DataInputStream instream;
-    protected static String ip = "192.168.0.5";
+    protected static String ip = "192.168.0.19";
     int port = 7777;
     ArrayList <String> roomlist;
     ArrayList <Integer> roomID, n, m;
@@ -89,6 +89,58 @@ public class MainActivity extends Activity {
             handler = new Handler();
             final MyThread thread = new MyThread(sock);
             thread.start();
+            for (i = 0; i < size; i++) {
+                String[] str = instream.readUTF().split(" ");
+                Log.v("M", str[0] + " " + str[1] + " " + str[2] + " " + str[3]);
+                roomID.add(Integer.valueOf(str[0]));
+                roomlist.add(str[1]);
+                n.add(Integer.valueOf(str[2]));
+                m.add(Integer.valueOf(str[3]));
+            }
+            for (i = 0; i < size; i++) {
+                final int num=i;
+                tableRow = new TableRow(MainActivity.this);
+                tableRow.setLayoutParams(new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                no = new TextView(MainActivity.this);
+                rn = new TextView(MainActivity.this);
+                player = new TextView(MainActivity.this);
+                tableRow.setBackgroundColor(Color.argb(170, 255, 255, 255));
+                no.setTextColor(Color.parseColor("#ff000000"));
+                no.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                no.setHeight(90);
+                no.setGravity(Gravity.CENTER);
+                no.setPadding(1, 1, 1, 1);
+                no.setText(String.valueOf(i + 1));
+                rn.setTextColor(Color.parseColor("#ff000000"));
+                rn.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                rn.setHeight(90);
+                rn.setGravity(Gravity.CENTER);
+                rn.setPadding(1, 1, 1, 1);
+                rn.setText(roomlist.get(i));
+                player.setTextColor(Color.parseColor("#ff000000"));
+                player.setPaintFlags(no.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                player.setHeight(90);
+                player.setGravity(Gravity.CENTER);
+                player.setPadding(1, 1, 1, 1);
+                player.setText(n.get(i) + "/" + m.get(i));
+
+                temp = new View(MainActivity.this);
+                temp.setBackgroundColor(Color.parseColor("#44000000"));
+                temp.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+
+                tableRow.addView(no);
+                tableRow.addView(rn);
+                tableRow.addView(player);
+                tableRow.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        index = num;
+                    }
+                });
+                table.addView(tableRow);
+                table.addView(temp);
+
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -177,10 +229,9 @@ public class MainActivity extends Activity {
                             intent1.putExtra("owner", ID);
                             try {
 
-
                                 Date d = new Date();
                                 int i = (int) (d.getTime() % 1000000000);
-                                intent1.putExtra("rID", i);
+                                intent1.putExtra("rID", String.valueOf(i));
                                 outstream.writeUTF("1 " + String.valueOf(ID) + " " + userName + " " + String.valueOf(i) + " " + room + " " + pNum + " " + sNum + " " + String.valueOf(t) + " " + String.valueOf(c));
                                 outstream.flush();
                             } catch (Exception e) {
@@ -218,13 +269,13 @@ public class MainActivity extends Activity {
         if(next==0)
             startActivity(intent);
         super.onDestroy();
-            try {
-                outstream.close();
-                instream.close();
-                sock.close();
+        try {
+            outstream.close();
+            instream.close();
+            sock.close();
 
-            } catch (IOException e) {
-            }
+        } catch (IOException e) {
+        }
     }
     class MyThread extends Thread {
         Socket socket;
@@ -246,7 +297,7 @@ public class MainActivity extends Activity {
                     int I = instream.readInt();
                     if(I ==-1){
                         Toast.makeText(getApplicationContext(), "자리가 꽉 찼습니다.", Toast.LENGTH_SHORT).show();
-                    }else if (I ==1){
+                    }else if (I ==1){ // 접속
                         intent1 = new Intent(getApplicationContext(), Room.class);
                         String owner=instream.readUTF();
                         int pNum=instream.readInt();
@@ -255,18 +306,18 @@ public class MainActivity extends Activity {
                         int chance=instream.readInt();
                         intent1.putExtra("userName", userName);
                         intent1.putExtra("roomName", roomlist.get(index));
-                        intent1.putExtra("playerNum", pNum);
-                        intent1.putExtra("seekerNum", sNum);
+                        intent1.putExtra("playerNum", String.valueOf(pNum));
+                        intent1.putExtra("seekerNum", String.valueOf(sNum));
                         intent1.putExtra("time", time);
                         intent1.putExtra("chance", chance);
                         intent1.putExtra("code", ID);
                         intent1.putExtra("owner", owner);
-                        intent1.putExtra("rID", roomID.get(index));
+                        intent1.putExtra("rID", String.valueOf(roomID.get(index)));
                         next=1;
                         startActivity(intent1);
                         finish();
                     }
-                    if (I == 11) {
+                    if (I == 11) { // 새로고침
                         outstream.writeUTF("200");
                         outstream.flush();
                         size = instream.readInt();

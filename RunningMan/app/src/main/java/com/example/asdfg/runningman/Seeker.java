@@ -1,4 +1,4 @@
-package com.example.asdfg.runningman;
+package com.runningman.asdfg.runningman;
 
 import android.app.ActionBar;
 import android.app.PendingIntent;
@@ -39,8 +39,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
+import android.widget.Toast;
 
 public class Seeker extends AppCompatActivity implements CreateNdefMessageCallback {
     Socket sock;
@@ -49,7 +52,7 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
     DataOutputStream outstream;
     DataInputStream instream;
     protected static String ip = "192.168.0.19";
-    int port = 7777, step = 0, min, sec = 0, chance, alive = 4, count = 0;
+    int port = 7777,num_S,num_H,index, step = 0, min, sec = 0, chance, alive = 4, count = 0;
     PopupWindow window;
     String userName;
     TableLayout table111;
@@ -66,7 +69,7 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
     private PendingIntent _pendingIntent;
     private IntentFilter[] _readIntentFilters;
     private IntentFilter[] _writeIntentFilters;
-    private Intent _intent;
+    private Intent intent;
     private final String _MIME_TYPE = "text/plain";
     private NfcAdapter mNfcAdapter;
     private long lastTime;
@@ -81,6 +84,13 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
     private static final int DATA_Z = SensorManager.DATA_Z;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor;
+    ArrayList<String> user=new  ArrayList<>();
+    ArrayList<String> userid=new  ArrayList<>();
+    ArrayList<Integer> feet=new  ArrayList<>();
+    ArrayList<String> seeker=new  ArrayList<>();
+    ArrayList<String> hider=new  ArrayList<>();
+    ArrayList<String> seeker2=new  ArrayList<>();
+    ArrayList<String> hider2=new  ArrayList<>();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.seeker);
@@ -92,10 +102,20 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Intent getIntent = getIntent();
-        userName = getIntent.getStringExtra("loginID");
-        ID = getIntent.getStringExtra("ID");
-        rID= getIntent.getIntExtra("rID", -1);
+        intent = getIntent(); // login한 닉네임
+        userName = intent.getStringExtra("user"); // 로그인 화면 아이디
+        myMacAddress = intent.getStringExtra("userid"); // 유저맥주소
+        ID=intent.getStringExtra("ID");
+        rID= Integer.parseInt(intent.getStringExtra("rID")); // 방 고유번호
+        num_H = Integer.parseInt(intent.getStringExtra("num_H"));
+        num_S = Integer.parseInt(intent.getStringExtra("num_S"));
+        seeker = intent.getStringArrayListExtra("seeker"); // seeker맥주소
+        seeker2 = intent.getStringArrayListExtra("seeker2"); // 아이디
+        hider = intent.getStringArrayListExtra("hider");   // hider맥주소
+        hider2 = intent.getStringArrayListExtra("hider2"); // 아이디
+        min = Integer.parseInt(intent.getStringExtra("time"));
+        chance = Integer.parseInt(intent.getStringExtra("chance"));
+     //   Toast.makeText(getApplicationContext(),seeker.get(0)+ " : " + num_H,Toast.LENGTH_SHORT).show();
         try {
             outstream.writeUTF("-1 "+ID+" " +rID);
             outstream.flush();
@@ -114,24 +134,27 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
         table111 = (TableLayout) findViewById(R.id.table111);
         text1 = findViewById(R.id.text1);
         handler = new Handler();
-        // text1.setText("술래 이름");
+
         restTime = findViewById(R.id.restTime);
         table111 = (TableLayout) findViewById(R.id.table111);
         text1 = findViewById(R.id.text1);
 
-        // text1.setText("술래 이름");
+        text1.setText("술래 이름: ");
+        for(int i=0;i<num_S;i++){
+            text1.append(seeker2.get(i)+" "); //  text1.append(seeker2.get(i)+" ");
+        }
         handler = new Handler();
 
-        for (int i = 0; i < (6 + 1) / 2; i++) { // i<(Integer.valueOf(hiderNum)+1)/2
+        for (int i = 0; i < (num_H+1) / 2; i++) { // i<(Integer.valueOf(hiderNum)+1)/2
             TableRow tempRow = new TableRow(Seeker.this);
             tempRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-            for (int j = 0; j < 2; j++) {
+            for (int j = 0; j < (num_H+1)%2+1; j++) {
                 linearLayout = new LinearLayout(tempRow.getContext());
                 linearLayout.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
                 linearLayout.setOrientation(LinearLayout.VERTICAL);
 
                 nameTag = new Button(this);
-                nameTag.setText("hider : ?"); // (i*2+j) index의 hider 이름
+                nameTag.setText("유저 : " + hider2.get(i*2+j)); //  hider2.get(i*2+j)
                 nameTag.setLayoutParams(new TableRow.LayoutParams(450, 150));
                 nameTag.setGravity(Gravity.CENTER);
                 nameTag.setTextSize(20);
@@ -149,7 +172,6 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
                                 // 신고하면 유저들에게 뿌려주기
                             }
                         });
-
                         dd.show();
                     }
                 });
@@ -198,15 +220,14 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
             }
             table111.addView(tempRow);
         }
-        min = 5;
-        chance = 30;
+
         MyThread dd = new MyThread();
         dd.start();
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,600); // 나중에 min*60+sec으로 바꿔야할듯
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,60*min);
         startActivity(discoverableIntent);
 
         myMacAddress= android.provider.Settings.Secure.getString(this.getContentResolver(), "bluetooth_address");
@@ -253,7 +274,7 @@ public class Seeker extends AppCompatActivity implements CreateNdefMessageCallba
     protected void onStop(){
         super.onStop();
         //if(sensorManager!=null)
-       // sensorManager.unregisterListener(this); 센싱 안하도록 하는 부분
+        // sensorManager.unregisterListener(this); 센싱 안하도록 하는 부분
     }
     public void onAccuracyChanged(Sensor sensor, int accuracy){
         ;
