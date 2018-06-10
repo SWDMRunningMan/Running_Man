@@ -67,6 +67,7 @@ public class server {
 					dis =new DataInputStream(in);
 					dos =new DataOutputStream(out);
 					msg=dis.readUTF();
+
 					if(msg==null) {
 						return;
 					}
@@ -137,13 +138,13 @@ public class server {
 						dos.writeInt(11);
 					}
 					else if(str[0].equals("104")) {//방접속
-						System.out.println(msg);
-						System.out.println("enter ");
-						room Room= R.inform(Integer.valueOf(str[1]));
-						if(Room.getNum()<=Room.userList().size()) {
-							dos.writeInt(-1);
-							dos.flush();
-						}else{
+		                  System.out.println(msg);
+		                  System.out.println("enter ");
+		                  room Room= R.inform(Integer.valueOf(str[1]));
+		                  if(Room.getNum()<=Room.userList().size()) {
+		                     dos.writeInt(-1);
+		                     dos.flush();
+		                  }else{
 							R.add(str[2], str[3],Integer.valueOf(str[1]), socket);
 							dos.writeInt(1);
 							dos.flush();
@@ -190,11 +191,13 @@ public class server {
 							}
 						}
 						R.gameStart(Integer.valueOf(str[1]));
-					}else if(str[0].equals("400")) {//사진전송
-						System.out.println(msg);
+					}else if(str[0].equals("400")) {//사진전송      400 rID ID 크기 rotated
+						//System.out.println(msg);
 						System.out.println("picture send ");
 						room Room= R.inform(Integer.valueOf(str[1]));
-						int size=Integer.valueOf(str[2]);
+						int size=Integer.valueOf(str[3]);
+						System.out.println(size);
+						System.out.println(str[2]);
 						byte[] data=new byte[size];
 						for(int i=0;i<size;i++) {
 							data[i]=dis.readByte();
@@ -207,15 +210,18 @@ public class server {
 							if(S != null){
 								d.writeInt(400);
 								d.flush();
+								d.writeUTF(str[2]);
+								d.flush();
 								d.writeInt(size);
 								d.flush();
 								for(int i=0;i<size;i++) {
 									d.writeByte(data[i]);
+									d.flush();
 								}
 								System.out.println("사진 전송");
 							}
 						}
-					}else if(str[0].equals("401")) {//잡힌거 전송
+					}else if(str[0].equals("401")) {//잡힌거 전송 401 rID ID 
 						System.out.println(msg);
 						System.out.println("out send ");
 						room Room= R.inform(Integer.valueOf(str[1]));
@@ -225,6 +231,7 @@ public class server {
 							OutputStream o=S.getOutputStream();
 							DataOutputStream d =new DataOutputStream(o);
 							if(S != null){
+								System.out.println("401 : " + str[2]);
 								d.writeInt(401);
 								d.flush();
 								d.writeUTF(str[2]);
@@ -252,14 +259,18 @@ public class server {
 					else if(str[0].equals("501")) {//걸음수 전달
 						System.out.println(msg);
 						System.out.println("game end ");
-						room Room= R.inform(Integer.valueOf(str[1]));
-						int size=Room.getNum();
-						int count=Room.count;
+			
+						
 						int feet=dis.readInt();
 						R.setFeet(Integer.valueOf(str[1]),str[2],feet);
+		                  room Room= R.inform(Integer.valueOf(str[1]));
+		                  int size=Room.userList().size();
+		                  int count=Room.count;
+		                 System.out.println("count: " + count + " size : " + size);
 						if(count==size) {
 						Iterator<Socket> iter=Room.userscList().iterator();
 							while(iter.hasNext()){
+								System.out.println("count: " + count);
 								Socket S = (Socket)iter.next();
 								OutputStream o=S.getOutputStream();
 								DataOutputStream d =new DataOutputStream(o);
@@ -267,6 +278,7 @@ public class server {
 									d.writeInt(501);
 									d.flush();
 									d.writeInt(size);
+									System.out.println(size);
 									d.flush();
   								    for(int i=0;i<size;i++) {
 										d.writeInt(Room.feetList().get(i));
