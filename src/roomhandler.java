@@ -1,8 +1,10 @@
+package server;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util. ArrayList;
 
 public class roomhandler{
 	private ArrayList<room> Room=new  ArrayList<room>();
@@ -11,12 +13,12 @@ public class roomhandler{
 		room R=new room(id,name,rid ,rname,n, s, t, h,sc);
 		Room.add(R);
 	}
-	//ë°©ìƒì„±
+	//¹æ»ı¼º
 	private void deleteRoom(int rid){
 		int I=findRoom(rid);
 		Room.remove(I);
 	}
-	//ë°©ì‚­ì œ
+	//¹æ»èÁ¦
 	private void enterRoom(String id,String name,int rid,Socket sc) {
 		int I=findRoom(rid);
 
@@ -24,9 +26,9 @@ public class roomhandler{
 		Room.get(I).addUserid(id);
 		Room.get(I).addusersc(sc);
 		Room.get(I).addFeet(0);
-		sitting(rid, id, sc);
+		sitting(rid,name, id, sc);
 	}
-	//ìœ ì €ì…ì¥
+	//À¯ÀúÀÔÀå
 	private void quitRoom(String id,int rid,Socket sc) {
 		int I=findRoom(rid);
 		room R=Room.get(I);
@@ -50,7 +52,7 @@ public class roomhandler{
 		Room.get(I).deleteUsersc(i);
 		Room.get(I).deleteUserid(i);
 	}
-	//ìœ ì €í‡´ì¥
+	//À¯ÀúÅğÀå
 	private int findRoom(int rid) {
 		int I=-1;
 		for(int i=0;i<Room.size();i++) {
@@ -81,8 +83,8 @@ public class roomhandler{
 		}
 		return str;
 	}
-	//ë°©ì°¾ê¸°
-	//ê²Œì„ì§„í–‰ - ê²Œì„ì¢…ë£Œ - ê²°ê³¼ì „ì†¡
+	//¹æÃ£±â
+	//°ÔÀÓÁøÇà - °ÔÀÓÁ¾·á - °á°úÀü¼Û
 	public boolean make(String id,String name,int rid,String rname ,int n,int s,int t,int h,Socket sc) {
 		if(findRoom(rid)==-1) {
 			createRoom(id,name,rid,rname ,n,s,t,h,sc);
@@ -144,7 +146,7 @@ public class roomhandler{
 			return true;
 		}
 	}
-	public synchronized boolean moveToSeeker(int rid,String id,Socket sc) {
+	public synchronized boolean moveToSeeker(int rid,String id,Socket sc,String name) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
@@ -155,32 +157,31 @@ public class roomhandler{
 				Room.get(i).deleteHider2(index);
 			}
 			Room.get(i).addSeeker(id);
-			Room.get(i).addSeeker2(id);
+			Room.get(i).addSeeker2(name);
 			int j=Room.get(i).findUserS(id);
 			Room.get(i).addSeekersc(j,sc);
 			return true;
 		}else
 			return false;
 	}
-	public synchronized boolean moveToHider(int rid,String id,Socket sc) {
+	public synchronized boolean moveToHider(int rid,String id,Socket sc,String name) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
 		}else if(Room.get(i).getNumH()!=Room.get(i).hiderList().size()){
 			int index=Room.get(i).findUserS(id);
 			if(index!=-1)	{
-				Room.get(i).deleteSeeker(index);
-				Room.get(i).deleteSeeker2(index);
+				Room.get(i).deleteSeeker(index);Room.get(i).deleteSeeker2(index);
 			}
 			Room.get(i).addHider(id);
-			Room.get(i).addHider2(id);
+			Room.get(i).addHider2(name);
 			int j=Room.get(i).findUserH(id);
 			Room.get(i).addHidersc(j,sc);
 			return true;
 		}else
 			return false;
 	}
-	public boolean sitting(int rid,String id,Socket sc) {
+	public boolean sitting(int rid,String name,String id,Socket sc) {
 		int i=findRoom(rid);
 		if(i==-1) {
 			return false;
@@ -189,13 +190,13 @@ public class roomhandler{
 			int H=Room.get(i).getNumH();
 			if(Room.get(i).seekerList().size()<S) {
 				Room.get(i).addSeeker(id);
-				Room.get(i).addSeeker2(id);
+				Room.get(i).addSeeker2(name);
 				int j=Room.get(i).findUserS(id);
 				Room.get(i).addSeekersc(j,sc);
 				return true;
 			}else if(Room.get(i).seekerList().size()<H){
 				Room.get(i).addHider(id);
-				Room.get(i).addHider2(id);
+				Room.get(i).addHider2(name);
 				int j=Room.get(i).findUserH(id);
 				Room.get(i).addHidersc(j,sc);
 				return true;
@@ -240,22 +241,24 @@ public class roomhandler{
 				ArrayList<String> hider=Room.get(i).hiderList();
 				ArrayList<String> seeker2=Room.get(i).seeker2List();
 				ArrayList<String> hider2=Room.get(i).hider2List();
-				//ì¸ì›ìˆ˜ seekerìˆ˜ hiderìˆ˜
-				dos.writeUTF(String.valueOf(user.size())+" "+String.valueOf(seeker.size())+" "+String.valueOf(hider.size()));
+				String time=String.valueOf(Room.get(i).getTime());
+				String chance = String.valueOf(Room.get(i).getHint());
+				//ÀÎ¿ø¼ö seeker¼ö hider¼ö
+				dos.writeUTF(String.valueOf(user.size())+" "+String.valueOf(seeker.size())+" "+String.valueOf(hider.size()) + " " + time + " " + chance);
 				dos.flush();
-				//ìœ ì € ëª©ë¡ (ì´ë¦„ id ê±¸ìŒìˆ˜)
+				//À¯Àú ¸ñ·Ï (ÀÌ¸§ id °ÉÀ½¼ö)
 				for(int j=0;j<user.size();j++) {
 					dos.writeUTF(user.get(j)+" "+userid.get(j)+" "+String.valueOf(feet.get(j)));
 					dos.flush();
 				}
 				for(int j=0;j<seeker.size();j++) {
-					dos.writeUTF(seeker.get(j));
-					//dos.writeUTF(seeker.get(j)+" "+seeker2.get(j));
+					//dos.writeUTF(seeker.get(j));
+					dos.writeUTF(seeker.get(j)+" "+seeker2.get(j));
 					dos.flush();
 				}
 				for(int j=0;j<hider.size();j++) {
-					dos.writeUTF(hider.get(j));
-					//dos.writeUTF(hider.get(j)+" "+hider2.get(j));
+					//dos.writeUTF(hider.get(j));
+					dos.writeUTF(hider.get(j)+" "+hider2.get(j));
 					dos.flush();
 				}
 			} catch (Exception e) {

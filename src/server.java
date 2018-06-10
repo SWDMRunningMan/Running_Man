@@ -1,3 +1,4 @@
+package server;
 import java.util.Iterator;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -23,7 +24,7 @@ public class server {
 				Socket s=listener.accept();
 				Handler hd = new Handler(s);
 				hd.start();
-				System.out.println("ì„œë²„ì—°ê²°");
+				System.out.println("¼­¹ö¿¬°á");
 				vc.add(hd);	
 				//user.add(s);
 				for(int i=0;i<vc.size();i++) {
@@ -32,7 +33,7 @@ public class server {
 			}
 		} finally {
 			listener.close();
-			System.out.println("ì—°ê²°ì¢…ë£Œ");
+			System.out.println("¿¬°áÁ¾·á");
 		}
 	}
 	
@@ -81,16 +82,16 @@ public class server {
 							dos.flush();
 						}
 					}
-					else if(str[0].equals("0")) {//ë¡œê·¸ì¸
+					else if(str[0].equals("0")) {//·Î±×ÀÎ
 						
 						String ID=str[1];
 						System.out.println("ID = "+ID);
 					}
-					else if(str[0].equals("1")) {//ë°©ìƒì„±
-						//ID, ì´ë¦„,ë°©id,ë°©ì´ë¦„, ì „ì²´ì¸ì›, ìˆ ë˜ìˆ˜, ì‹œê°„, íŒíŠ¸
+					else if(str[0].equals("1")) {//¹æ»ı¼º
+						//ID, ÀÌ¸§,¹æid,¹æÀÌ¸§, ÀüÃ¼ÀÎ¿ø, ¼ú·¡¼ö, ½Ã°£, ÈùÆ®
 						System.out.println(msg);
 						R.make( str[1],str[2],Integer.valueOf(str[3]),str[4],Integer.valueOf(str[5]),Integer.valueOf(str[6]),Integer.valueOf(str[7]),Integer.valueOf(str[8]),socket);
-						R.sitting(Integer.valueOf(str[3]), str[1], socket);
+						R.sitting(Integer.valueOf(str[3]),str[2], str[1], socket);
 						Iterator<Socket> iter=R.user.iterator();
 						while(iter.hasNext()){
 							Socket S = (Socket)iter.next();
@@ -99,11 +100,11 @@ public class server {
 							if(S != null){
 								d.writeInt(11);
 								d.flush();
-								System.out.println("ë°ì´í„° ì „ì†¡");
+								System.out.println("µ¥ÀÌÅÍ Àü¼Û");
 							}
 						}
-						System.out.println("ë°©ìƒì„± "+ str[1]);
-					}else if(str[0].equals("100")) {//ë°©ì •ë³´
+						System.out.println("¹æ»ı¼º "+ str[1]);
+					}else if(str[0].equals("100")) {//¹æÁ¤º¸
 						System.out.println(msg);
 						System.out.println("broad cast ");
 						
@@ -117,25 +118,25 @@ public class server {
 								d.writeInt(100);
 								d.flush();
 								R.write(Integer.valueOf(str[1]),S);
-								System.out.println("ë°ì´í„° ì „ì†¡");
+								System.out.println("µ¥ÀÌÅÍ Àü¼Û");
 							}
 						}
-					}else if(str[0].equals("101")) {//ìë¦¬ì´ë™
+					}else if(str[0].equals("101")) {//ÀÚ¸®ÀÌµ¿
 						System.out.println(msg);
 						System.out.println("move to seek ");
-						R.moveToSeeker(Integer.valueOf(str[1]),str[2], socket);
+						R.moveToSeeker(Integer.valueOf(str[1]),str[2], socket,str[3]);
 						
-					}else if(str[0].equals("102")) {//ìë¦¬ì´ë™
+					}else if(str[0].equals("102")) {//ÀÚ¸®ÀÌµ¿
 						System.out.println(msg);
 						System.out.println("move to hide ");
-						R.moveToHider(Integer.valueOf(str[1]), str[2], socket);
-					}else if(str[0].equals("103")) {//ë‚˜ê°
+						R.moveToHider(Integer.valueOf(str[1]), str[2], socket,str[3]);
+					}else if(str[0].equals("103")) {//³ª°¨
 						System.out.println(msg);
 						System.out.println("exit ");
 						R.remove(Integer.valueOf(str[1]), str[2],socket);
 						dos.writeInt(11);
 					}
-					else if(str[0].equals("104")) {//ë°©ì ‘ì†
+					else if(str[0].equals("104")) {//¹æÁ¢¼Ó
 						System.out.println(msg);
 						System.out.println("enter ");
 						room Room= R.inform(Integer.valueOf(str[1]));
@@ -159,7 +160,7 @@ public class server {
 							
 						}
 					}
-					else if(str[0].equals("200")) {//ë°©ëª©ë¡
+					else if(str[0].equals("200")) {//¹æ¸ñ·Ï
 						
 						System.out.println(msg);
 						System.out.println("room list ");
@@ -172,7 +173,7 @@ public class server {
 							dos.flush();
 						}
 						
-					}else if(str[0].equals("300")) {//ê²Œì„ì‹œì‘
+					}else if(str[0].equals("300")) {//°ÔÀÓ½ÃÀÛ
 						
 						System.out.println(msg);
 						System.out.println("game start ");
@@ -185,11 +186,11 @@ public class server {
 							if(S != null){
 								d.writeInt(300);
 								d.flush();
-								System.out.println("ê²Œì„ì‹œì‘");
+								System.out.println("°ÔÀÓ½ÃÀÛ");
 							}
 						}
 						R.gameStart(Integer.valueOf(str[1]));
-					}else if(str[0].equals("400")) {//ì‚¬ì§„ì „ì†¡
+					}else if(str[0].equals("400")) {//»çÁøÀü¼Û
 						System.out.println(msg);
 						System.out.println("picture send ");
 						room Room= R.inform(Integer.valueOf(str[1]));
@@ -211,10 +212,10 @@ public class server {
 								for(int i=0;i<size;i++) {
 									d.writeByte(data[i]);
 								}
-								System.out.println("ì‚¬ì§„ ì „ì†¡");
+								System.out.println("»çÁø Àü¼Û");
 							}
 						}
-					}else if(str[0].equals("401")) {//ì¡íŒê±° ì „ì†¡
+					}else if(str[0].equals("401")) {//ÀâÈù°Å Àü¼Û
 						System.out.println(msg);
 						System.out.println("out send ");
 						room Room= R.inform(Integer.valueOf(str[1]));
@@ -229,10 +230,10 @@ public class server {
 								d.writeUTF(str[2]);
 								d.flush();
 
-								System.out.println("ì•„ì›ƒ");
+								System.out.println("¾Æ¿ô");
 							}
 						}
-					}else if(str[0].equals("500")) {//ê²Œì„ë
+					}else if(str[0].equals("500")) {//°ÔÀÓ³¡
 						System.out.println(msg);
 						System.out.println("game end ");
 						room Room= R.inform(Integer.valueOf(str[1]));
@@ -244,11 +245,11 @@ public class server {
 								if(S != null){
 									d.writeInt(500);
 									d.flush();
-								System.out.println("ê²Œì„ ì¢…ë£Œ");
+								System.out.println("°ÔÀÓ Á¾·á");
 								}
 							}
 						}
-					else if(str[0].equals("501")) {//ê±¸ìŒìˆ˜ ì „ë‹¬
+					else if(str[0].equals("501")) {//°ÉÀ½¼ö Àü´Ş
 						System.out.println(msg);
 						System.out.println("game end ");
 						room Room= R.inform(Integer.valueOf(str[1]));
@@ -271,7 +272,7 @@ public class server {
 										d.writeInt(Room.feetList().get(i));
 									}
   								    
-								System.out.println("ë°ì´í„° ì „ì†¡");
+								System.out.println("µ¥ÀÌÅÍ Àü¼Û");
 								}
 							}
 							R.gameOver(Integer.valueOf(str[1]));

@@ -1,4 +1,5 @@
-import java.net.Socket;
+package server;
+import java.net.Socket;import java.net.Socket;
 import java.util.ArrayList;
 
 public class room {
@@ -136,8 +137,14 @@ public class room {
 	public void addSeeker(String id) {
 		seeker.add(id);
 	}
+	public void addSeeker2(String id) {
+		seeker2.add(id);
+	}
 	public void addHider(String id) {
 		hider.add(id);
+	}
+	public void addHider2(String id) {
+		hider2.add(id);
 	}
 	public void addSeekersc(int i,Socket s) {
 		seekersc.add(i,s);
@@ -169,8 +176,14 @@ public class room {
 	public void deleteSeeker(int i) {
 		seeker.remove(i);
 	}
+	public void deleteSeeker2(int i) {
+		seeker2.remove(i);
+	}
 	public void deleteHider(int i) {
 		hider.remove(i);
+	}
+	public void deleteHider2(int i) {
+		hider2.remove(i);
 	}
 	public void deleteSeekersc(int i) {
 		seekersc.remove(i);
