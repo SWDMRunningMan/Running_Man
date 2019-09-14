@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/run"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="방 리스트"
+                android:layout_weight="10"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:layout_margin="5dp"
+                android:textColor="#ff000000"
+                android:textStyle="bold"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:text=" 새로고침"
+                android:id="@+id/refreshBtn"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_margin="5dp"
+                android:textAllCaps="false"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:id="@+id/center"
+            android:layout_weight="10"
+            android:background="#aaffffff"
+            android:orientation="vertical">
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1"
+                android:background="#44000000"
+                android:padding="2dp"
+                >
+                <TableRow
+                    android:background="#aaffffff">
+                    <TextView
+                        android:layout_height="30dp"
+                        android:text="방 번호"
+                        android:textColor="#ff000000"
+                        android:textStyle="bold"
+                        android:layout_margin="1dp"
+                        android:gravity="center"
+                        android:id="@+id/dropdown"/>
+                    <TextView android:text="방 제목"
+                        android:textColor="#ff000000"
+                        android:textStyle="bold"
+                        android:layout_height="30dp"
+                        android:layout_margin="1dp"
+                        android:gravity="center"
+                        />
+                    <TextView android:text="방 인원수"
+                        android:textColor="#ff000000"
+                        android:textStyle="bold"
+                        android:layout_height="30dp"
+                        android:layout_margin="1dp"
+                        android:gravity="center"/>
+                </TableRow>
+                <View
+                    android:background="#44000000"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    />
+            </TableLayout>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1"
+                android:background="#44000000"
+                android:padding="2dp"
+                android:id="@+id/table">
+            </TableLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/roomMakeBtn"
+                android:text="방만들기"
+                android:textSize="20dp"
+                android:background="#00ffffff"
+                android:textStyle="bold"
+                android:layout_margin="5dp" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/roomEnterBtn"
+                android:text="방 접속하기"
+                android:textSize="20dp"
+                android:background="#00ffffff"
+                android:textStyle="bold"
+                android:layout_margin="5dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
